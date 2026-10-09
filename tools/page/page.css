@@ -104,6 +104,8 @@
   #flash { position:absolute; inset:0; display:flex; align-items:center;
            justify-content:center; font-size:34px; font-weight:800;
            color:#fff; opacity:0; pointer-events:none; transition:opacity .18s; }
+  #flash div { text-align:center; }
+  #flash small { display:block; font-size:15px; font-weight:600; opacity:.9; margin-top:4px; }
   footer { display:flex; gap:9px; padding:0 14px 26px; }
   .btn { flex:1; padding:14px 0 12px; border-radius:15px; font-size:15.5px;
          font-weight:700; color:#fff; text-align:center; line-height:1.15; }

@@ -49,57 +49,91 @@
   }
 
   let docRef = null;
-  let writing = false, dirty = false;
+  let writing = false, dirty = false, retryTimer = null;
+  let saveState = "idle";        // "idle" | "saving" | "saved" | "retrying" | "local"
+  let savedAt = 0;
 
-  /** One write at a time; grades made while a write is in flight are
-   *  folded into the next one. */
+  /** A store call that hasn't answered in this long counts as failed, so
+   *  one stuck write can never hold up every save after it. */
+  function withTimeout(promise, ms) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject({ code: "timeout" }), ms)),
+    ]);
+  }
+
+  function setSaveState(state) {
+    saveState = state;
+    if (state === "saved") savedAt = Date.now();
+    renderSaveState();
+  }
+
+  // Failures that mean this view can never write to the account store.
+  const FINAL = ["invalid_argument", "not_granted", "revoked", "capability_disabled",
+    "capability_removed", "quota_exceeded"];
+
+  /** One write at a time; grades made while a write is in flight are folded
+   *  into the next one. A failed or stuck write is retried rather than
+   *  given up on, so a hiccup costs a few seconds, not the session. */
   async function accountSave() {
     if (!docRef) return;
     if (writing) { dirty = true; return; }
     writing = true;
+    clearTimeout(retryTimer);
+    setSaveState("saving");
     try {
       do {
         dirty = false;
-        await docRef.set({ progress: JSON.stringify(progress), updated: Date.now() });
+        await withTimeout(docRef.set({ progress: JSON.stringify(progress), updated: Date.now() }), 10000);
       } while (dirty);
-    } catch (e) {
-      // Signed out, view-only, or the store is unavailable: carry on in this
-      // browser only, and say so on the menu.
-      docRef = null;
-      where = "local";
-      renderStoreNote();
-    } finally {
       writing = false;
+      setSaveState("saved");
+    } catch (e) {
+      writing = false;
+      if (FINAL.includes(e && e.code)) {
+        docRef = null;
+        where = "local";
+        setSaveState("local");
+        renderStoreNote();
+      } else {
+        // Timeout, rate limit or a passing outage: try again shortly. The
+        // browser copy holds everything meanwhile.
+        setSaveState("retrying");
+        retryTimer = setTimeout(accountSave, 4000 + Math.random() * 3000);
+      }
     }
   }
 
   function save() {
     localSave();
-    accountSave();
+    if (docRef) accountSave();
+    else setSaveState("local");
   }
 
   async function connectAccount() {
     try {
-      if (!window.claude || !window.claude.use) return;
+      if (!window.claude || !window.claude.use) return setSaveState("local");
       const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
-      if (!db || !user) return;
+      if (!db || !user) return setSaveState("local");
       const id = await user.id();
-      if (!id) return;
+      if (!id) return setSaveState("local");
       const ref = db.collection("data/users/" + id).doc("econ381");
-      const snap = await ref.get();
+      const snap = await withTimeout(ref.get(), 10000);
+      let remote = { cards: {} };
       if (snap.exists) {
-        const body = snap.data() || {};
-        merge(JSON.parse(body.progress || "{}"));
+        try { remote = JSON.parse((snap.data() || {}).progress || "{}") || remote; } catch (e) { /* unreadable */ }
       }
+      merge(remote);
       docRef = ref;
       where = "account";
       localSave();
-      // Anything graded in this browser before the account answered goes up.
-      accountSave();
+      // Write only when this browser holds grades the account doesn't.
+      if (JSON.stringify(progress.cards) !== JSON.stringify(remote.cards || {})) accountSave();
+      else setSaveState("saved");
       if (!$("#menu").hidden) renderMenu();
       else renderStoreNote();
     } catch (e) {
-      /* stay on this browser's copy */
+      setSaveState("local");
     }
   }
 
@@ -132,10 +166,11 @@
   function begin(cards, cram) {
     if (!cards.length) return;
     mode = cram ? "cram" : "review";
-    $("#quit").textContent = cram ? "Cram · nothing is rescheduled" : "Esc for the menu · every grade is saved as you go";
+    $("#quit").textContent = cram ? "Cram · nothing is rescheduled" : "Esc for the menu";
     $("#menu").hidden = true;
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
     startSession(cards.map(forPage), cram);
+    renderSaveState();
   }
 
   function showMenu() {
@@ -158,6 +193,23 @@
 
   function timeOf(ms) {
     return new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  }
+
+  /** Where the last grade went, shown on the menu and along the top of a
+   *  session, so a save that isn't landing is visible straight away. */
+  function renderSaveState() {
+    const account = where === "account";
+    const label = {
+      idle: "",
+      saving: "Saving…",
+      saved: account ? "Saved to your account ✓" : "",
+      retrying: "Can’t reach your account · retrying (kept in this browser meanwhile)",
+      local: "Saved in this browser only",
+    }[saveState];
+    if (mode !== "cram" && $("#menu").hidden) {
+      $("#quit").textContent = "Esc for the menu" + (label ? " · " + label : "");
+    }
+    $("#m-saved").textContent = label + (saveState === "saved" && savedAt ? " at " + timeOf(savedAt) : "");
   }
 
   function renderStoreNote() {
@@ -213,6 +265,7 @@
     }).join("");
 
     renderStoreNote();
+    renderSaveState();
     if (!$("#stats").hidden) renderStats();
   }
 

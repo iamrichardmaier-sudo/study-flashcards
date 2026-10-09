@@ -106,6 +106,8 @@
   #flash { position:absolute; inset:0; display:flex; align-items:center;
            justify-content:center; font-size:34px; font-weight:800;
            color:#fff; opacity:0; pointer-events:none; transition:opacity .18s; }
+  #flash div { text-align:center; }
+  #flash small { display:block; font-size:15px; font-weight:600; opacity:.9; margin-top:4px; }
   footer { display:flex; gap:9px; padding:0 14px 26px; }
   .btn { flex:1; padding:14px 0 12px; border-radius:15px; font-size:15.5px;
          font-weight:700; color:#fff; text-align:center; line-height:1.15; }
@@ -166,6 +168,7 @@ kbd { font: 600 10.5px/1 ui-monospace, "SF Mono", Menlo, monospace; padding: 2px
 .m-title { font-family: ui-serif, "New York", Georgia, serif; font-size: clamp(30px, 5vw, 42px);
            font-weight: 700; line-height: 1.1; margin: 0; text-wrap: balance; }
 .m-sub { font-size: 14px; opacity: .6; margin: 0; }
+.m-saved { font-size: 12.5px; opacity: .5; min-height: 1.2em; }
 .m-meter { display: flex; flex-direction: column; gap: 6px; }
 .m-bar { height: 8px; border-radius: 4px; background: rgba(43,33,24,.09); overflow: hidden; display: flex; }
 .m-bar span { height: 100%; }
@@ -231,6 +234,7 @@ button:focus-visible, .btn:focus-visible { outline: 3px solid #E8A25E; outline-o
       </div>
       <h1 class="m-title">Term &amp; definition cards</h1>
       <p class="m-sub" id="m-status">Loading your progress…</p>
+      <p class="m-sub m-saved" id="m-saved"></p>
     </div>
 
     <div class="m-meter">
@@ -1087,7 +1091,7 @@ function grade(rating) {
   ping('grade?id=' + encodeURIComponent(card.id) + '&rating=' + rating +
        '&seq=' + (results.length - 1) + '&t=' + t);
   const colors = { missed: '#C0392B', shaky: '#D9952B', confident: '#2E7D52' };
-  flash(rating.charAt(0).toUpperCase() + rating.slice(1), colors[rating]);
+  flash(rating.charAt(0).toUpperCase() + rating.slice(1), comesBack(card, rating), colors[rating]);
 
   if (rating === 'missed') {
     // Didn't know it: to the back of the deck, so it comes round again this
@@ -1120,12 +1124,25 @@ function ping(path) {
   setTimeout(function () { f.remove(); }, 80);
 }
 
-function flash(text, color) {
+/** When a graded card will be seen again, said the moment it's graded, so
+ *  the schedule is visible rather than taken on trust. Read before the
+ *  card's step moves. */
+function comesBack(card, rating) {
+  if (PRACTICE) return rating === 'missed' ? 'again at the end' : rating === 'shaky' ? 'again in a few cards' : 'cram \u00b7 not scheduled';
+  if (rating === 'missed') return 'again at the end of this session';
+  if (rating === 'shaky') return 'back in 1 hour';
+  const h = LADDER[Math.min(steps[card.id] || 0, LADDER.length - 1)];
+  return 'back in ' + (h === 24 ? '1 day' : h + ' hours');
+}
+
+let flashTimer = null;
+function flash(text, sub, color) {
   const f = $('#flash');
-  f.textContent = text;
+  f.innerHTML = '<div>' + esc(text) + '<small>' + esc(sub) + '</small></div>';
   f.style.background = color;
-  f.style.opacity = '.92';
-  setTimeout(function () { f.style.opacity = '0'; }, 160);
+  f.style.opacity = '.94';
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(function () { f.style.opacity = '0'; }, 520);
 }
 
 function finishScreen() {
@@ -1393,57 +1410,91 @@ function shuffle(a) {
   }
 
   let docRef = null;
-  let writing = false, dirty = false;
+  let writing = false, dirty = false, retryTimer = null;
+  let saveState = "idle";        // "idle" | "saving" | "saved" | "retrying" | "local"
+  let savedAt = 0;
 
-  /** One write at a time; grades made while a write is in flight are
-   *  folded into the next one. */
+  /** A store call that hasn't answered in this long counts as failed, so
+   *  one stuck write can never hold up every save after it. */
+  function withTimeout(promise, ms) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject({ code: "timeout" }), ms)),
+    ]);
+  }
+
+  function setSaveState(state) {
+    saveState = state;
+    if (state === "saved") savedAt = Date.now();
+    renderSaveState();
+  }
+
+  // Failures that mean this view can never write to the account store.
+  const FINAL = ["invalid_argument", "not_granted", "revoked", "capability_disabled",
+    "capability_removed", "quota_exceeded"];
+
+  /** One write at a time; grades made while a write is in flight are folded
+   *  into the next one. A failed or stuck write is retried rather than
+   *  given up on, so a hiccup costs a few seconds, not the session. */
   async function accountSave() {
     if (!docRef) return;
     if (writing) { dirty = true; return; }
     writing = true;
+    clearTimeout(retryTimer);
+    setSaveState("saving");
     try {
       do {
         dirty = false;
-        await docRef.set({ progress: JSON.stringify(progress), updated: Date.now() });
+        await withTimeout(docRef.set({ progress: JSON.stringify(progress), updated: Date.now() }), 10000);
       } while (dirty);
-    } catch (e) {
-      // Signed out, view-only, or the store is unavailable: carry on in this
-      // browser only, and say so on the menu.
-      docRef = null;
-      where = "local";
-      renderStoreNote();
-    } finally {
       writing = false;
+      setSaveState("saved");
+    } catch (e) {
+      writing = false;
+      if (FINAL.includes(e && e.code)) {
+        docRef = null;
+        where = "local";
+        setSaveState("local");
+        renderStoreNote();
+      } else {
+        // Timeout, rate limit or a passing outage: try again shortly. The
+        // browser copy holds everything meanwhile.
+        setSaveState("retrying");
+        retryTimer = setTimeout(accountSave, 4000 + Math.random() * 3000);
+      }
     }
   }
 
   function save() {
     localSave();
-    accountSave();
+    if (docRef) accountSave();
+    else setSaveState("local");
   }
 
   async function connectAccount() {
     try {
-      if (!window.claude || !window.claude.use) return;
+      if (!window.claude || !window.claude.use) return setSaveState("local");
       const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
-      if (!db || !user) return;
+      if (!db || !user) return setSaveState("local");
       const id = await user.id();
-      if (!id) return;
+      if (!id) return setSaveState("local");
       const ref = db.collection("data/users/" + id).doc("econ381");
-      const snap = await ref.get();
+      const snap = await withTimeout(ref.get(), 10000);
+      let remote = { cards: {} };
       if (snap.exists) {
-        const body = snap.data() || {};
-        merge(JSON.parse(body.progress || "{}"));
+        try { remote = JSON.parse((snap.data() || {}).progress || "{}") || remote; } catch (e) { /* unreadable */ }
       }
+      merge(remote);
       docRef = ref;
       where = "account";
       localSave();
-      // Anything graded in this browser before the account answered goes up.
-      accountSave();
+      // Write only when this browser holds grades the account doesn't.
+      if (JSON.stringify(progress.cards) !== JSON.stringify(remote.cards || {})) accountSave();
+      else setSaveState("saved");
       if (!$("#menu").hidden) renderMenu();
       else renderStoreNote();
     } catch (e) {
-      /* stay on this browser's copy */
+      setSaveState("local");
     }
   }
 
@@ -1476,10 +1527,11 @@ function shuffle(a) {
   function begin(cards, cram) {
     if (!cards.length) return;
     mode = cram ? "cram" : "review";
-    $("#quit").textContent = cram ? "Cram · nothing is rescheduled" : "Esc for the menu · every grade is saved as you go";
+    $("#quit").textContent = cram ? "Cram · nothing is rescheduled" : "Esc for the menu";
     $("#menu").hidden = true;
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
     startSession(cards.map(forPage), cram);
+    renderSaveState();
   }
 
   function showMenu() {
@@ -1502,6 +1554,23 @@ function shuffle(a) {
 
   function timeOf(ms) {
     return new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  }
+
+  /** Where the last grade went, shown on the menu and along the top of a
+   *  session, so a save that isn't landing is visible straight away. */
+  function renderSaveState() {
+    const account = where === "account";
+    const label = {
+      idle: "",
+      saving: "Saving…",
+      saved: account ? "Saved to your account ✓" : "",
+      retrying: "Can’t reach your account · retrying (kept in this browser meanwhile)",
+      local: "Saved in this browser only",
+    }[saveState];
+    if (mode !== "cram" && $("#menu").hidden) {
+      $("#quit").textContent = "Esc for the menu" + (label ? " · " + label : "");
+    }
+    $("#m-saved").textContent = label + (saveState === "saved" && savedAt ? " at " + timeOf(savedAt) : "");
   }
 
   function renderStoreNote() {
@@ -1557,6 +1626,7 @@ function shuffle(a) {
     }).join("");
 
     renderStoreNote();
+    renderSaveState();
     if (!$("#stats").hidden) renderStats();
   }
 

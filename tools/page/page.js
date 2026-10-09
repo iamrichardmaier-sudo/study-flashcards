@@ -191,7 +191,7 @@ function grade(rating) {
   ping('grade?id=' + encodeURIComponent(card.id) + '&rating=' + rating +
        '&seq=' + (results.length - 1) + '&t=' + t);
   const colors = { missed: '#C0392B', shaky: '#D9952B', confident: '#2E7D52' };
-  flash(rating.charAt(0).toUpperCase() + rating.slice(1), colors[rating]);
+  flash(rating.charAt(0).toUpperCase() + rating.slice(1), comesBack(card, rating), colors[rating]);
 
   if (rating === 'missed') {
     // Didn't know it: to the back of the deck, so it comes round again this
@@ -224,12 +224,25 @@ function ping(path) {
   setTimeout(function () { f.remove(); }, 80);
 }
 
-function flash(text, color) {
+/** When a graded card will be seen again, said the moment it's graded, so
+ *  the schedule is visible rather than taken on trust. Read before the
+ *  card's step moves. */
+function comesBack(card, rating) {
+  if (PRACTICE) return rating === 'missed' ? 'again at the end' : rating === 'shaky' ? 'again in a few cards' : 'cram \u00b7 not scheduled';
+  if (rating === 'missed') return 'again at the end of this session';
+  if (rating === 'shaky') return 'back in 1 hour';
+  const h = LADDER[Math.min(steps[card.id] || 0, LADDER.length - 1)];
+  return 'back in ' + (h === 24 ? '1 day' : h + ' hours');
+}
+
+let flashTimer = null;
+function flash(text, sub, color) {
   const f = $('#flash');
-  f.textContent = text;
+  f.innerHTML = '<div>' + esc(text) + '<small>' + esc(sub) + '</small></div>';
   f.style.background = color;
-  f.style.opacity = '.92';
-  setTimeout(function () { f.style.opacity = '0'; }, 160);
+  f.style.opacity = '.94';
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(function () { f.style.opacity = '0'; }, 520);
 }
 
 function finishScreen() {

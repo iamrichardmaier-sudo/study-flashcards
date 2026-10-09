@@ -181,6 +181,85 @@ for (const [w, h] of [[1280, 860], [390, 844]]) {
 }
 console.log("✓ all 126 answers fit at 1280px and 390px");
 
+// ------------------------------------------- saving to the account
+//
+// A stand-in for the claude.ai account store (the Artifact `db`
+// capability), kept in sessionStorage so it survives a reload. `mode`
+// makes the store misbehave the ways a real one can: a write that never
+// answers, or one refused with a passing error.
+
+async function accountRun(storeMode) {
+  const c = await browser.newContext({ viewport: { width: 1280, height: 860 } });
+  await c.route("https://econ381.test/**", (r) => r.fulfill({ contentType: "text/html", body: html }));
+  await c.addInitScript((storeMode) => {
+    const KEY = "__mock_db";
+    const read = () => JSON.parse(sessionStorage.getItem(KEY) || "{}");
+    let calls = Number(sessionStorage.getItem("__mock_calls") || 0);
+    const db = {
+      collection(path) {
+        return {
+          doc(id) {
+            const full = path + "/" + id;
+            return {
+              async get() {
+                const d = read()[full];
+                return { exists: !!d, data: () => d };
+              },
+              set(data) {
+                calls++;
+                sessionStorage.setItem("__mock_calls", String(calls));
+                if (storeMode === "hang" && calls === 1) return new Promise(() => {});
+                if (storeMode === "flaky" && calls === 1) return Promise.reject({ code: "resource_exhausted" });
+                const all = read();
+                all[full] = JSON.parse(JSON.stringify(data));
+                sessionStorage.setItem(KEY, JSON.stringify(all));
+                return Promise.resolve();
+              },
+            };
+          },
+        };
+      },
+    };
+    const user = { id: async () => "u_test" };
+    window.claude = { use: async (name) => (name === "db" ? db : name === "user" ? user : null) };
+  }, storeMode);
+  const pg = await c.newPage();
+  pg.on("pageerror", (e) => errors.push(String(e)));
+  await pg.goto("https://econ381.test/");
+  await pg.waitForFunction("document.querySelector('#m-store').textContent.includes('account')");
+  const remote = () => pg.evaluate("JSON.parse((JSON.parse(sessionStorage.getItem('__mock_db') || '{}')['data/users/u_test/econ381'] || {}).progress || '{\"cards\":{}}')");
+  assert.equal(await pg.evaluate("sessionStorage.getItem('__mock_calls')"), null, "nothing to write on open");
+
+  await pg.keyboard.press("Enter");
+  const id = await pg.evaluate("CARDS[0].id");
+  await pg.keyboard.press("Enter");
+  await pg.keyboard.press("ArrowRight");
+  // The flash says when it comes back.
+  assert.match(await pg.textContent("#flash"), /Confident\s*back in 4 hours/);
+  await pg.waitForFunction((id) => {
+    const d = JSON.parse(sessionStorage.getItem("__mock_db") || "{}")["data/users/u_test/econ381"];
+    return d && JSON.parse(d.progress).cards[id];
+  }, id, { timeout: 30000 });
+  assert.match(await pg.textContent("#quit"), /Saved to your account/);
+
+  // A new browser on the same account: no local copy, the account has it.
+  await pg.evaluate("localStorage.clear()");
+  await pg.reload();
+  await pg.waitForFunction("document.querySelector('#m-saved').textContent.includes('Saved')");
+  assert.match(await pg.textContent("#m-status"), /24 new/, "the graded card isn't new any more");
+  await pg.keyboard.press("Enter");
+  assert.notEqual(await pg.evaluate("CARDS[0].id"), id, "a card graded Confident doesn't come straight back");
+  assert.ok((await remote()).cards[id].due > Date.now() + 3.9 * H);
+  await c.close();
+}
+
+await accountRun("ok");
+console.log("✓ account store: grades saved, reload on a fresh browser keeps them, no repeat");
+await accountRun("flaky");
+console.log("✓ account store refuses one write: retried and saved");
+await accountRun("hang");
+console.log("✓ account store write hangs: times out, retried and saved");
+
 assert.deepEqual(errors, [], "page errors: " + errors.join("; "));
 await browser.close();
 console.log("Screenshots in " + out);
