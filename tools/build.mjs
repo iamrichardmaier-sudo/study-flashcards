@@ -7,7 +7,7 @@
 // that gets pasted into Scriptable, with the deck, graphs and scheduler
 // embedded).
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import vm from "node:vm";
@@ -95,12 +95,52 @@ const fill = (marker, value) => {
 fill("/*__SCHEDULE__*/", read("tools/schedule.js").trim());
 fill("/*__DECK__*/ null", JSON.stringify(deck));
 fill('/*__GRAPHS__*/ ""', JSON.stringify(graphSrc));
+const page = {
+  css: read("tools/page/page.css"),
+  body: read("tools/page/page.html"),
+  js: read("tools/page/page.js"),
+};
+fill("/*__PAGE__*/ null", JSON.stringify(page));
 writeFileSync(join(root, "scriptable/econ381-review.js"), script);
+
+// ------------------------------------------------------------- website
+//
+// The same review page, plus the web menu, keyboard and saving
+// (tools/web/). Written as page content only: the Artifact publisher wraps
+// it in its own <html>/<head>/<body> skeleton.
+
+const split = (src, marker, value) => {
+  if (!src.includes(marker)) throw new Error(`missing ${marker}`);
+  return src.split(marker).join(value);
+};
+const safe = (s) => s.replace(/<\/script/gi, "<\\/script");
+const webUI = {
+  tipFront: "Enter or \u2192 to flip \u00b7 or click the card",
+  tipBack: "\u2192 Confident  \u00b7  \u2190 Shaky  \u00b7  \u2191\u2193 Missed  \u00b7  Enter flips back",
+  thirds: false,
+};
+let webJs = page.js;
+webJs = split(webJs, "/*__WEEKS__*/[]", JSON.stringify(weeks).replace(/</g, "\\u003c"));
+webJs = split(webJs, "/*__UI__*/{}", JSON.stringify(webUI));
+let webBody = page.body;
+webBody = split(webBody, "__QUIT__", "");
+webBody = split(webBody, "__DONE_ACTIONS__", '<button class="btn menu" id="toMenu" type="button">Back to menu <kbd>Enter</kbd></button>');
+const host = split(read("tools/web/host.js"), "/*__DECK__*/ null", JSON.stringify(deck).replace(/</g, "\\u003c"));
+
+const web =
+  "<title>ECON 381 Flashcards</title>\n" +
+  "<style>\n" + page.css + "\n" + read("tools/web/web.css") + "</style>\n" +
+  read("tools/web/web.html") + "\n" + webBody + "\n" +
+  "<script>\n" + safe(graphSrc) + "\n</script>\n" +
+  "<script>\n" + safe(webJs) + "</script>\n" +
+  "<script>\n" + safe(read("tools/schedule.js")) + "\n" + safe(host) + "</script>\n";
+mkdirSync(join(root, "web"), { recursive: true });
+writeFileSync(join(root, "web/econ381.html"), web);
 
 const kb = (s) => (Buffer.byteLength(s) / 1024).toFixed(0) + " KB";
 const count = (f) => cards.filter((c) => c[f] && (!Array.isArray(c[f]) || c[f].length)).length;
 console.log(
-  `Built ${cards.length} cards (${starred} ★) → scriptable/econ381-review.js (${kb(script)})\n` +
+  `Built ${cards.length} cards (${starred} ★) → scriptable/econ381-review.js (${kb(script)}), web/econ381.html (${kb(web)})\n` +
   `  with graph: ${count("graph")}, numbers: ${count("numbers")}, played out: ${count("played")}, ` +
   `example: ${count("example")}, connections: ${count("connections")}`,
 );

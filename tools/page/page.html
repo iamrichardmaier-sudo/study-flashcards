@@ -1,0 +1,37 @@
+<div id="app">
+  <header>
+    <span id="logo">
+      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 5v29h29" stroke-width="2.6"/>
+        <path d="M10 29c6-1 9-5 12-11s6-9 11-10" stroke-width="2.6"/>
+        <path d="M10 12l23 17" stroke-width="2" opacity=".55"/>
+      </svg>ECON 381
+    </span>
+    <div id="bar"><div id="fill"></div></div>
+    <span id="count"></span>
+  </header>
+  <div id="quitline"><span id="quit">__QUIT__</span></div>
+  <main>
+    <div id="scroll"><div id="card"></div></div>
+    <div id="flash"></div>
+    <div id="peek"></div>
+  </main>
+  <div id="tip">Tap to flip</div>
+  <footer>
+    <div class="btn missed" data-act="missed">Missed<small>again now</small></div>
+    <div class="btn shaky" data-act="shaky">Shaky<small>in 1 hour</small></div>
+    <div class="btn confident" data-act="confident">Confident<small id="confHint">later</small></div>
+  </footer>
+</div>
+
+<div id="done">
+  <h2>Done</h2>
+  <p id="doneText"></p>
+  <div class="tally">
+    <div class="missed"><span id="tM">0</span><small>missed</small></div>
+    <div class="shaky"><span id="tS">0</span><small>shaky</small></div>
+    <div class="confident"><span id="tC">0</span><small>confident</small></div>
+  </div>
+  <p id="laterText"></p>
+  __DONE_ACTIONS__
+</div>

@@ -120,3 +120,24 @@ function summary(cards, progress, now) {
   const nextCard = q.due[0] || q.fresh[0] || null;
   return { due, unseen, newLeft, solid, total: cards.length, nextCard, upcoming };
 }
+
+/** Due cards first, with new ones folded in every few so a long session
+ *  doesn't end on a block of nothing but unfamiliar terms. */
+function interleave(due, fresh) {
+  if (!due.length) return fresh.slice();
+  const out = [];
+  let d = 0, f = 0;
+  while (d < due.length || f < fresh.length) {
+    for (let k = 0; k < 3 && d < due.length; k++) out.push(due[d++]);
+    if (f < fresh.length) out.push(fresh[f++]);
+  }
+  return out;
+}
+
+function shuffle(a) {
+  for (let k = a.length - 1; k > 0; k--) {
+    const j = Math.floor(Math.random() * (k + 1));
+    [a[k], a[j]] = [a[j], a[k]];
+  }
+  return a;
+}

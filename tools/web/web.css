@@ -1,0 +1,84 @@
+/* Website additions on top of the shared review page (tools/page/page.css).
+   One light look, the same as the phone: cream paper, ink, and each week's
+   own colour. */
+:root { color-scheme: light; }
+html, body { background: var(--cream); }
+
+/* Desktop: keep the card, the bar and the buttons in one readable column. */
+header, #quitline, #tip, footer { width: 100%; max-width: 680px; margin-inline: auto; }
+#scroll { padding-inline: max(20px, calc((100% - 640px) / 2)); }
+footer { padding-bottom: 22px; }
+.btn { cursor: pointer; user-select: none; }
+.btn:hover { filter: brightness(1.06); }
+.link { cursor: pointer; }
+.link:hover { border-color: var(--wk); }
+#logo { cursor: pointer; }
+kbd { font: 600 10.5px/1 ui-monospace, "SF Mono", Menlo, monospace; padding: 2px 5px;
+      border-radius: 5px; border: 1px solid currentColor; opacity: .85; margin-left: 4px;
+      vertical-align: 1px; }
+.btn kbd { border-color: rgba(255,255,255,.7); }
+
+/* ------------------------------------------------------------- menu */
+#menu { position: fixed; inset: 0; overflow-y: auto; background: var(--cream); z-index: 10;
+        padding-block: calc(28px + env(safe-area-inset-top, 0px)) 40px; padding-inline: 20px; }
+.m-wrap { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+.m-head { display: flex; flex-direction: column; gap: 6px; }
+.m-eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #1F4E8C;
+             display: flex; align-items: center; gap: 8px; }
+.m-eyebrow svg { width: 18px; height: 18px; }
+.m-title { font-family: ui-serif, "New York", Georgia, serif; font-size: clamp(30px, 5vw, 42px);
+           font-weight: 700; line-height: 1.1; margin: 0; text-wrap: balance; }
+.m-sub { font-size: 14px; opacity: .6; margin: 0; }
+.m-meter { display: flex; flex-direction: column; gap: 6px; }
+.m-bar { height: 8px; border-radius: 4px; background: rgba(43,33,24,.09); overflow: hidden; display: flex; }
+.m-bar span { height: 100%; }
+.m-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; opacity: .7; font-variant-numeric: tabular-nums; }
+.m-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: 0; }
+
+.m-primary { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%;
+             padding: 20px 22px; border: 0; border-radius: 18px; background: #1F4E8C; color: #fff;
+             font: inherit; text-align: left; cursor: pointer; }
+.m-primary:hover { filter: brightness(1.08); }
+.m-primary:disabled { background: rgba(43,33,24,.08); color: var(--ink); cursor: default; filter: none; }
+.m-primary b { display: block; font-size: 21px; }
+.m-primary small { display: block; font-size: 13px; opacity: .8; margin-top: 3px; }
+.m-primary .go { font-size: 13px; font-weight: 700; white-space: nowrap; opacity: .9; }
+
+.m-h { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .45; margin: 0 0 8px; }
+.m-weeks { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.m-week { display: flex; flex-direction: column; gap: 6px; padding: 14px 14px 12px; border-radius: 14px;
+          border: 1px solid rgba(43,33,24,.1); background: #fff; font: inherit; color: var(--ink);
+          text-align: left; cursor: pointer; min-width: 0; }
+.m-week:hover { border-color: var(--c); }
+.m-week .wk { font-size: 10.5px; font-weight: 800; letter-spacing: .1em; color: var(--c); }
+.m-week .nm { font-size: 14px; font-weight: 600; line-height: 1.3; }
+.m-week .ct { font-size: 12px; opacity: .6; font-variant-numeric: tabular-nums; }
+.m-week .mini { height: 4px; border-radius: 2px; background: rgba(43,33,24,.08); overflow: hidden; }
+.m-week .mini span { display: block; height: 100%; background: var(--c); }
+
+.m-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.m-btn { flex: 1 1 200px; padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(43,33,24,.12);
+         background: #fff; color: var(--ink); font: inherit; font-size: 14.5px; font-weight: 600;
+         text-align: left; cursor: pointer; }
+.m-btn small { display: block; font-weight: 400; font-size: 12px; opacity: .6; margin-top: 2px; }
+.m-btn:hover { border-color: #1F4E8C; }
+.m-btn.star { color: #B4561B; }
+
+.m-keys { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 13px; align-items: baseline;
+          padding: 14px 16px; border-radius: 14px; background: rgba(31,78,140,.06); }
+.m-keys kbd { margin: 0 4px 0 0; }
+.m-note { font-size: 12px; opacity: .55; margin: 0; }
+
+#stats { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 14px;
+         background: #fff; border: 1px solid rgba(43,33,24,.1); }
+#stats .row .val { color: var(--ink); font-size: 14px; }
+#stats ul { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.5; }
+.danger { color: #C0392B; }
+.m-confirm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13.5px; }
+.m-confirm button, .m-small { padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(43,33,24,.15);
+         background: #fff; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink); }
+.m-confirm .yes { background: #C0392B; color: #fff; border-color: #C0392B; }
+
+#done .btn.menu { background: #1F4E8C; padding: 14px 34px; flex: none; border: 0; font: inherit; font-weight: 700; color: #fff; }
+button:focus-visible, .btn:focus-visible { outline: 3px solid #E8A25E; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

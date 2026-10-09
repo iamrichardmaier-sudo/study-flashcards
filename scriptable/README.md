@@ -80,3 +80,21 @@ node tools/preview.mjs               # runs the script end to end, screenshots i
 to a card that doesn't exist, a graph doesn't draw, a number has no source,
 or the count isn't 126 cards with 65 starred. Then paste the new
 `econ381-review.js` over the old one in Scriptable. Your progress is kept.
+
+## The website version
+
+`web/econ381.html` is the same review page for a computer, built from the same
+cards by `node tools/build.mjs` and published as a claude.ai Artifact. Same
+cards and graphs, same three grades and schedule, plus a start menu and keys:
+
+| Key | Front | Back |
+|---|---|---|
+| **Enter** | flip | flip back to the term |
+| **→** | flip | Confident |
+| **←** | | Shaky |
+| **↑ / ↓** | | Missed |
+| **Esc** | menu | menu |
+
+Progress is saved to your claude.ai account (private to you), with a copy in
+the browser. It's separate from the phone's progress, which lives in iCloud.
+`node tools/preview-web.mjs` tests it end to end.
