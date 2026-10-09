@@ -1,0 +1,4119 @@
+{
+ "title": "ECON 381 · Midterm 1",
+ "weeks": [
+  {
+   "title": "Data and Measurement",
+   "color": "#1F4E8C",
+   "soft": "rgba(31,78,140,.10)"
+  },
+  {
+   "title": "National Income, Distribution & Loanable Funds",
+   "color": "#138A7E",
+   "soft": "rgba(19,138,126,.11)"
+  },
+  {
+   "title": "Money, Inflation & Monetary Policy",
+   "color": "#C25A16",
+   "soft": "rgba(194,90,22,.11)"
+  },
+  {
+   "title": "Unemployment & Labor-Market Flows",
+   "color": "#6A4BA8",
+   "soft": "rgba(106,75,168,.11)"
+  },
+  {
+   "title": "Growth & the Solow Model",
+   "color": "#2E7D4F",
+   "soft": "rgba(46,125,79,.11)"
+  }
+ ],
+ "cards": [
+  {
+   "id": "recession",
+   "n": 1,
+   "week": 1,
+   "tags": [
+    "L1"
+   ],
+   "term": "Recession",
+   "simple": "A broad, temporary fall in economic activity: output, jobs, trade and production all shrink together.",
+   "more": [
+    "The headline rule of thumb is <b>two quarters in a row of falling real GDP</b>, but the official US referee, the NBER's Business Cycle Dating Committee, looks at many monthly indicators (employment, real income, industrial production, sales) and asks whether the fall is <i>significant, widespread and lasting</i>.",
+    "Opposite: an expansion. The turning points are called the peak (expansion ends) and the trough (recession ends)."
+   ],
+   "connections": [
+    "gdp",
+    "real-gdp",
+    "unemployment-rate",
+    "natural-rate"
+   ],
+   "example": "In the first half of 2022 real GDP fell for two straight quarters in the first estimates, yet the NBER never called a recession: employment was growing fast the whole time. The two-quarter rule is a shortcut, not the definition.",
+   "numbers": [
+    [
+     "Great Recession (NBER)",
+     "Dec 2007 – Jun 2009"
+    ],
+    [
+     "Its length",
+     "18 months"
+    ],
+    [
+     "COVID recession",
+     "Feb – Apr 2020"
+    ],
+    [
+     "Its length (shortest ever)",
+     "2 months"
+    ],
+    [
+     "Peak unemployment, 2009",
+     "10.0%"
+    ],
+    [
+     "Peak unemployment, Apr 2020",
+     "14.8%"
+    ]
+   ],
+   "numbersSource": "NBER business-cycle dates; BLS unemployment rate.",
+   "graph": "businessCycle",
+   "starred": false
+  },
+  {
+   "id": "gdp",
+   "n": 2,
+   "week": 1,
+   "tags": [
+    "L2",
+    "Ch 2"
+   ],
+   "term": "Gross domestic product (GDP)",
+   "simple": "The market value of all <b>final</b> goods and services produced inside a country in a period.",
+   "more": [
+    "Three ways to measure it, all giving the same number (the circular flow): <b>total spending</b> on final output, <b>total income</b> earned producing it, and <b>total value added</b> by every firm.",
+    "Word by word: <i>market value</i> (uses prices to add apples and haircuts), <i>final</i> (no intermediate goods, or you double count), <i>produced</i> (used cars and stocks don't count), <i>domestic</i> (inside the borders, whoever owns the factory), <i>in a period</i> (a flow, per quarter or year)."
+   ],
+   "connections": [
+    "expenditure-identity",
+    "value-added",
+    "nominal-gdp",
+    "stock-flow"
+   ],
+   "example": "A Honda built in Ohio counts in US GDP even though Honda is Japanese. A used Honda resold this year adds nothing (only the dealer's service fee counts, as a service produced now).",
+   "numbers": [
+    [
+     "US nominal GDP, 2025",
+     "≈ $30.8 trillion"
+    ],
+    [
+     "US nominal GDP, 2024",
+     "≈ $29.3 trillion"
+    ],
+    [
+     "Real GDP growth, Q2 2026",
+     "2.2% (annual rate)"
+    ],
+    [
+     "China, 2025",
+     "¥140.2 trillion"
+    ]
+   ],
+   "numbersSource": "BEA (2025 total via Statista/Wikipedia summaries of BEA; Q2 2026 third estimate, released Sep 30, 2026); China NBS.",
+   "graph": "circularFlow",
+   "starred": false
+  },
+  {
+   "id": "expenditure-identity",
+   "n": 3,
+   "week": 1,
+   "tags": [
+    "L2",
+    "Ch 2"
+   ],
+   "term": "Expenditure identity",
+   "simple": "Output equals what's spent on it: consumption plus investment plus government purchases plus net exports.",
+   "formula": "<i>Y</i><span class=\"op\">=</span><i>C</i><span class=\"op\">+</span><i>I</i><span class=\"op\">+</span><i>G</i><span class=\"op\">+</span><i>NX</i>",
+   "more": [
+    "It is an <b>identity</b>: true by definition, because of how the accounts are built. Anything produced but not sold goes into inventories, which count as investment, so the two sides always balance.",
+    "Rearranged it gives the saving identity used all through Week 2: <i>Y − C − G = I + NX</i>, i.e. national saving equals investment plus net exports (and just <i>S = I</i> in a closed economy)."
+   ],
+   "connections": [
+    "consumption",
+    "investment",
+    "government",
+    "net-exports",
+    "national-saving"
+   ],
+   "example": "If Ford builds a truck in December and it's still on the lot on December 31, it counts as inventory investment this year. When it sells next year, consumption rises and inventory investment falls by the same amount: no double counting.",
+   "numbers": [
+    [
+     "C",
+     "≈ 68% of GDP"
+    ],
+    [
+     "I",
+     "≈ 18%"
+    ],
+    [
+     "G",
+     "≈ 17%"
+    ],
+    [
+     "NX",
+     "≈ −3%"
+    ]
+   ],
+   "numbersSource": "Approximate 2025 shares, BEA national accounts. Consumption share 67.9% in Q3 2025 (FRED).",
+   "graph": {
+    "key": "gdpShares"
+   },
+   "starred": false
+  },
+  {
+   "id": "consumption",
+   "n": 4,
+   "week": 1,
+   "tags": [
+    "L2"
+   ],
+   "term": "Consumption (C)",
+   "simple": "Spending by households on goods and services. The biggest part of GDP, about two-thirds.",
+   "more": [
+    "Includes durables (cars, appliances), nondurables (food, clothing) and services (rent, haircuts, health care). Services are the largest piece.",
+    "<b>Exception:</b> buying a newly built house counts as <i>residential investment</i>, not consumption. Rent (including the rent homeowners implicitly “pay themselves”) is consumption."
+   ],
+   "connections": [
+    "expenditure-identity",
+    "consumption-function",
+    "mpc",
+    "disposable-income"
+   ],
+   "example": "Your Netflix subscription, a Chipotle burrito and a new iPhone all count. Your tuition counts too, as a service.",
+   "numbers": [
+    [
+     "Share of US GDP, Q3 2025",
+     "67.9%"
+    ],
+    [
+     "Personal saving rate, Jul 2026",
+     "3.0%"
+    ]
+   ],
+   "numbersSource": "BEA via FRED; BEA Personal Income and Outlays, July 2026.",
+   "graph": {
+    "key": "gdpShares",
+    "args": {
+     "hi": "C"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "investment",
+   "n": 5,
+   "week": 1,
+   "starred": true,
+   "tags": [
+    "PE Q19",
+    "Ch 2 #4"
+   ],
+   "term": "Investment (I)",
+   "simple": "Spending on goods bought for <b>future use</b>: business equipment, buildings, new houses and inventories.",
+   "more": [
+    "Three pieces: <b>business fixed investment</b> (machines, software, factories), <b>residential investment</b> (new housing) and <b>inventory investment</b> (the change in unsold stock).",
+    "<b>Exam trap:</b> buying stocks or bonds is <i>not</i> investment in GDP. That is a financial transaction that swaps one asset for another; nothing new is produced.",
+    "It's the most volatile part of GDP: firms postpone projects when the outlook darkens, so investment falls far more than consumption in a recession."
+   ],
+   "connections": [
+    "expenditure-identity",
+    "investment-function",
+    "loanable-funds",
+    "capital-accumulation"
+   ],
+   "example": "A brewery buying a new fermentation tank, a family buying a newly built home, and a store stocking up on unsold inventory are all investment. Buying Apple shares is not.",
+   "numbers": [
+    [
+     "Share of US GDP",
+     "≈ 18%"
+    ]
+   ],
+   "numbersSource": "Approximate 2025 share, BEA.",
+   "played": [
+    "Ask: was something newly produced for future use? If yes, investment.",
+    "A used factory changing hands: no new output, so it's not investment (it just transfers ownership).",
+    "Inventories rose by $50B this year: +$50B to I, even though nothing was sold."
+   ],
+   "graph": {
+    "key": "gdpShares",
+    "args": {
+     "hi": "I"
+    }
+   }
+  },
+  {
+   "id": "government",
+   "n": 6,
+   "week": 1,
+   "tags": [
+    "Ch 2 #4",
+    "BG"
+   ],
+   "term": "Government purchases (G)",
+   "simple": "Goods and services the government buys, like computers for a public school or a soldier's salary.",
+   "more": [
+    "<b>Transfer payments are not included</b>: Social Security, unemployment benefits and welfare move money from one person to another without buying anything produced. They show up in GDP only when the recipient spends them (as C).",
+    "Covers federal, state and local government, both consumption (salaries, supplies) and investment (roads, buildings)."
+   ],
+   "connections": [
+    "expenditure-identity",
+    "public-saving",
+    "crowding-out",
+    "balanced-budget"
+   ],
+   "example": "When a city pays a contractor to repave a road, that's G. When the government sends a Social Security check, that's a transfer: G doesn't change.",
+   "numbers": [
+    [
+     "Share of US GDP",
+     "≈ 17%"
+    ],
+    [
+     "Federal deficit, FY2025",
+     "$1.8 trillion"
+    ],
+    [
+     "Federal outlays, FY2025",
+     "$7.0 trillion"
+    ]
+   ],
+   "numbersSource": "BEA (share, approximate); CBO Monthly Budget Review, FY2025. Federal outlays include transfers and interest, which are not G.",
+   "played": [
+    "Federal outlays ($7.0T) are far bigger than federal G because most of it is transfers (Social Security, Medicare) and interest on the debt.",
+    "Only the part that buys goods and services, like defense purchases or federal salaries, enters G."
+   ],
+   "graph": {
+    "key": "gdpShares",
+    "args": {
+     "hi": "G"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "net-exports",
+   "n": 7,
+   "week": 1,
+   "tags": [
+    "Ch 2 #4"
+   ],
+   "term": "Net exports (NX)",
+   "simple": "Exports minus imports. Positive is a trade surplus, negative a trade deficit.",
+   "formula": "<i>NX</i><span class=\"op\">=</span><i>EX</i><span class=\"op\">−</span><i>IM</i>",
+   "more": [
+    "Imports are subtracted because they are already counted inside C, I and G. Subtracting them strips out spending on goods made abroad, so GDP only counts domestic production.",
+    "A US good sold to a buyer abroad counts in NX (as an export)."
+   ],
+   "connections": [
+    "expenditure-identity",
+    "gdp",
+    "cpi-vs-deflator"
+   ],
+   "example": "You buy a $1,000 Samsung TV made in Korea: C rises $1,000 and IM rises $1,000, so US GDP is unchanged. Boeing sells a plane to Air France: EX rises and US GDP rises.",
+   "numbers": [
+    [
+     "US share of GDP",
+     "≈ −3%"
+    ],
+    [
+     "US goods & services deficit, 2024",
+     "≈ $918 billion"
+    ]
+   ],
+   "numbersSource": "BEA/Census annual trade release for 2024; share approximate.",
+   "graph": {
+    "key": "gdpShares",
+    "args": {
+     "hi": "NX"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "stock-flow",
+   "n": 8,
+   "week": 1,
+   "tags": [
+    "L2"
+   ],
+   "term": "Stock vs flow",
+   "simple": "A <b>flow</b> is measured per period of time; a <b>stock</b> is measured at a point in time.",
+   "more": [
+    "Flows: GDP, income, investment, the deficit, monthly job gains. Stocks: the capital stock, wealth, the national debt, the number employed.",
+    "Flows change stocks: investment adds to the capital stock, depreciation drains it; each year's deficit adds to the debt."
+   ],
+   "connections": [
+    "gdp",
+    "capital-accumulation",
+    "unemployment-dynamics"
+   ],
+   "example": "Bathtub: the faucet's rate is the flow, the water in the tub is the stock. Your salary is a flow ($/year); your bank balance is a stock ($ on Dec 31).",
+   "numbers": [
+    [
+     "FY2025 deficit (flow)",
+     "$1.8 trillion"
+    ],
+    [
+     "Debt held by public, FY2025 (stock)",
+     "≈ 100% of GDP"
+    ]
+   ],
+   "numbersSource": "CBO; CRFB estimate of debt at 99.8% of GDP.",
+   "played": [
+    "Capital stock on Jan 1: 100 machines (stock).",
+    "Investment during the year: +12 machines (flow). Depreciation: −5 (flow).",
+    "Capital stock on Dec 31: 100 + 12 − 5 = 107."
+   ],
+   "graph": "stockFlow",
+   "starred": false
+  },
+  {
+   "id": "value-added",
+   "n": 9,
+   "week": 1,
+   "tags": [
+    "Ch 2",
+    "BG"
+   ],
+   "term": "Value added",
+   "simple": "A firm's output minus what it paid for intermediate goods. GDP is the sum of value added across all firms.",
+   "formula": "value added<span class=\"op\">=</span>value of output<span class=\"op\">−</span>intermediate goods",
+   "more": [
+    "Summing value added at each stage gives exactly the value of the final good, which is why the value-added and final-goods methods give the same GDP.",
+    "Value added is also the income created at that stage: wages and profit paid out of it."
+   ],
+   "connections": [
+    "gdp",
+    "expenditure-identity"
+   ],
+   "example": "A farmer sells wheat for $1, a miller turns it into flour for $3, a baker sells bread for $5. Value added: $1 + $2 + $2 = $5, the price of the bread.",
+   "played": [
+    "Farmer: sells $1 of wheat, buys nothing → value added $1.",
+    "Miller: sells flour for $3, paid $1 for wheat → $2.",
+    "Baker: sells bread for $5, paid $3 for flour → $2.",
+    "Sum: $5 = final sale. Adding every sale ($1 + $3 + $5 = $9) double counts the wheat and flour."
+   ],
+   "graph": "valueAdded",
+   "starred": false
+  },
+  {
+   "id": "nominal-gdp",
+   "n": 10,
+   "week": 1,
+   "tags": [
+    "Ch 2 #7"
+   ],
+   "term": "Nominal GDP",
+   "simple": "Output valued at <b>current</b> prices. It rises if prices rise or if quantities rise.",
+   "formula": "Nominal GDP<sub><i>t</i></sub><span class=\"op\">=</span>∑<sub><i>i</i></sub> <i>P</i><sub><i>i,t</i></sub><i>Q</i><sub><i>i,t</i></sub>",
+   "more": [
+    "Because it mixes price changes with real changes, nominal GDP alone can't tell you whether the economy produced more.",
+    "Nominal GDP growth ≈ real GDP growth + inflation (of the GDP deflator)."
+   ],
+   "connections": [
+    "real-gdp",
+    "gdp-deflator",
+    "quantity-equation"
+   ],
+   "example": "If an economy makes the same 100 pizzas two years running but the price goes from $10 to $12, nominal GDP rises 20% from $1,000 to $1,200 while real output didn't change at all.",
+   "numbers": [
+    [
+     "Q2 2026 current-dollar GDP growth",
+     "8.0% (annual rate)"
+    ],
+    [
+     "Q2 2026 real GDP growth",
+     "2.2%"
+    ]
+   ],
+   "numbersSource": "BEA second estimate (current dollars) and third estimate (real), 2026. The gap is mostly inflation.",
+   "played": [
+    "Year 1: 100 pizzas at $10 + 50 books at $20 = $1,000 + $1,000 = $2,000.",
+    "Year 2: 110 pizzas at $11 + 50 books at $22 = $1,210 + $1,100 = $2,310.",
+    "Nominal GDP grew 15.5%, but some of that is just higher prices."
+   ],
+   "starred": false
+  },
+  {
+   "id": "real-gdp",
+   "n": 11,
+   "week": 1,
+   "tags": [
+    "Ch 2 #7"
+   ],
+   "term": "Real GDP",
+   "simple": "Output valued at <b>base-year</b> prices, so it changes only when quantities change.",
+   "formula": "Real GDP<sub><i>t</i></sub><span class=\"op\">=</span>∑<sub><i>i</i></sub> <i>P</i><sub><i>i</i>,base</sub><i>Q</i><sub><i>i,t</i></sub>",
+   "more": [
+    "Real GDP is what we use to measure growth and recessions. The US actually uses chain-weighting (the base year rolls forward every year) to limit the bias from a stale base year."
+   ],
+   "connections": [
+    "nominal-gdp",
+    "gdp-deflator",
+    "recession"
+   ],
+   "example": "When the news says “the economy grew 2.2%” it means real GDP, at an annual rate. That was the Q2 2026 figure.",
+   "numbers": [
+    [
+     "Real GDP growth, Q2 2026",
+     "2.2% (annual rate)"
+    ],
+    [
+     "Real GDP growth, Q1 2026",
+     "2.5% (revised)"
+    ]
+   ],
+   "numbersSource": "BEA, third estimate for Q2 2026 (Sep 30, 2026).",
+   "played": [
+    "Use year 1 prices ($10 pizza, $20 book) for both years.",
+    "Year 1: 100×$10 + 50×$20 = $2,000. Year 2: 110×$10 + 50×$20 = $2,100.",
+    "Real GDP grew 5%. Compare nominal: 15.5%. The difference is inflation."
+   ],
+   "starred": false
+  },
+  {
+   "id": "gdp-deflator",
+   "n": 12,
+   "week": 1,
+   "starred": true,
+   "tags": [
+    "PE Q1",
+    "Ch 2 #7"
+   ],
+   "term": "GDP deflator",
+   "simple": "The price of everything produced <b>domestically</b>: nominal GDP over real GDP, times 100.",
+   "formula": "GDP deflator<span class=\"op\">=</span><span class=\"fr\"><span>Nominal GDP</span><span>Real GDP</span></span><span class=\"op\">×</span>100",
+   "more": [
+    "Its basket is whatever the economy produced this year, so it <b>changes every year</b> (a Paasche index).",
+    "It <b>excludes imports</b> and includes things consumers never buy, like fighter jets, factory machines and government services."
+   ],
+   "connections": [
+    "cpi",
+    "cpi-vs-deflator",
+    "laspeyres-paasche",
+    "nominal-gdp",
+    "real-gdp"
+   ],
+   "example": "If the price of US-made fighter jets rises, the deflator rises but the CPI doesn't (households don't buy jets). If the price of imported Toyotas rises, the CPI rises but the deflator doesn't.",
+   "played": [
+    "From the pizza and book example: nominal GDP year 2 = $2,310; real GDP year 2 = $2,100.",
+    "Deflator = 2,310 / 2,100 × 100 = 110.",
+    "Prices of domestic output rose 10% since the base year."
+   ],
+   "graph": "indexBias"
+  },
+  {
+   "id": "cpi",
+   "n": 13,
+   "week": 1,
+   "starred": true,
+   "tags": [
+    "PE Q1",
+    "Ch 2 #7"
+   ],
+   "term": "Consumer price index (CPI)",
+   "simple": "The price of a <b>fixed basket</b> of goods and services bought by a typical consumer, relative to a base year.",
+   "formula": "CPI<sub><i>t</i></sub><span class=\"op\">=</span><span class=\"fr\"><span>∑ <i>P</i><sub><i>i,t</i></sub><i>Q</i><sub><i>i</i>,base</sub></span><span>∑ <i>P</i><sub><i>i</i>,base</sub><i>Q</i><sub><i>i</i>,base</sub></span></span><span class=\"op\">×</span>100",
+   "more": [
+    "Fixed basket = a <b>Laspeyres</b> index. It <b>includes imports</b> consumers buy.",
+    "BLS collects about 80,000 prices a month. Shelter (rent and owners' equivalent rent) is the biggest weight, roughly a third of the index.",
+    "“Core” CPI drops food and energy because they're volatile."
+   ],
+   "connections": [
+    "gdp-deflator",
+    "cpi-vs-deflator",
+    "laspeyres-paasche",
+    "inflation-rate"
+   ],
+   "example": "Social Security benefits are raised every year by CPI inflation (the cost-of-living adjustment), so the CPI directly moves tens of millions of checks.",
+   "numbers": [
+    [
+     "CPI inflation, 12 months to Aug 2026",
+     "3.4%"
+    ],
+    [
+     "Core CPI (ex food & energy)",
+     "2.4%"
+    ],
+    [
+     "Energy prices",
+     "+16.3%"
+    ],
+    [
+     "Peak of the 2021–23 surge (Jun 2022)",
+     "9.1%"
+    ]
+   ],
+   "numbersSource": "BLS CPI release, Sep 11, 2026; June 2022 peak, BLS.",
+   "played": [
+    "Base-year basket: 10 apples at $1, 5 oranges at $2 → costs $20.",
+    "This year: apples $2, oranges $2. Same basket costs 10×$2 + 5×$2 = $30.",
+    "CPI = 30 / 20 × 100 = 150, so prices are 50% higher by this measure."
+   ],
+   "graph": "cpiHistory"
+  },
+  {
+   "id": "cpi-vs-deflator",
+   "n": 14,
+   "week": 1,
+   "starred": true,
+   "tags": [
+    "PE Q1"
+   ],
+   "term": "CPI vs GDP deflator (the tested difference)",
+   "simple": "The CPI includes imported goods and uses a fixed basket; the deflator includes only domestic production and its basket changes every year.",
+   "more": [
+    "Both cover goods <b>and</b> services.",
+    "Three differences to list on the exam: (1) <b>imports</b>: in CPI, not in deflator; (2) <b>investment and government goods</b>: in deflator, not in CPI; (3) <b>weights</b>: CPI's basket is fixed (Laspeyres), the deflator's changes (Paasche)."
+   ],
+   "connections": [
+    "cpi",
+    "gdp-deflator",
+    "laspeyres-paasche",
+    "net-exports"
+   ],
+   "example": "When oil prices spike, the CPI jumps more than the deflator: much of the oil is imported, and gasoline is a big share of what consumers buy. In the 12 months to August 2026, energy prices were up 16.3% and headline CPI (3.4%) ran well above core (2.4%).",
+   "played": [
+    "Year 2 quantities change: people buy 6 apples (now $2) and 8 oranges ($2) instead of 10 and 5.",
+    "CPI uses the old basket: (10×2 + 5×2) / (10×1 + 5×2) = 30/20 → <b>150</b>.",
+    "Deflator uses the new basket: (6×2 + 8×2) / (6×1 + 8×2) = 28/22 → <b>127</b>.",
+    "Same prices, different weights: the CPI shows more inflation because it ignores the switch away from apples."
+   ],
+   "graph": "indexBias"
+  },
+  {
+   "id": "laspeyres-paasche",
+   "n": 15,
+   "week": 1,
+   "tags": [
+    "Ch 2 #7–8"
+   ],
+   "term": "Laspeyres vs Paasche bias",
+   "simple": "A fixed-basket index (CPI) <b>overstates</b> the rise in the cost of living; a changing-basket index (deflator) <b>understates</b> it.",
+   "more": [
+    "Laspeyres (fixed basket) ignores <b>substitution</b>: when beef gets dearer people switch to chicken, but the index keeps buying beef.",
+    "Paasche (current basket) gives the cheap goods people switched <i>toward</i> too much weight, so it misses part of the pain.",
+    "The CPI has other upward biases too: new goods arrive late, and quality improvements look like price rises."
+   ],
+   "connections": [
+    "cpi",
+    "gdp-deflator",
+    "cpi-vs-deflator"
+   ],
+   "example": "The 1996 Boskin Commission estimated that the CPI overstated inflation by about 1.1 percentage points a year. BLS has since added substitution and quality adjustments (and a chained CPI) to shrink the gap.",
+   "numbers": [
+    [
+     "Boskin Commission estimate of CPI overstatement (1996)",
+     "≈ 1.1 pts/yr"
+    ]
+   ],
+   "numbersSource": "Boskin Commission report to the Senate Finance Committee, 1996.",
+   "played": [
+    "Same apples/oranges example: Laspeyres = 150, Paasche = 127.",
+    "The true rise in the cost of staying equally happy lies between them.",
+    "If benefits are indexed to the CPI, they rise a bit faster than the true cost of living."
+   ],
+   "graph": "indexBias",
+   "starred": false
+  },
+  {
+   "id": "inflation-rate",
+   "n": 16,
+   "week": 1,
+   "tags": [
+    "Ch 2"
+   ],
+   "term": "Inflation rate",
+   "simple": "The percentage change in a price index from one period to the next.",
+   "formula": "π<sub><i>t</i></sub><span class=\"op\">=</span><span class=\"fr\"><span><i>P</i><sub><i>t</i></sub> − <i>P</i><sub><i>t</i>−1</sub></span><span><i>P</i><sub><i>t</i>−1</sub></span></span>",
+   "more": [
+    "Use any index: CPI, GDP deflator, or the PCE price index (the one the Fed targets at 2%).",
+    "Deflation is negative inflation; disinflation is inflation falling but still positive."
+   ],
+   "connections": [
+    "cpi",
+    "inflation",
+    "fisher-equation",
+    "qt-growth-rates"
+   ],
+   "example": "The 12-month CPI inflation rate was 3.4% in August 2026, above the Fed's 2% goal, one reason the Fed raised rates in September.",
+   "numbers": [
+    [
+     "CPI, 12 months to Aug 2026",
+     "3.4%"
+    ],
+    [
+     "2022 annual average",
+     "8.0%"
+    ],
+    [
+     "2024 annual average",
+     "2.9%"
+    ]
+   ],
+   "numbersSource": "BLS CPI-U.",
+   "played": [
+    "CPI last year = 300, this year = 309.",
+    "π = (309 − 300) / 300 = 9 / 300 = 0.03 → 3%."
+   ],
+   "graph": "cpiHistory",
+   "starred": false
+  },
+  {
+   "id": "labor-force",
+   "n": 17,
+   "week": 1,
+   "tags": [
+    "Ch 2 #9"
+   ],
+   "term": "Labor force",
+   "simple": "Everyone employed plus everyone unemployed.",
+   "formula": "<i>L</i><span class=\"op\">=</span><i>E</i><span class=\"op\">+</span><i>U</i>",
+   "more": [
+    "Measured from the household survey: adults 16+ not in prisons or other institutions, and not on active military duty.",
+    "If you are neither working nor looking, you're <b>outside</b> the labor force."
+   ],
+   "connections": [
+    "unemployed",
+    "not-in-lf",
+    "unemployment-rate",
+    "lfpr"
+   ],
+   "example": "A college student with no job who isn't looking is not in the labor force. The same student working 5 hours a week at the library is employed and in the labor force.",
+   "numbers": [
+    [
+     "US unemployed, Sep 2026",
+     "7.1 million"
+    ],
+    [
+     "Unemployment rate, Sep 2026",
+     "4.2%"
+    ],
+    [
+     "Implied labor force (7.1M ÷ 0.042)",
+     "≈ 169 million"
+    ]
+   ],
+   "numbersSource": "BLS Employment Situation, Oct 2, 2026; labor force implied from the two published figures.",
+   "graph": "laborForceTree",
+   "starred": false
+  },
+  {
+   "id": "unemployed",
+   "n": 18,
+   "week": 1,
+   "tags": [
+    "Ch 2 #9"
+   ],
+   "term": "Unemployed",
+   "simple": "Without a job, available to work, and actively searching (in the past four weeks).",
+   "more": [
+    "All three conditions must hold. Not searching = not in the labor force, even if you'd like a job.",
+    "People on temporary layoff waiting to be recalled count as unemployed even if they aren't searching."
+   ],
+   "connections": [
+    "labor-force",
+    "unemployment-rate",
+    "discouraged",
+    "not-in-lf"
+   ],
+   "example": "A laid-off engineer who sent out applications last week: unemployed. One who gave up searching three months ago: not in the labor force.",
+   "numbers": [
+    [
+     "Unemployed, Sep 2026",
+     "7.1 million"
+    ]
+   ],
+   "numbersSource": "BLS Employment Situation, Oct 2, 2026.",
+   "graph": "laborForceTree",
+   "starred": false
+  },
+  {
+   "id": "not-in-lf",
+   "n": 19,
+   "week": 1,
+   "tags": [
+    "Ch 2 #9"
+   ],
+   "term": "Not in the labor force",
+   "simple": "Adults who are neither working nor looking for work: retirees, students, homemakers and discouraged workers.",
+   "more": [
+    "Movements in and out of this group change the unemployment rate without anything happening to jobs, which is why economists also watch the employment-population ratio."
+   ],
+   "connections": [
+    "labor-force",
+    "discouraged",
+    "lfpr",
+    "epop",
+    "unemployment-imperfect"
+   ],
+   "example": "Baby boomers retiring in large numbers since about 2010 have pulled the overall participation rate down, even though prime-age (25–54) participation is near record highs.",
+   "numbers": [
+    [
+     "Prime-age (25–54) participation, Aug 2026",
+     "83.4%"
+    ]
+   ],
+   "numbersSource": "BLS via FRED (LNS11300060).",
+   "graph": "laborForceTree",
+   "starred": false
+  },
+  {
+   "id": "discouraged",
+   "n": 20,
+   "week": 1,
+   "starred": true,
+   "tags": [
+    "PE Q3",
+    "Ch 2 #9"
+   ],
+   "term": "Discouraged worker",
+   "simple": "Someone who wants a job but has stopped searching because they think none is available. Counted as <b>not in the labor force</b>, not as unemployed.",
+   "more": [
+    "This is the classic reason the unemployment rate understates labor-market weakness: when job seekers give up, U falls and so does the measured rate.",
+    "BLS's broader U-4 to U-6 measures add discouraged and other marginally attached workers back in."
+   ],
+   "connections": [
+    "unemployed",
+    "not-in-lf",
+    "unemployment-imperfect",
+    "unemployment-rate"
+   ],
+   "example": "After a plant closes in a small town, a 55-year-old machinist searches for a year, finds nothing, and stops. The next month the town's unemployment rate falls, although no one found a job.",
+   "played": [
+    "Start: E = 90, U = 10 → u = 10 / 100 = 10%.",
+    "2 unemployed people give up: E = 90, U = 8, L = 98.",
+    "u = 8 / 98 = 8.2%. The rate fell 1.8 points, yet employment didn't change."
+   ],
+   "graph": "laborForceTree"
+  },
+  {
+   "id": "unemployment-rate",
+   "n": 21,
+   "week": 1,
+   "tags": [
+    "Ch 2 #9"
+   ],
+   "term": "Unemployment rate",
+   "simple": "The share of the labor force that is unemployed.",
+   "formula": "<i>u</i><span class=\"op\">=</span><span class=\"fr\"><span><i>U</i></span><span><i>L</i></span></span><span class=\"op\">=</span><span class=\"fr\"><span><i>U</i></span><span><i>E</i> + <i>U</i></span></span>",
+   "more": [
+    "The denominator is the <b>labor force</b>, not the whole population. That's the most common mistake."
+   ],
+   "connections": [
+    "labor-force",
+    "unemployed",
+    "natural-rate",
+    "ss-unemployment-rate",
+    "unemployment-imperfect"
+   ],
+   "example": "The September 2026 jobs report: 4.2%, inside the narrow 4.1–4.3% range it had held since March.",
+   "numbers": [
+    [
+     "Sep 2026",
+     "4.2%"
+    ],
+    [
+     "Oct 2009 (Great Recession peak)",
+     "10.0%"
+    ],
+    [
+     "Apr 2020 (COVID)",
+     "14.8%"
+    ]
+   ],
+   "numbersSource": "BLS.",
+   "played": [
+    "E = 160 million, U = 7 million.",
+    "L = 167 million.",
+    "u = 7 / 167 = 4.2%."
+   ],
+   "graph": "laborForceTree",
+   "starred": false
+  },
+  {
+   "id": "lfpr",
+   "n": 22,
+   "week": 1,
+   "tags": [
+    "Ch 2 #9"
+   ],
+   "term": "Labor force participation rate",
+   "simple": "The share of the adult population that is in the labor force (working or looking).",
+   "formula": "LFPR<span class=\"op\">=</span><span class=\"fr\"><span><i>L</i></span><span>adult population</span></span>",
+   "more": [
+    "Long-run US trends: women's participation climbed from the 1950s to about 2000; the overall rate has drifted down since 2000 mostly because the population is aging."
+   ],
+   "connections": [
+    "labor-force",
+    "epop",
+    "not-in-lf"
+   ],
+   "example": "Two economies can have the same 4% unemployment rate but very different participation: one where 70% of adults are in the labor force and one where 60% are.",
+   "numbers": [
+    [
+     "US overall, 2025",
+     "≈ 62%"
+    ],
+    [
+     "Prime-age 25–54, Aug 2026",
+     "83.4%"
+    ]
+   ],
+   "numbersSource": "BLS (overall rate, approximate 2025 level); FRED LNS11300060.",
+   "played": [
+    "Adult population 270M; labor force 168M.",
+    "LFPR = 168 / 270 = 62.2%."
+   ],
+   "graph": "laborForceTree",
+   "starred": false
+  },
+  {
+   "id": "epop",
+   "n": 23,
+   "week": 1,
+   "tags": [
+    "L2"
+   ],
+   "term": "Employment-population ratio",
+   "simple": "The share of all adults who have a job.",
+   "formula": "<span class=\"fr\"><span><i>E</i></span><span>adult population</span></span>",
+   "more": [
+    "Its advantage: it is <b>not affected</b> by people moving between unemployment and out of the labor force, because neither group is in the numerator, and the denominator (all adults) doesn't change.",
+    "That makes it a cleaner gauge of jobs when lots of people are giving up or returning to search."
+   ],
+   "connections": [
+    "lfpr",
+    "unemployment-rate",
+    "discouraged",
+    "unemployment-imperfect"
+   ],
+   "example": "In the discouraged-worker example the unemployment rate fell from 10% to 8.2%, but the employment-population ratio didn't move at all. It correctly says nothing improved.",
+   "numbers": [
+    [
+     "US, 2025",
+     "≈ 60%"
+    ]
+   ],
+   "numbersSource": "BLS, approximate 2025 level.",
+   "played": [
+    "Adults = 150, E = 90, U = 10 → E/pop = 60%.",
+    "2 unemployed give up: E still 90, adults still 150 → still 60%.",
+    "Unemployment rate fell; the employment-population ratio correctly didn't."
+   ],
+   "graph": "laborForceTree",
+   "starred": false
+  },
+  {
+   "id": "household-vs-establishment",
+   "n": 24,
+   "week": 1,
+   "tags": [
+    "Ch 2 #9c"
+   ],
+   "term": "Household survey vs establishment survey",
+   "simple": "The <b>household</b> survey counts <i>people</i> employed (it gives the unemployment rate). The <b>establishment</b> (payroll) survey counts <i>jobs</i>.",
+   "more": [
+    "Payroll survey: someone with two jobs counts <b>twice</b>; the self-employed, farm workers and household workers are <b>not counted</b>.",
+    "The payroll survey's monthly “jobs added” is the headline number; it has a much larger sample, so it is less noisy month to month."
+   ],
+   "connections": [
+    "unemployment-rate",
+    "labor-force",
+    "stock-flow"
+   ],
+   "example": "In the September 2026 report the payroll survey showed just +29,000 jobs while the household survey's unemployment rate held at 4.2%. The two often disagree in any single month.",
+   "numbers": [
+    [
+     "Household survey (CPS)",
+     "≈ 60,000 households"
+    ],
+    [
+     "Payroll survey (CES)",
+     "≈ 121,000 businesses & agencies"
+    ],
+    [
+     "Payroll change, Sep 2026",
+     "+29,000"
+    ]
+   ],
+   "numbersSource": "BLS survey descriptions; Employment Situation, Oct 2, 2026 (payroll figure preliminary).",
+   "played": [
+    "Maria drives for Uber (self-employed) and works part-time at Target.",
+    "Household survey: 1 employed person.",
+    "Payroll survey: 1 job (Target only; Uber driving is self-employment)."
+   ],
+   "starred": false
+  },
+  {
+   "id": "gdp-wellbeing",
+   "n": 25,
+   "week": 1,
+   "tags": [
+    "Ch 2 #10–11"
+   ],
+   "term": "GDP and well-being",
+   "simple": "GDP misses leisure, home production, health and the environment, and can rise with things that make life worse. It's still useful because it moves with much of what people value.",
+   "more": [
+    "Missing: unpaid work (childcare, cooking), leisure, pollution, inequality, the underground economy.",
+    "Perverse cases: rebuilding after a hurricane, or more spending on security after a crime wave, both raise GDP.",
+    "Still, richer countries have longer life expectancy, more education and lower child mortality, so GDP per person is a good rough guide."
+   ],
+   "connections": [
+    "gdp",
+    "income-wellbeing",
+    "solow"
+   ],
+   "example": "If you hire a cleaner instead of cleaning your own home, GDP rises even though the same work gets done. If you take an unpaid month off, GDP falls though you may be better off.",
+   "starred": false
+  },
+  {
+   "id": "production-function",
+   "n": 26,
+   "week": 2,
+   "tags": [
+    "Ch 3",
+    "L3"
+   ],
+   "term": "Production function",
+   "simple": "Output depends on capital, labor and technology. In the long-run model K and L are fixed, so output is fixed.",
+   "formula": "<i>Y</i><span class=\"op\">=</span><i>F</i>(<i>K</i>, <i>L</i>)<span class=\"op\">⇒</span><i>Y̅</i><span class=\"op\">=</span><i>F</i>(<i>K̅</i>, <i>L̅</i>)",
+   "more": [
+    "The production function describes technology: how inputs turn into output. Better technology means more output from the same K and L.",
+    "In Chapter 3's classical model factor supplies are given, so <b>output is pinned down by the supply side</b>; demand only decides how that output is divided among C, I and G."
+   ],
+   "connections": [
+    "crs",
+    "cobb-douglas",
+    "mpl",
+    "goods-market-eq"
+   ],
+   "example": "A pizzeria: ovens (K) and cooks (L) turn into pizzas (Y). A better dough recipe (technology) means more pizzas from the same ovens and cooks.",
+   "played": [
+    "Running example: Y = K<sup>1/3</sup>L<sup>2/3</sup>, K = 8,000, L = 1,000.",
+    "Y = 8000<sup>1/3</sup> × 1000<sup>2/3</sup> = 20 × 100 = 2,000.",
+    "With K and L fixed, Y̅ = 2,000 no matter what happens to G or T."
+   ],
+   "graph": {
+    "key": "production",
+    "args": {
+     "x": "L"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "crs",
+   "n": 27,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "Ch 3 #3",
+    "PE Q13c"
+   ],
+   "term": "Constant returns to scale",
+   "simple": "Scale every input by <i>z</i> and output scales by exactly <i>z</i>.",
+   "formula": "<i>F</i>(<i>zK</i>, <i>zL</i>)<span class=\"op\">=</span><i>z</i>·<i>F</i>(<i>K</i>, <i>L</i>)",
+   "more": [
+    "Increasing returns: output more than doubles. Decreasing returns: less than doubles.",
+    "Why it matters: with CRS and competition, paying each factor its marginal product uses up exactly all output (zero economic profit). It also lets you write everything <b>per worker</b>: y = f(k), the starting point of the Solow model."
+   ],
+   "connections": [
+    "cobb-douglas",
+    "zero-profit",
+    "per-worker",
+    "production-function"
+   ],
+   "example": "Building a second identical factory with the same number of workers should, roughly, double output. That's the idea behind CRS.",
+   "played": [
+    "Y = K<sup>1/3</sup>L<sup>2/3</sup> with K = 8,000, L = 1,000 → Y = 2,000.",
+    "Double both: K = 16,000, L = 2,000 → Y = 16000<sup>1/3</sup> × 2000<sup>2/3</sup> = 25.2 × 158.7 = 4,000.",
+    "Output doubled exactly: CRS, because 1/3 + 2/3 = 1."
+   ],
+   "graph": "crs"
+  },
+  {
+   "id": "cobb-douglas",
+   "n": 28,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE P2 Q3",
+    "Ch 3"
+   ],
+   "term": "Cobb-Douglas production function",
+   "simple": "The workhorse production function. α is capital's share of income; A is productivity (technology).",
+   "formula": "<i>Y</i><span class=\"op\">=</span><i>A K</i><sup>α</sup><i>L</i><sup>1−α</sup>",
+   "more": [
+    "Exponents add to 1, so it has constant returns to scale.",
+    "Its key property: factor <b>shares</b> of income are constant (α to capital, 1 − α to labor) no matter how K, L or A change.",
+    "In the US, α is usually taken to be about 1/3."
+   ],
+   "connections": [
+    "crs",
+    "cd-marginal",
+    "labor-share",
+    "capital-share",
+    "tfp",
+    "backing-out"
+   ],
+   "example": "Paul Douglas noticed in the 1920s that labor's share of US income stayed near 3/4 while capital and labor grew at very different rates. Charles Cobb found the function with that property.",
+   "played": [
+    "A = 1, α = 1/3, K = 8,000, L = 1,000.",
+    "Y = 8000<sup>1/3</sup> × 1000<sup>2/3</sup> = 20 × 100 = <b>2,000</b>."
+   ],
+   "graph": "incomeSplit"
+  },
+  {
+   "id": "tfp",
+   "n": 29,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE P2 Q3b",
+    "Ch 3 #1"
+   ],
+   "term": "Total factor productivity (A)",
+   "simple": "The technology term. A higher A raises output, the real wage and the real rental rate together.",
+   "more": [
+    "It's measured as a residual (the Solow residual): whatever output growth isn't explained by more K and L.",
+    "Because A multiplies everything, MPL and MPK rise in proportion. Income shares (α, 1 − α) don't change."
+   ],
+   "connections": [
+    "cobb-douglas",
+    "cd-marginal",
+    "neoclassical-distribution",
+    "backing-out"
+   ],
+   "example": "The spread of computers, the internet, better management practices and new drugs all show up as higher A.",
+   "numbers": [
+    [
+     "US labor productivity growth, Q4 2024 → Q4 2025",
+     "2.5%"
+    ]
+   ],
+   "numbersSource": "BLS Productivity and Costs, revised March 24, 2026 (output per hour, nonfarm business). Labor productivity rises with A and with capital per worker.",
+   "played": [
+    "Running example: A = 1 → Y = 2,000, MPL = 1.33, MPK = 0.083.",
+    "Raise A by 10% to 1.1: Y = 2,200.",
+    "MPL = (2/3)(2200/1000) = 1.47; MPK = (1/3)(2200/8000) = 0.092. Both rose 10%."
+   ],
+   "graph": {
+    "key": "production",
+    "args": {
+     "x": "L"
+    }
+   }
+  },
+  {
+   "id": "mpl",
+   "n": 30,
+   "week": 2,
+   "tags": [
+    "Ch 3"
+   ],
+   "term": "Marginal product of labor (MPL)",
+   "simple": "The extra output from one more unit of labor, holding capital fixed.",
+   "formula": "MPL<span class=\"op\">=</span><span class=\"fr\"><span>∂<i>F</i></span><span>∂<i>L</i></span></span>",
+   "more": [
+    "<b>Diminishing marginal product</b>: it falls as L rises. With a fixed kitchen, each extra cook adds less than the last.",
+    "Graphically, it's the slope of the production function plotted against L."
+   ],
+   "connections": [
+    "mpk",
+    "labor-demand",
+    "cd-marginal",
+    "real-wage"
+   ],
+   "example": "Adding a second barista to a busy coffee shop adds a lot of output. The tenth barista mostly gets in the way at one espresso machine.",
+   "played": [
+    "Running example: MPL = (1 − α)Y/L = (2/3)(2000/1000) = 1.33 units of output per worker.",
+    "Raise L to 1,331 (+33%): Y = 20 × 1331<sup>2/3</sup> = 20 × 121 = 2,420.",
+    "New MPL = (2/3)(2420/1331) = 1.21. It fell: diminishing returns."
+   ],
+   "graph": {
+    "key": "production",
+    "args": {
+     "x": "L"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "mpk",
+   "n": 31,
+   "week": 2,
+   "tags": [
+    "Ch 3"
+   ],
+   "term": "Marginal product of capital (MPK)",
+   "simple": "The extra output from one more unit of capital, holding labor fixed. It falls as K rises.",
+   "formula": "MPK<span class=\"op\">=</span><span class=\"fr\"><span>∂<i>F</i></span><span>∂<i>K</i></span></span>",
+   "more": [
+    "Diminishing MPK is the engine of the Solow model: as capital piles up, each new machine adds less, so growth from capital alone eventually stops."
+   ],
+   "connections": [
+    "mpl",
+    "capital-demand",
+    "cd-marginal",
+    "golden-condition",
+    "solow"
+   ],
+   "example": "Giving a worker her first computer is a huge boost. A second monitor helps a bit. A fifth computer on the same desk adds almost nothing.",
+   "played": [
+    "Running example: MPK = αY/K = (1/3)(2000/8000) = 0.083.",
+    "Double K to 16,000: Y = 25.2 × 100 = 2,520.",
+    "New MPK = (1/3)(2520/16000) = 0.053. It fell."
+   ],
+   "graph": {
+    "key": "production",
+    "args": {
+     "x": "K"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "profit",
+   "n": 32,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE P2 Q3a"
+   ],
+   "term": "Firm's profit",
+   "simple": "Revenue minus labor costs minus capital costs.",
+   "formula": "Profit<span class=\"op\">=</span><i>PY</i><span class=\"op\">−</span><i>WL</i><span class=\"op\">−</span><i>RK</i>",
+   "more": [
+    "<i>W</i> is the nominal wage, <i>R</i> the nominal rental rate of capital, <i>P</i> the price of output.",
+    "The competitive firm takes P, W and R as given and chooses L and K to maximise profit. The first-order conditions are the labor and capital demand conditions on the next cards."
+   ],
+   "connections": [
+    "labor-demand",
+    "capital-demand",
+    "zero-profit"
+   ],
+   "example": "A bakery sells $500,000 of bread, pays $300,000 in wages and $150,000 in rent on ovens and space: profit is $50,000.",
+   "played": [
+    "Set P = 1. Running example: Y = 2,000, L = 1,000, K = 8,000.",
+    "Pay W = MPL = 1.333 and R = MPK = 0.0833.",
+    "Profit = 2,000 − 1.333 × 1,000 − 0.0833 × 8,000 = 2,000 − 1,333 − 667 = <b>0</b>."
+   ]
+  },
+  {
+   "id": "labor-demand",
+   "n": 33,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE P2 Q3a",
+    "PS2"
+   ],
+   "term": "Labor demand condition",
+   "simple": "Firms hire until the marginal product of labor equals the real wage.",
+   "formula": "MPL<span class=\"op\">=</span><span class=\"fr\"><span><i>W</i></span><span><i>P</i></span></span>",
+   "more": [
+    "Logic: hiring one more worker adds MPL units of output, worth P × MPL, and costs W. Keep hiring while P × MPL > W.",
+    "Because MPL falls as L rises, the MPL curve <b>is</b> the labor demand curve."
+   ],
+   "connections": [
+    "mpl",
+    "real-wage",
+    "profit",
+    "capital-demand"
+   ],
+   "example": "A farm will hire another picker at $20/hour only if she picks at least $20 worth of berries an hour.",
+   "played": [
+    "Real wage W/P = 1.33. Running example at L = 1,000: MPL = 1.33. Hire exactly 1,000.",
+    "If the real wage fell to 1.21, the firm would hire until MPL = 1.21, i.e. L = 1,331."
+   ],
+   "graph": {
+    "key": "factorMarket",
+    "args": {
+     "kind": "labor"
+    }
+   }
+  },
+  {
+   "id": "capital-demand",
+   "n": 34,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE P2 Q3b",
+    "PS2"
+   ],
+   "term": "Capital demand condition",
+   "simple": "Firms rent capital until its marginal product equals the real rental price of capital.",
+   "formula": "MPK<span class=\"op\">=</span><span class=\"fr\"><span><i>R</i></span><span><i>P</i></span></span>",
+   "more": [
+    "Same logic as labor: one more machine adds MPK units of output and costs R/P in output terms.",
+    "With K fixed in the long-run model, the MPK at K̅ sets the equilibrium real rental rate."
+   ],
+   "connections": [
+    "mpk",
+    "labor-demand",
+    "profit",
+    "capital-share"
+   ],
+   "example": "A construction firm leases another excavator at $2,000 a month only if it lets the firm finish at least $2,000 more work a month.",
+   "played": [
+    "Running example: MPK = 0.083 at K = 8,000.",
+    "So the equilibrium real rental rate R/P = 0.083 (8.3% of a unit of output per unit of capital per period)."
+   ],
+   "graph": {
+    "key": "factorMarket",
+    "args": {
+     "kind": "capital"
+    }
+   }
+  },
+  {
+   "id": "real-wage",
+   "n": 35,
+   "week": 2,
+   "tags": [
+    "Ch 3 #2"
+   ],
+   "term": "Real wage",
+   "simple": "The nominal wage divided by the price level: what your pay actually buys. In equilibrium it equals MPL.",
+   "formula": "<span class=\"fr\"><span><i>W</i></span><span><i>P</i></span></span><span class=\"op\">=</span>MPL",
+   "more": [
+    "If wages rise 3% and prices rise 3.4%, the real wage <b>fell</b> about 0.4%."
+   ],
+   "connections": [
+    "labor-demand",
+    "mpl",
+    "wage-productivity",
+    "wage-rigidity"
+   ],
+   "example": "In 2022 average hourly earnings rose about 5% but CPI inflation was 8%, so real wages fell for most workers.",
+   "numbers": [
+    [
+     "CPI inflation, 12 mo. to Aug 2026",
+     "3.4%"
+    ]
+   ],
+   "numbersSource": "BLS. Compare with wage growth to get real wage growth: real ≈ nominal − inflation.",
+   "played": [
+    "Nominal wage W = $30/hour, price of a meal P = $15.",
+    "Real wage = 30 / 15 = 2 meals per hour of work.",
+    "If W rises to $31.50 (+5%) but P rises to $16.20 (+8%): real wage = 1.94 meals (−3%)."
+   ],
+   "graph": {
+    "key": "factorMarket",
+    "args": {
+     "kind": "labor"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "cd-marginal",
+   "n": 36,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE P2 Q3",
+    "Ch 3 #4"
+   ],
+   "term": "Cobb-Douglas marginal products",
+   "simple": "Each marginal product is the factor's exponent times the average product.",
+   "formula": "MPL<span class=\"op\">=</span>(1 − α)<span class=\"fr\"><span><i>Y</i></span><span><i>L</i></span></span><span style=\"display:inline-block;width:18px\"></span>MPK<span class=\"op\">=</span>α<span class=\"fr\"><span><i>Y</i></span><span><i>K</i></span></span>",
+   "more": [
+    "Derivation: ∂/∂L of A K<sup>α</sup> L<sup>1−α</sup> = (1 − α) A K<sup>α</sup> L<sup>−α</sup> = (1 − α) Y/L.",
+    "So MPL is proportional to <b>output per worker</b> (labor productivity), the link behind the real wage and labor productivity card."
+   ],
+   "connections": [
+    "cobb-douglas",
+    "mpl",
+    "mpk",
+    "wage-productivity",
+    "labor-share"
+   ],
+   "example": "If output per worker doubles, the Cobb-Douglas real wage doubles too.",
+   "played": [
+    "Y = 2,000, L = 1,000, K = 8,000, α = 1/3.",
+    "MPL = (2/3)(2000/1000) = <b>1.33</b>.",
+    "MPK = (1/3)(2000/8000) = <b>0.083</b>."
+   ],
+   "graph": "incomeSplit"
+  },
+  {
+   "id": "labor-share",
+   "n": 37,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE Q13a",
+    "PE P2 Q3b"
+   ],
+   "term": "Labor share of income",
+   "simple": "The fraction of output paid to workers. Under Cobb-Douglas it's 1 − α and stays constant when K or L change.",
+   "formula": "<span class=\"fr\"><span><i>WL</i></span><span><i>PY</i></span></span><span class=\"op\">=</span><span class=\"fr\"><span>MPL · <i>L</i></span><span><i>Y</i></span></span><span class=\"op\">=</span>1 − α",
+   "more": [
+    "Why constant: MPL × L / Y = (1 − α)(Y/L) × L / Y = 1 − α. The L's and Y's cancel, so it holds for any K and L. If L rises, MPL falls by just enough that the wage bill keeps the same share of output.",
+    "In US data the labor share has been falling since about 2000, which Cobb-Douglas can't explain; see the declining-share card."
+   ],
+   "connections": [
+    "capital-share",
+    "cobb-douglas",
+    "declining-labor-share",
+    "backing-out"
+   ],
+   "example": "A company paying $1.33M in wages out of $2M in value added has a labor share of 2/3.",
+   "numbers": [
+    [
+     "Nonfarm business labor share, Q2 2026",
+     "52.8% (record low)"
+    ],
+    [
+     "Same measure, Q4 2025",
+     "54.4%"
+    ],
+    [
+     "Series begins",
+     "1947"
+    ]
+   ],
+   "numbersSource": "BLS Productivity and Costs / Economics Daily. BLS's measure differs from the textbook 2/3 because of how it treats self-employment and depreciation.",
+   "played": [
+    "Running example: wage bill = MPL × L = 1.333 × 1,000 = 1,333.",
+    "Labor share = 1,333 / 2,000 = <b>2/3 = 1 − α</b>."
+   ],
+   "graph": "incomeSplit"
+  },
+  {
+   "id": "capital-share",
+   "n": 38,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE P2 Q3b"
+   ],
+   "term": "Capital share of income",
+   "simple": "The fraction of output paid to capital owners. Under Cobb-Douglas it equals α.",
+   "formula": "<span class=\"fr\"><span><i>RK</i></span><span><i>PY</i></span></span><span class=\"op\">=</span><span class=\"fr\"><span>MPK · <i>K</i></span><span><i>Y</i></span></span><span class=\"op\">=</span>α",
+   "more": [
+    "Labor share + capital share = 1: all output is paid out (zero economic profit)."
+   ],
+   "connections": [
+    "labor-share",
+    "cobb-douglas",
+    "zero-profit",
+    "golden-saving"
+   ],
+   "example": "In the US, about a third of national income goes to capital (rent, interest, profit) and about two-thirds to labor, which is why α ≈ 1/3 is the default.",
+   "played": [
+    "Running example: MPK × K = 0.0833 × 8,000 = 667.",
+    "Capital share = 667 / 2,000 = <b>1/3 = α</b>."
+   ],
+   "graph": "incomeSplit"
+  },
+  {
+   "id": "backing-out",
+   "n": 39,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE P2 Q3b"
+   ],
+   "term": "Backing out α and A",
+   "simple": "Get α from the labor share, then solve the production function for A.",
+   "formula": "1 − α<span class=\"op\">=</span><span class=\"fr\"><span>MPL · <i>L</i></span><span><i>Y</i></span></span>,<span style=\"display:inline-block;width:16px\"></span><i>A</i><span class=\"op\">=</span><span class=\"fr\"><span><i>Y</i></span><span><i>K</i><sup>α</sup><i>L</i><sup>1−α</sup></span></span>",
+   "more": [
+    "Step 1 always: labor share → α. Step 2: plug α, Y, K, L into the production function and solve for A.",
+    "This is exactly how growth accountants measure TFP in real data."
+   ],
+   "connections": [
+    "labor-share",
+    "tfp",
+    "cobb-douglas"
+   ],
+   "example": "Given a country's GDP, capital stock, employment and total wages, you can back out its α and TFP. That's how the Penn World Table builds cross-country productivity numbers.",
+   "played": [
+    "Data: Y = 2,000, K = 8,000, L = 1,000, total wages WL/P = 1,333.",
+    "1 − α = 1,333 / 2,000 = 2/3 → <b>α = 1/3</b>.",
+    "A = 2,000 / (8000<sup>1/3</sup> × 1000<sup>2/3</sup>) = 2,000 / (20 × 100) = <b>1</b>."
+   ]
+  },
+  {
+   "id": "zero-profit",
+   "n": 40,
+   "week": 2,
+   "tags": [
+    "Ch 3"
+   ],
+   "term": "Zero economic profit",
+   "simple": "With competition and constant returns, paying each factor its marginal product uses up all output.",
+   "formula": "<i>Y</i><span class=\"op\">=</span>MPL · <i>L</i><span class=\"op\">+</span>MPK · <i>K</i>",
+   "more": [
+    "This is Euler's theorem for CRS functions.",
+    "“Zero economic profit” isn't zero accounting profit: accounting profit includes the return to capital the owners provide themselves."
+   ],
+   "connections": [
+    "crs",
+    "profit",
+    "labor-share",
+    "capital-share"
+   ],
+   "example": "In a competitive industry with easy entry, any excess profit attracts new firms until it's competed away.",
+   "played": [
+    "MPL × L = 1.333 × 1,000 = 1,333.",
+    "MPK × K = 0.0833 × 8,000 = 667.",
+    "Sum = 2,000 = Y. Nothing is left over."
+   ],
+   "graph": "incomeSplit",
+   "starred": false
+  },
+  {
+   "id": "neoclassical-distribution",
+   "n": 41,
+   "week": 2,
+   "tags": [
+    "Ch 3 #1",
+    "PS2"
+   ],
+   "term": "Neoclassical theory of distribution",
+   "simple": "Each factor is paid its marginal product. More labor lowers the real wage and raises the rental rate; less capital does the same; better technology raises both.",
+   "more": [
+    "Think scarcity: whatever becomes relatively scarce earns more. Extra workers make capital relatively scarce (R/P up) and labor relatively plentiful (W/P down).",
+    "Technology (A up) raises both MPL and MPK."
+   ],
+   "connections": [
+    "labor-demand",
+    "capital-demand",
+    "tfp",
+    "real-wage"
+   ],
+   "example": "The Black Death killed about a third of Europe's population in the 1300s. Land per worker jumped; over the following decades real wages rose sharply while land rents fell, exactly as the theory predicts.",
+   "played": [
+    "Running example: L rises from 1,000 to 1,331 (+33%).",
+    "Y = 2,420. W/P = MPL: 1.33 → 1.21 (falls).",
+    "R/P = MPK: (1/3)(2420/8000) = 0.101, up from 0.083 (rises)."
+   ],
+   "graph": {
+    "key": "factorMarket",
+    "args": {
+     "kind": "labor"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "wage-productivity",
+   "n": 42,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE Q13c",
+    "L3"
+   ],
+   "term": "Real wage and labor productivity",
+   "simple": "Under competition and constant returns, the real wage is proportional to average labor productivity.",
+   "formula": "<span class=\"fr\"><span><i>W</i></span><span><i>P</i></span></span><span class=\"op\">=</span>(1 − α)<span class=\"fr\"><span><i>Y</i></span><span><i>L</i></span></span>",
+   "more": [
+    "So real wages should grow at the same rate as output per worker. In the US they did, roughly, until about 1970-2000; since then productivity has grown faster than typical pay. That gap is the same fact as the falling labor share."
+   ],
+   "connections": [
+    "cd-marginal",
+    "labor-share",
+    "declining-labor-share",
+    "real-wage"
+   ],
+   "example": "Across countries this works well: workers in high-productivity Switzerland or Norway earn far more than in low-productivity economies, roughly in proportion.",
+   "played": [
+    "Y/L = 2,000 / 1,000 = 2. With 1 − α = 2/3, W/P = 1.33.",
+    "Productivity rises 10% to 2.2: W/P = (2/3)(2.2) = 1.47, also +10%."
+   ],
+   "graph": "laborShareShift"
+  },
+  {
+   "id": "declining-labor-share",
+   "n": 43,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE Q13d",
+    "L3"
+   ],
+   "term": "Declining labor share: explanations",
+   "simple": "(1) <b>Production technology</b>: offshoring and automation, capital displacing workers. (2) <b>Rising market power</b>: higher markups, superstar firms and concentration lowering wages relative to productivity.",
+   "more": [
+    "Technology story: if capital and labor are easier to substitute than Cobb-Douglas assumes, cheaper machines (computers, robots) shift income from labor to capital.",
+    "Market-power story: firms that price above marginal cost keep the gap as profit, so neither labor nor capital is paid its full marginal product. Superstar firms (high profit, few workers) gaining market share pull the aggregate share down."
+   ],
+   "connections": [
+    "labor-share",
+    "markup",
+    "wage-productivity",
+    "cobb-douglas"
+   ],
+   "example": "Instagram had 13 employees when Facebook bought it for $1 billion in 2012. Kodak, the photography giant it replaced, had employed over 100,000 people at its peak.",
+   "numbers": [
+    [
+     "BLS labor share, Q2 2026",
+     "52.8%, lowest since 1947"
+    ],
+    [
+     "Average US markup, 1980",
+     "21% over cost"
+    ],
+    [
+     "Average US markup, 2016",
+     "61% over cost"
+    ]
+   ],
+   "numbersSource": "BLS Productivity and Costs; De Loecker, Eeckhout & Unger (2020), Quarterly Journal of Economics.",
+   "graph": "laborShareShift"
+  },
+  {
+   "id": "markup",
+   "n": 44,
+   "week": 2,
+   "tags": [
+    "L3"
+   ],
+   "term": "Markup",
+   "simple": "Price above marginal cost (P > MC). Rising markups mean firms keep more of output, lowering the labor share.",
+   "formula": "markup<span class=\"op\">=</span><span class=\"fr\"><span><i>P</i></span><span><i>MC</i></span></span>",
+   "more": [
+    "Under perfect competition P = MC and the markup is 1. Market power lets a firm charge more.",
+    "The extra (P − MC) goes to profit, not to workers or to the competitive return on capital."
+   ],
+   "connections": [
+    "declining-labor-share",
+    "labor-share",
+    "zero-profit"
+   ],
+   "example": "A pill that costs a drugmaker $1 to make but sells for $50 under patent has a markup of 50.",
+   "numbers": [
+    [
+     "Average US markup, 1980",
+     "1.21"
+    ],
+    [
+     "Average US markup, 2016",
+     "1.61"
+    ]
+   ],
+   "numbersSource": "De Loecker, Eeckhout & Unger (2020).",
+   "played": [
+    "MC of a coffee = $1.50; it sells for $4.50.",
+    "Markup = 4.50 / 1.50 = 3. Two-thirds of the price is above cost."
+   ],
+   "starred": false
+  },
+  {
+   "id": "wage-compression",
+   "n": 45,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE Q13b",
+    "L3"
+   ],
+   "term": "Wage compression after the pandemic",
+   "simple": "Since the pandemic, wage growth has been fastest for low-income workers (around the 10th percentile).",
+   "more": [
+    "Tight labor markets in 2021–23 (many more openings than job seekers) let low-wage workers switch jobs easily, and job switchers got big raises. That bid up pay at the bottom fastest.",
+    "Researchers estimate the surge reversed a sizeable part (roughly a third) of the rise in the gap between high and low earners since 1980."
+   ],
+   "connections": [
+    "declining-labor-share",
+    "real-wage",
+    "minimum-wage"
+   ],
+   "example": "Restaurant and warehouse wages jumped in 2021–22 as employers competed for workers: many fast-food chains moved starting pay well above the $7.25 federal minimum without any law forcing them.",
+   "numbers": [
+    [
+     "Share of 1980–2019 rise in 90/10 gap reversed",
+     "≈ one third"
+    ]
+   ],
+   "numbersSource": "Autor, Dube & McGrew, “The Unexpected Compression” (2023).",
+   "graph": "wageCompression"
+  },
+  {
+   "id": "disposable-income",
+   "n": 46,
+   "week": 2,
+   "tags": [
+    "Ch 3"
+   ],
+   "term": "Disposable income",
+   "simple": "Income after taxes.",
+   "formula": "<i>Y</i><span class=\"op\">−</span><i>T</i>",
+   "more": [
+    "T here is taxes <b>net of transfers</b>, so a stimulus check is a negative T."
+   ],
+   "connections": [
+    "consumption-function",
+    "mpc",
+    "private-saving"
+   ],
+   "example": "In 2020–21 stimulus checks (negative T) pushed US disposable income up even while unemployment was high.",
+   "numbers": [
+    [
+     "Personal saving rate, Jul 2026 (share of disposable income)",
+     "3.0%"
+    ]
+   ],
+   "numbersSource": "BEA Personal Income and Outlays, July 2026.",
+   "played": [
+    "Running example: Y = 5,000, T = 1,000 → disposable income = 4,000."
+   ],
+   "starred": false
+  },
+  {
+   "id": "consumption-function",
+   "n": 47,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE Q5",
+    "PE Q18"
+   ],
+   "term": "Consumption function",
+   "simple": "Consumption depends on disposable income.",
+   "formula": "<i>C</i><span class=\"op\">=</span><i>C</i>(<i>Y</i> − <i>T</i>)",
+   "more": [
+    "Usually linear in examples: C = a + MPC × (Y − T).",
+    "In the classical model with Y and T fixed, C is fixed too, which is why a change in G has to crowd out I."
+   ],
+   "connections": [
+    "mpc",
+    "disposable-income",
+    "goods-market-eq",
+    "private-saving"
+   ],
+   "example": "When your take-home pay rises, you eat out more and save some of the rest.",
+   "played": [
+    "C = 250 + 0.75(Y − T).",
+    "Y = 5,000, T = 1,000 → C = 250 + 0.75 × 4,000 = <b>3,250</b>."
+   ],
+   "graph": "consumption"
+  },
+  {
+   "id": "mpc",
+   "n": 48,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE Q18"
+   ],
+   "term": "Marginal propensity to consume (MPC)",
+   "simple": "The extra consumption from an extra dollar of disposable income. Between 0 and 1.",
+   "formula": "MPC<span class=\"op\">=</span><span class=\"fr\"><span>∂<i>C</i>(<i>Y</i> − <i>T</i>)</span><span>∂(<i>Y</i> − <i>T</i>)</span></span>,<span style=\"display:inline-block;width:12px\"></span>0 < MPC < 1",
+   "more": [
+    "1 − MPC is the marginal propensity to save.",
+    "It matters for taxes: a tax cut of ΔT raises C by MPC × ΔT, so private saving rises by only (1 − MPC)ΔT."
+   ],
+   "connections": [
+    "consumption-function",
+    "tax-saving",
+    "balanced-budget"
+   ],
+   "example": "Studies of the 2008 stimulus payments found households spent roughly 50–90% of them within a few months, with lower-income households spending more.",
+   "played": [
+    "MPC = 0.75. You get a $100 raise after tax.",
+    "You spend $75 and save $25."
+   ],
+   "graph": "consumption"
+  },
+  {
+   "id": "investment-function",
+   "n": 49,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE Q5",
+    "Ch 4"
+   ],
+   "term": "Investment function",
+   "simple": "Investment falls as the real interest rate rises, because borrowing costs more.",
+   "formula": "<i>I</i><span class=\"op\">=</span><i>I</i>(<i>r</i>)",
+   "more": [
+    "It's the <b>real</b> rate that matters: a firm repays the loan with output whose price rises with inflation.",
+    "Even firms using their own cash face r: it's the return they give up by not lending the money out."
+   ],
+   "connections": [
+    "investment",
+    "loanable-funds",
+    "nominal-real-rate",
+    "crowding-out"
+   ],
+   "example": "When mortgage rates jumped from about 3% to about 7% in 2022, housing starts and home sales fell sharply: residential investment is the most interest-sensitive part of I.",
+   "played": [
+    "I(r) = 1,000 − 50r.",
+    "r = 5 → I = 750. r = 10 → I = 500."
+   ],
+   "graph": "investment"
+  },
+  {
+   "id": "goods-market-eq",
+   "n": 50,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE Q5",
+    "PE P2 Q3c"
+   ],
+   "term": "Goods-market equilibrium",
+   "simple": "The real interest rate adjusts so that demand for output equals the fixed supply.",
+   "formula": "<i>Y̅</i><span class=\"op\">=</span><i>C</i>(<i>Y̅</i> − <i>T̅</i>)<span class=\"op\">+</span><i>I</i>(<i>r</i>)<span class=\"op\">+</span><i>G̅</i>",
+   "more": [
+    "Everything is fixed except r (and so I). r is the price that clears the market.",
+    "Subtract C and G from both sides and you get S = I(r): the same equilibrium seen from the loanable-funds market."
+   ],
+   "connections": [
+    "loanable-funds",
+    "consumption-function",
+    "investment-function",
+    "production-function"
+   ],
+   "played": [
+    "5,000 = 3,250 + (1,000 − 50r) + 1,000.",
+    "5,000 = 5,250 − 50r → 50r = 250 → <b>r = 5</b>.",
+    "I = 1,000 − 250 = 750. Check: 3,250 + 750 + 1,000 = 5,000 ✓"
+   ],
+   "graph": "loanableFunds"
+  },
+  {
+   "id": "private-saving",
+   "n": 51,
+   "week": 2,
+   "tags": [
+    "Ch 4 #1, #3"
+   ],
+   "term": "Private saving",
+   "simple": "Disposable income that households don't consume.",
+   "formula": "<i>S</i><sub>private</sub><span class=\"op\">=</span><i>Y</i><span class=\"op\">−</span><i>T</i><span class=\"op\">−</span><i>C</i>",
+   "connections": [
+    "public-saving",
+    "national-saving",
+    "disposable-income",
+    "tax-saving"
+   ],
+   "example": "During the 2020 lockdowns, with spending blocked and stimulus checks arriving, the US personal saving rate briefly spiked above 30%.",
+   "numbers": [
+    [
+     "Personal saving rate, Jul 2026",
+     "3.0%"
+    ],
+    [
+     "Jan 2026",
+     "4.5%"
+    ]
+   ],
+   "numbersSource": "BEA Personal Income and Outlays.",
+   "played": [
+    "Y = 5,000, T = 1,000, C = 3,250.",
+    "S<sub>private</sub> = 5,000 − 1,000 − 3,250 = <b>750</b>."
+   ],
+   "graph": "loanableFunds",
+   "starred": false
+  },
+  {
+   "id": "public-saving",
+   "n": 52,
+   "week": 2,
+   "tags": [
+    "Ch 4 #3"
+   ],
+   "term": "Public saving",
+   "simple": "Tax revenue minus government purchases. Negative means a budget deficit.",
+   "formula": "<i>S</i><sub>public</sub><span class=\"op\">=</span><i>T</i><span class=\"op\">−</span><i>G</i>",
+   "more": [
+    "In the model, T is net taxes, so transfers are already subtracted."
+   ],
+   "connections": [
+    "private-saving",
+    "national-saving",
+    "crowding-out",
+    "government"
+   ],
+   "example": "The US federal government ran a $1.8 trillion deficit in fiscal 2025: public saving was strongly negative.",
+   "numbers": [
+    [
+     "FY2025 revenue",
+     "$5.2 trillion"
+    ],
+    [
+     "FY2025 outlays",
+     "$7.0 trillion"
+    ],
+    [
+     "FY2025 deficit",
+     "$1.8T (≈ 5.9% of GDP)"
+    ],
+    [
+     "Net interest, FY2025",
+     "> $1 trillion (first time)"
+    ]
+   ],
+   "numbersSource": "CBO Monthly Budget Review, FY2025; share of GDP per CRFB/AAF.",
+   "played": [
+    "T = 1,000, G = 1,000 → S<sub>public</sub> = 0 (balanced budget).",
+    "G rises to 1,250 → S<sub>public</sub> = −250 (a deficit)."
+   ],
+   "graph": {
+    "key": "loanableFunds",
+    "args": {
+     "shift": "left"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "national-saving",
+   "n": 53,
+   "week": 2,
+   "tags": [
+    "Ch 4 #3",
+    "PS3"
+   ],
+   "term": "National saving",
+   "simple": "Output not consumed by households or government. Private plus public saving.",
+   "formula": "<i>S</i><span class=\"op\">=</span><i>Y</i> − <i>C</i> − <i>G</i><span class=\"op\">=</span>(<i>Y</i> − <i>T</i> − <i>C</i>)<span class=\"op\">+</span>(<i>T</i> − <i>G</i>)",
+   "more": [
+    "Add and subtract T and the total splits neatly into the private and public pieces.",
+    "In the closed-economy model this is the supply of loanable funds."
+   ],
+   "connections": [
+    "private-saving",
+    "public-saving",
+    "loanable-funds",
+    "expenditure-identity"
+   ],
+   "played": [
+    "Y − C − G = 5,000 − 3,250 − 1,000 = 750.",
+    "Private 750 + public 0 = <b>750</b>."
+   ],
+   "graph": "loanableFunds",
+   "starred": false
+  },
+  {
+   "id": "loanable-funds",
+   "n": 54,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE Q5",
+    "Ch 4"
+   ],
+   "term": "Loanable funds market",
+   "simple": "Saving (supply) equals investment (demand). The real interest rate clears it.",
+   "formula": "<i>S</i><span class=\"op\">=</span><i>I</i>(<i>r</i>)",
+   "more": [
+    "Graph: <i>r</i> on the vertical axis. Saving is a <b>vertical</b> line (it doesn't depend on r in this model). Investment demand slopes <b>down</b>.",
+    "Anything that changes national saving shifts the vertical line; anything that changes the desire to invest at each r shifts the demand curve."
+   ],
+   "connections": [
+    "national-saving",
+    "investment-function",
+    "crowding-out",
+    "goods-market-eq"
+   ],
+   "example": "A burst of optimism about AI makes firms want to build data centers at any given interest rate: investment demand shifts right, and with saving fixed, r rises.",
+   "played": [
+    "S = 750 (vertical). I = 1,000 − 50r.",
+    "750 = 1,000 − 50r → r = 5."
+   ],
+   "graph": "loanableFunds"
+  },
+  {
+   "id": "crowding-out",
+   "n": 55,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE Q5",
+    "L3"
+   ],
+   "term": "Crowding out",
+   "simple": "Higher government spending lowers public saving, shifts saving left, raises r, and cuts investment one-for-one.",
+   "more": [
+    "Because Y is fixed by the supply side, every extra dollar of G has to come out of something else. C is fixed (Y and T didn't change), so it comes out of I.",
+    "This is textbook Figure 3-9."
+   ],
+   "connections": [
+    "loanable-funds",
+    "public-saving",
+    "government",
+    "balanced-budget"
+   ],
+   "example": "A long-run worry about large deficits: if government borrowing absorbs national saving, there's less left for private investment in factories and equipment, so the future capital stock is smaller.",
+   "played": [
+    "G rises 1,000 → 1,250 (T unchanged). S falls 750 → 500.",
+    "500 = 1,000 − 50r → r = 10 (up from 5).",
+    "I = 500, down 250 = the rise in G. One-for-one crowding out."
+   ],
+   "graph": {
+    "key": "loanableFunds",
+    "args": {
+     "shift": "left"
+    }
+   }
+  },
+  {
+   "id": "tax-saving",
+   "n": 56,
+   "week": 2,
+   "tags": [
+    "Ch 4 #1"
+   ],
+   "term": "Tax change and saving",
+   "simple": "A tax increase ΔT raises public saving by ΔT and lowers private saving by MPC·ΔT, so national saving rises by (1 − MPC)ΔT.",
+   "formula": "Δ<i>S</i><span class=\"op\">=</span>(1 − MPC)Δ<i>T</i>",
+   "more": [
+    "National saving rises, r falls, investment rises.",
+    "Private saving falls by less than the tax because households cut consumption by MPC × ΔT and saving by the rest."
+   ],
+   "connections": [
+    "mpc",
+    "public-saving",
+    "private-saving",
+    "loanable-funds"
+   ],
+   "played": [
+    "T rises 1,000 → 1,100, MPC = 0.75.",
+    "Public saving +100. C falls 75 → private saving falls 25.",
+    "S rises 750 → 825. 825 = 1,000 − 50r → r = 3.5, I = 825."
+   ],
+   "graph": {
+    "key": "loanableFunds",
+    "args": {
+     "shift": "right"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "balanced-budget",
+   "n": 57,
+   "week": 2,
+   "tags": [
+    "PS2 (Ch 4 #4)"
+   ],
+   "term": "Balanced-budget increase",
+   "simple": "Raising G and T by the same amount x still lowers national saving, by (1 − MPC)x, so r rises and investment falls.",
+   "formula": "Δ<i>S</i><span class=\"op\">=</span>−(1 − MPC)<i>x</i>",
+   "more": [
+    "Public saving doesn't change (T − G constant). But the higher tax cuts consumption by only MPC × x, so private saving falls by (1 − MPC)x.",
+    "Equivalently: G took x, and C gave up only MPC × x, so I must give up the rest."
+   ],
+   "connections": [
+    "crowding-out",
+    "tax-saving",
+    "mpc",
+    "public-saving"
+   ],
+   "played": [
+    "G and T both rise by 100, MPC = 0.75.",
+    "Public saving: unchanged. C falls 75 → private saving falls 25.",
+    "S = 725 → r = 5.5, I = 725 (down 25 = (1 − 0.75) × 100)."
+   ],
+   "graph": {
+    "key": "loanableFunds",
+    "args": {
+     "shift": "left",
+     "cap": "Equal rises in G and T: public saving unchanged, private saving down (1 − MPC)x. S shifts left a little, r rises, I falls by (1 − MPC)x."
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "exogenous",
+   "n": 58,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE Q14"
+   ],
+   "term": "Exogenous variable",
+   "simple": "A variable known beforehand and fed into the model, like K, L, G or T.",
+   "more": [
+    "Exogenous = comes from outside the model. The model takes it as given; you change it to run experiments (“what if G rises?”)."
+   ],
+   "connections": [
+    "endogenous",
+    "goods-market-eq"
+   ],
+   "example": "In the long-run model: K̅, L̅, A, G̅, T̅ and (in Week 3) the money supply M are exogenous."
+  },
+  {
+   "id": "endogenous",
+   "n": 59,
+   "week": 2,
+   "starred": true,
+   "tags": [
+    "PE Q14"
+   ],
+   "term": "Endogenous variable",
+   "simple": "A variable of interest that comes out of the model, like r, C or I.",
+   "more": [
+    "The model explains it. Change an exogenous variable and read off what happens to the endogenous ones."
+   ],
+   "connections": [
+    "exogenous",
+    "goods-market-eq"
+   ],
+   "example": "In the long-run model: Y (via the production function), W/P, R/P, C, I and r are endogenous. In the Solow model, k* and y* are endogenous; s, δ and n are exogenous.",
+   "played": [
+    "Exogenous shock: G rises 250.",
+    "Endogenous responses: r 5 → 10, I 750 → 500. C and Y unchanged."
+   ]
+  },
+  {
+   "id": "inflation",
+   "n": 60,
+   "week": 3,
+   "tags": [
+    "Ch 6 key concept"
+   ],
+   "term": "Inflation",
+   "simple": "A sustained increase in the overall level of prices.",
+   "more": [
+    "<b>Sustained</b> and <b>overall</b>: a one-time jump in the price of eggs is a relative-price change, not inflation. Inflation is when the general price level keeps rising, so money keeps losing purchasing power.",
+    "Milton Friedman: “Inflation is always and everywhere a monetary phenomenon”, in the long run, the quantity theory."
+   ],
+   "connections": [
+    "inflation-rate",
+    "quantity-theory",
+    "hyperinflation",
+    "recent-inflation"
+   ],
+   "example": "$1 in 1990 bought about what $2.45 buys today. Prices more than doubled over 35 years at an average inflation rate of about 2.5% a year.",
+   "numbers": [
+    [
+     "CPI inflation, 12 mo. to Aug 2026",
+     "3.4%"
+    ],
+    [
+     "Fed's target (PCE inflation)",
+     "2%"
+    ]
+   ],
+   "numbersSource": "BLS; Federal Reserve.",
+   "graph": "cpiHistory",
+   "starred": false
+  },
+  {
+   "id": "hyperinflation",
+   "n": 61,
+   "week": 3,
+   "tags": [
+    "Ch 6 key concept",
+    "L5",
+    "BG"
+   ],
+   "term": "Hyperinflation",
+   "simple": "Extremely high inflation (Mankiw: above 50% per month). It starts when governments print money to pay for big deficits and ends with fiscal reform.",
+   "more": [
+    "Cause: a government that can't borrow or tax enough prints money (seigniorage). Prices rise, the real value of its tax revenue falls, it prints faster: a spiral.",
+    "Cure: <b>fiscal</b> reform that removes the need for seigniorage, usually with a new currency or central-bank independence. A new currency alone doesn't work if the deficits continue."
+   ],
+   "connections": [
+    "seigniorage",
+    "inflation-tax",
+    "quantity-theory",
+    "shoeleather"
+   ],
+   "example": "Germany 1922–23: in November 1923 a US dollar cost 4.2 trillion paper marks (it had cost 4.2 marks in 1914). Workers were paid twice a day and rushed to spend before prices rose again. The Rentenmark, swapped at 1 for 1 trillion old marks, plus budget cuts, ended it.",
+   "numbers": [
+    [
+     "Germany, marks per $ (1914)",
+     "4.2"
+    ],
+    [
+     "Germany, marks per $ (Nov 1923)",
+     "4.2 trillion"
+    ],
+    [
+     "Zimbabwe, monthly inflation (Nov 2008)",
+     "≈ 79.6 billion %"
+    ],
+    [
+     "Hungary 1946: prices doubled every",
+     "≈ 15 hours"
+    ]
+   ],
+   "numbersSource": "Historical exchange-rate data for the Weimar mark; Hanke & Krus, World Hyperinflations (2012) for Zimbabwe and Hungary.",
+   "played": [
+    "50% per month compounds: 1.5<sup>12</sup> ≈ 130.",
+    "So prices rise about 13,000% in a year at the threshold rate."
+   ],
+   "graph": "hyperinflation",
+   "starred": false
+  },
+  {
+   "id": "money",
+   "n": 62,
+   "week": 3,
+   "tags": [
+    "BG (Lecture 6 not in files)"
+   ],
+   "term": "Money",
+   "simple": "The stock of assets used for transactions. It serves as a store of value, a unit of account and a medium of exchange.",
+   "more": [
+    "<b>Medium of exchange</b>: what you hand over to buy things (avoids barter's double coincidence of wants). <b>Unit of account</b>: what prices are quoted in. <b>Store of value</b>: carries purchasing power into the future (imperfectly, if there's inflation).",
+    "Fiat money (dollars) has no intrinsic value; commodity money (gold coins, cigarettes in POW camps) does."
+   ],
+   "connections": [
+    "m1",
+    "monetary-base",
+    "real-money-balances",
+    "money-demand"
+   ],
+   "example": "In WWII prisoner-of-war camps, cigarettes became money: prices of food and clothing were quoted in cigarettes, even by non-smokers.",
+   "numbers": [
+    [
+     "US M2, Jul 2026",
+     "$23.2 trillion"
+    ],
+    [
+     "US M1, Feb 2026",
+     "≈ $19.4 trillion"
+    ]
+   ],
+   "numbersSource": "Federal Reserve H.6 (M2 release of Aug 25, 2026; M1 via Trading Economics).",
+   "graph": "moneyAggregates",
+   "starred": false
+  },
+  {
+   "id": "quantity-equation",
+   "n": 63,
+   "week": 3,
+   "tags": [
+    "Ch 6 key concept",
+    "PS3"
+   ],
+   "term": "Quantity equation",
+   "simple": "Money times velocity equals nominal GDP.",
+   "formula": "<i>M</i><span class=\"op\">×</span><i>V</i><span class=\"op\">=</span><i>P</i><span class=\"op\">×</span><i>Y</i>",
+   "more": [
+    "By itself it's an <b>identity</b>: V is defined as PY/M, so it always holds. It becomes a theory (the quantity theory) once you assume V is constant."
+   ],
+   "connections": [
+    "velocity",
+    "quantity-theory",
+    "qt-growth-rates",
+    "nominal-gdp"
+   ],
+   "example": "If the Fed doubles M and velocity and real output don't change, nominal GDP must double, and the only way is for P to double.",
+   "played": [
+    "US 2025: PY ≈ $30.8 trillion; M2 ≈ $22 trillion.",
+    "V = 30.8 / 22 ≈ <b>1.4</b>: each dollar of M2 funds about $1.40 of final spending a year."
+   ],
+   "graph": "quantityTheory",
+   "starred": false
+  },
+  {
+   "id": "transactions-income-velocity",
+   "n": 64,
+   "week": 3,
+   "tags": [
+    "Ch 6 key concept"
+   ],
+   "term": "Transactions vs income velocity",
+   "simple": "Transactions velocity uses all transactions: MV = PT. Income velocity uses output: MV = PY. The course uses income velocity.",
+   "more": [
+    "Transactions include used goods, intermediate goods and financial trades, which are hard to measure. Output (Y) is in the national accounts, so income velocity is what people actually compute."
+   ],
+   "connections": [
+    "quantity-equation",
+    "velocity"
+   ],
+   "example": "Buying a used car is a transaction (in T) but not output (not in Y), so it affects transactions velocity only.",
+   "starred": false
+  },
+  {
+   "id": "velocity",
+   "n": 65,
+   "week": 3,
+   "starred": true,
+   "tags": [
+    "PE Q11",
+    "Ch 6 #3"
+   ],
+   "term": "Velocity of money",
+   "simple": "How many times a dollar changes hands in a period.",
+   "formula": "<i>V</i><span class=\"op\">=</span><span class=\"fr\"><span><i>PY</i></span><span><i>M</i></span></span>",
+   "more": [
+    "Velocity rises when people hold less money relative to spending, for instance when interest rates are high (holding cash costs more) or when payment technology improves.",
+    "M2 velocity fell sharply in 2020 when people piled up deposits during lockdowns."
+   ],
+   "connections": [
+    "quantity-equation",
+    "money-demand",
+    "quantity-theory"
+   ],
+   "example": "Picture a $20 bill that pays for a haircut, then the barber's lunch, then the cook's gas, all in a week: that one bill financed $60 of spending.",
+   "numbers": [
+    [
+     "US nominal GDP, 2025",
+     "≈ $30.8 trillion"
+    ],
+    [
+     "M2 (2025 average, approx.)",
+     "≈ $22 trillion"
+    ],
+    [
+     "Implied M2 velocity",
+     "≈ 1.4"
+    ]
+   ],
+   "numbersSource": "BEA; Federal Reserve H.6. Velocity computed here as PY/M.",
+   "played": [
+    "Nominal GDP = $600, M = $200.",
+    "V = 600 / 200 = 3. Each dollar is spent 3 times a year on final goods."
+   ],
+   "graph": "quantityTheory"
+  },
+  {
+   "id": "real-money-balances",
+   "n": 66,
+   "week": 3,
+   "tags": [
+    "Ch 6 key concept"
+   ],
+   "term": "Real money balances",
+   "simple": "The purchasing power of the money stock: money divided by the price level.",
+   "formula": "<span class=\"fr\"><span><i>M</i></span><span><i>P</i></span></span>",
+   "more": [
+    "It measures money in units of goods. If M doubles and P doubles, real balances are unchanged."
+   ],
+   "connections": [
+    "money-demand",
+    "inflation-tax",
+    "real-nominal"
+   ],
+   "example": "$100 in your wallet when a burger costs $10 is 10 burgers of real balances. If burger prices double, it's 5.",
+   "played": [
+    "M = $1,000, P = 2 → M/P = 500 units of goods.",
+    "Inflation of 10% with M unchanged: M/P = 1,000 / 2.2 = 455."
+   ],
+   "graph": "moneyDemand",
+   "starred": false
+  },
+  {
+   "id": "money-demand",
+   "n": 67,
+   "week": 3,
+   "tags": [
+    "Ch 6 #2–4"
+   ],
+   "term": "Money demand function",
+   "simple": "People want real money balances in proportion to income; more generally, demand falls as the nominal interest rate rises.",
+   "formula": "(<span class=\"fr\"><span><i>M</i></span><span><i>P</i></span></span>)<sup><i>d</i></sup><span class=\"op\">=</span><i>kY</i><span class=\"op\">⇒</span><i>V</i><span class=\"op\">=</span><span class=\"fr\"><span>1</span><span><i>k</i></span></span>",
+   "more": [
+    "General form: (M/P)<sup>d</sup> = L(i, Y). Money pays no interest, so the nominal rate <i>i</i> is the opportunity cost of holding it. Higher i means lower money demand, so <b>velocity rises with i</b>.",
+    "Uses the <b>nominal</b> rate: holding cash instead of a bond loses the real return plus the inflation that eats the cash."
+   ],
+   "connections": [
+    "real-money-balances",
+    "velocity",
+    "nominal-real-rate",
+    "shoeleather"
+   ],
+   "example": "When savings accounts paid near 0% in 2020–21, people left lots of money in checking. When yields rose to 4–5% in 2023, money flowed out of checking into money-market funds and Treasury bills.",
+   "played": [
+    "k = 0.25, Y = 400 → (M/P)<sup>d</sup> = 100.",
+    "V = 1/k = 4."
+   ],
+   "graph": "moneyDemand",
+   "starred": false
+  },
+  {
+   "id": "quantity-theory",
+   "n": 68,
+   "week": 3,
+   "starred": true,
+   "tags": [
+    "PE Q15",
+    "Ch 6 key concept"
+   ],
+   "term": "Quantity theory of money",
+   "simple": "With velocity constant and output fixed by factors of production, the money supply determines nominal GDP and the price level: P is proportional to M.",
+   "formula": "<i>M V̅</i><span class=\"op\">=</span><i>P Y̅</i><span class=\"op\">⇒</span><i>P</i><span class=\"op\">=</span><span class=\"fr\"><span><i>V̅</i></span><span><i>Y̅</i></span></span><i>M</i>",
+   "more": [
+    "Three pieces: (1) factors and technology fix Y; (2) money supply M fixes nominal GDP PY via constant V; (3) so P = PY / Y.",
+    "Good long-run theory; it fails in the short run because V moves a lot."
+   ],
+   "connections": [
+    "quantity-equation",
+    "qt-growth-rates",
+    "classical-dichotomy",
+    "seigniorage"
+   ],
+   "example": "Spain in the 1500s: silver and gold shipped in from the Americas expanded the money supply, and prices across Europe rose about fourfold over the following century (the “price revolution”).",
+   "played": [
+    "V = 4, Y = 400, M = 100 → P = (4/400) × 100 = 1.",
+    "Double M to 200 → P = 2. Y unchanged. Only prices changed."
+   ],
+   "graph": "quantityTheory"
+  },
+  {
+   "id": "qt-growth-rates",
+   "n": 69,
+   "week": 3,
+   "tags": [
+    "Ch 6 #1",
+    "PS3"
+   ],
+   "term": "Quantity theory in growth rates",
+   "simple": "Money growth plus velocity growth equals inflation plus real growth. With constant velocity, inflation is money growth minus output growth.",
+   "formula": "%Δ<i>M</i> + %Δ<i>V</i><span class=\"op\">=</span>%Δ<i>P</i> + %Δ<i>Y</i><br>π<span class=\"op\">=</span>%Δ<i>M</i><span class=\"op\">−</span>%Δ<i>Y</i>",
+   "more": [
+    "Take logs of MV = PY and differentiate: growth rates add."
+   ],
+   "connections": [
+    "quantity-theory",
+    "inflation-rate",
+    "classical-combined"
+   ],
+   "example": "M2 grew 5.4% in the year to July 2026. If real GDP grows about 2% and velocity holds still, the theory implies inflation around 3.4%, close to the 3.4% CPI reading for August.",
+   "numbers": [
+    [
+     "M2 growth, 12 mo. to Jul 2026",
+     "5.4%"
+    ],
+    [
+     "CPI inflation, 12 mo. to Aug 2026",
+     "3.4%"
+    ]
+   ],
+   "numbersSource": "Federal Reserve H.6; BLS. The close match is partly luck: velocity isn't really constant year to year.",
+   "played": [
+    "%ΔM = 5%, %ΔY = 2%, %ΔV = 0.",
+    "π = 5 − 2 = <b>3%</b>."
+   ],
+   "graph": "quantityTheory",
+   "starred": false
+  },
+  {
+   "id": "seigniorage",
+   "n": 70,
+   "week": 3,
+   "starred": true,
+   "tags": [
+    "PE Q15",
+    "Ch 6 key concept"
+   ],
+   "term": "Seigniorage",
+   "simple": "Revenue the government raises by printing money.",
+   "more": [
+    "Printing money to pay bills is one of three ways to finance spending (with taxes and borrowing). It's small in the US but has been the main revenue source in every hyperinflation.",
+    "The word comes from the feudal lord (seigneur) who had the right to mint coins and keep the difference between face value and metal cost."
+   ],
+   "connections": [
+    "inflation-tax",
+    "hyperinflation",
+    "quantity-theory",
+    "monetary-base"
+   ],
+   "example": "The Fed earns interest on the bonds it bought with newly created money and sends the profit to the Treasury: a modern form of seigniorage.",
+   "numbers": [
+    [
+     "Fed remittances to Treasury, 2021",
+     "$107 billion"
+    ],
+    [
+     "Since late 2022",
+     "losses booked as a “deferred asset”"
+    ]
+   ],
+   "numbersSource": "Federal Reserve annual financial statements."
+  },
+  {
+   "id": "inflation-tax",
+   "n": 71,
+   "week": 3,
+   "starred": true,
+   "tags": [
+    "PE Q15"
+   ],
+   "term": "Inflation tax",
+   "simple": "Printing money causes inflation, so money people hold loses value while the government gains revenue. It works like a tax on <b>people who hold money</b>.",
+   "formula": "inflation tax<span class=\"op\">≈</span>π<span class=\"op\">×</span><span class=\"fr\"><span><i>M</i></span><span><i>P</i></span></span>",
+   "more": [
+    "Nobody gets a tax bill; the tax is collected through rising prices that shrink the real value of cash.",
+    "It falls hardest on people who hold a lot of cash relative to income, often the poor and unbanked."
+   ],
+   "connections": [
+    "seigniorage",
+    "real-money-balances",
+    "hyperinflation",
+    "unexpected-inflation"
+   ],
+   "example": "If you keep $1,000 under your mattress for a year of 10% inflation, it buys about $909 worth of goods at the end. The government, which printed the money, captured the $91.",
+   "played": [
+    "Real balances M/P = $500, inflation π = 4%.",
+    "Inflation tax ≈ 0.04 × 500 = $20 of purchasing power a year."
+   ]
+  },
+  {
+   "id": "nominal-real-rate",
+   "n": 72,
+   "week": 3,
+   "tags": [
+    "Ch 6 key concept"
+   ],
+   "term": "Nominal vs real interest rate",
+   "simple": "The nominal rate <i>i</i> is what the bank pays. The real rate <i>r</i> is the increase in your purchasing power.",
+   "formula": "<i>r</i><span class=\"op\">=</span><i>i</i><span class=\"op\">−</span>π",
+   "more": [
+    "Real rate is what matters for saving and investment decisions; the nominal rate is what matters for money demand."
+   ],
+   "connections": [
+    "fisher-equation",
+    "ex-ante-post",
+    "investment-function",
+    "money-demand"
+   ],
+   "example": "A savings account paying 4% when inflation is 3.4% gives a real return of only 0.6%.",
+   "numbers": [
+    [
+     "Fed funds target (from Sep 17, 2026)",
+     "3.75–4.00%"
+    ],
+    [
+     "CPI inflation, Aug 2026",
+     "3.4%"
+    ],
+    [
+     "Rough real policy rate",
+     "≈ +0.5%"
+    ]
+   ],
+   "numbersSource": "Federal Reserve FOMC statement, Sep 16, 2026; BLS.",
+   "graph": "inflationVsRates",
+   "starred": false
+  },
+  {
+   "id": "fisher-equation",
+   "n": 73,
+   "week": 3,
+   "tags": [
+    "PS3",
+    "Ch 6 #1"
+   ],
+   "term": "Fisher equation",
+   "simple": "The nominal interest rate equals the real rate plus inflation.",
+   "formula": "<i>i</i><span class=\"op\">=</span><i>r</i><span class=\"op\">+</span>π",
+   "more": [
+    "Named for Irving Fisher. In the classical model r comes from the loanable-funds market and π from money growth; the Fisher equation stitches them together."
+   ],
+   "connections": [
+    "fisher-effect",
+    "nominal-real-rate",
+    "classical-combined"
+   ],
+   "played": [
+    "r = 2%, π = 3% → i = 5%."
+   ],
+   "graph": "fisher",
+   "starred": false
+  },
+  {
+   "id": "fisher-effect",
+   "n": 74,
+   "week": 3,
+   "tags": [
+    "Ch 6 #3d",
+    "Ch 6 key concept",
+    "L5"
+   ],
+   "term": "Fisher effect",
+   "simple": "A one-point rise in expected inflation raises the nominal interest rate by one point and leaves the real rate unchanged.",
+   "more": [
+    "Lenders demand compensation for the purchasing power they expect to lose; borrowers are willing to pay it because they'll repay in cheaper dollars.",
+    "Holds well across countries and across decades; much less well month to month."
+   ],
+   "connections": [
+    "fisher-equation",
+    "qt-growth-rates",
+    "ex-ante-post"
+   ],
+   "example": "In 1980–81 US CPI inflation ran in the low teens and the fed funds rate went as high as about 20%. In 2021 inflation and rates were both near zero at the start of the year. High-inflation countries like Argentina and Turkey have had double- or triple-digit interest rates.",
+   "played": [
+    "Money growth rises 2 points → π rises 2 points (quantity theory).",
+    "r is fixed by the real side (S = I(r)).",
+    "So i rises 2 points: 5% → 7%."
+   ],
+   "graph": "fisher",
+   "starred": false
+  },
+  {
+   "id": "ex-ante-post",
+   "n": 75,
+   "week": 3,
+   "tags": [
+    "Ch 6 key concept"
+   ],
+   "term": "Ex ante vs ex post real interest rate",
+   "simple": "Ex ante uses <b>expected</b> inflation (what you anticipate when lending); ex post uses <b>actual</b> inflation (what really happened).",
+   "formula": "<i>r</i><sup>ex ante</sup><span class=\"op\">=</span><i>i</i><span class=\"op\">−</span><i>E</i>[π]<span style=\"display:inline-block;width:14px\"></span><i>r</i><sup>ex post</sup><span class=\"op\">=</span><i>i</i><span class=\"op\">−</span>π",
+   "more": [
+    "Nominal rates are set using expected inflation: <i>i = r + E[π]</i>. When inflation surprises, the ex post real rate differs from the ex ante one, and that's where the redistribution from unexpected inflation comes from.",
+    "Inflation-protected bonds (TIPS) pay a real rate directly, so their yields are a market read on ex ante real rates."
+   ],
+   "connections": [
+    "fisher-equation",
+    "unexpected-inflation",
+    "nominal-real-rate"
+   ],
+   "example": "Someone who locked in a 3% mortgage in 2020 expecting about 2% inflation (ex ante real rate +1%) then lived through 8% inflation in 2022: an ex post real rate of −5% that year. Great for the borrower, bad for the lender.",
+   "played": [
+    "i = 5%, expected π = 2% → ex ante r = 3%.",
+    "Actual π = 6% → ex post r = −1%.",
+    "The lender expected to gain 3% in purchasing power and lost 1%."
+   ],
+   "starred": false
+  },
+  {
+   "id": "shoeleather",
+   "n": 76,
+   "week": 3,
+   "tags": [
+    "Ch 6 key concept",
+    "Ch 6 #7"
+   ],
+   "term": "Shoeleather costs",
+   "simple": "The costs of holding less money because of inflation, such as more trips to the bank.",
+   "more": [
+    "High inflation raises the nominal interest rate, so people hold less cash and make more frequent withdrawals, wearing out their shoes (metaphorically). Today it's time and hassle.",
+    "Small at moderate inflation, huge in hyperinflation."
+   ],
+   "connections": [
+    "money-demand",
+    "menu-costs",
+    "other-costs",
+    "hyperinflation"
+   ],
+   "example": "During Germany's 1923 hyperinflation, workers were paid twice a day and family members rushed to shops at lunchtime to spend the morning's wages before prices rose again.",
+   "starred": false
+  },
+  {
+   "id": "menu-costs",
+   "n": 77,
+   "week": 3,
+   "tags": [
+    "Ch 6 key concept",
+    "Ch 6 #7"
+   ],
+   "term": "Menu costs",
+   "simple": "The costs of changing prices, such as reprinting catalogs and menus.",
+   "more": [
+    "Includes the time spent deciding on new prices and the risk of annoying customers. Higher inflation means prices must be changed more often.",
+    "Because firms change prices infrequently, prices get out of line with each other: the relative-price variability on the next card."
+   ],
+   "connections": [
+    "shoeleather",
+    "other-costs"
+   ],
+   "example": "Coca-Cola kept the price of a bottle at 5 cents from 1886 to 1959, partly because vending machines only took nickels: changing the price meant re-engineering every machine.",
+   "starred": false
+  },
+  {
+   "id": "other-costs",
+   "n": 78,
+   "week": 3,
+   "tags": [
+    "Ch 6 #5, #7"
+   ],
+   "term": "Other costs of expected inflation",
+   "simple": "Relative prices get out of line, nominal gains get taxed, and a changing unit of account makes planning harder.",
+   "more": [
+    "<b>Relative-price variability</b>: prices change at different times, so resources are misallocated.",
+    "<b>Tax distortions</b>: taxes are on nominal gains, so inflation alone can create a tax bill on an asset that didn't gain in real terms.",
+    "<b>Inconvenience</b>: a dollar is a different-sized ruler each year, which makes long-term contracts and accounting harder."
+   ],
+   "connections": [
+    "shoeleather",
+    "menu-costs",
+    "real-nominal"
+   ],
+   "played": [
+    "Buy a stock for $100. Ten years later prices have risen 30%; sell for $130.",
+    "Real gain: zero. Taxable gain: $30.",
+    "At a 20% rate you pay $6 tax and end up with less purchasing power than you started with."
+   ],
+   "starred": false
+  },
+  {
+   "id": "unexpected-inflation",
+   "n": 79,
+   "week": 3,
+   "tags": [
+    "Ch 6 #7b"
+   ],
+   "term": "Cost of unexpected inflation",
+   "simple": "Arbitrary redistribution between debtors and creditors. Lenders with fixed nominal payments lose; borrowers gain.",
+   "more": [
+    "Contracts in nominal terms (loans, pensions, annuities, wage contracts) bake in expected inflation. Surprise inflation shifts real wealth from whoever receives fixed dollars to whoever pays them.",
+    "Surprise <i>deflation</i> runs the other way: borrowers lose."
+   ],
+   "connections": [
+    "ex-ante-post",
+    "inflation-tax",
+    "fisher-equation"
+   ],
+   "example": "A retiree with a fixed $2,000-a-month annuity lost about 8% of its purchasing power in 2022 alone. Homeowners with fixed-rate mortgages gained: their payments stayed the same while their incomes rose with inflation.",
+   "played": [
+    "Bank lends $100 at 5% expecting 2% inflation (real 3%).",
+    "Actual inflation 7%. Repayment $105 buys what $98 bought a year ago.",
+    "The bank lost 2% in real terms; the borrower gained it."
+   ],
+   "starred": false
+  },
+  {
+   "id": "benefit-inflation",
+   "n": 80,
+   "week": 3,
+   "tags": [
+    "Ch 6"
+   ],
+   "term": "Possible benefit of inflation",
+   "simple": "Lets real wages fall without nominal wage cuts, and allows negative real interest rates.",
+   "more": [
+    "Workers strongly resist nominal pay cuts. With 2–3% inflation, a firm can cut a real wage by just not giving a raise (“greasing the wheels” of the labor market).",
+    "With some inflation, a 0% nominal rate is a negative real rate, giving the central bank room to stimulate in a recession.",
+    "One reason central banks target 2% rather than 0%."
+   ],
+   "connections": [
+    "real-wage",
+    "wage-rigidity",
+    "nominal-real-rate"
+   ],
+   "example": "In 2020–21 the Fed held the funds rate near 0% while inflation rose; real rates were sharply negative, encouraging borrowing and spending.",
+   "starred": false
+  },
+  {
+   "id": "real-nominal",
+   "n": 81,
+   "week": 3,
+   "starred": true,
+   "tags": [
+    "Ch 6 key concept",
+    "PE Q20"
+   ],
+   "term": "Real vs nominal variables",
+   "simple": "<b>Nominal</b> variables are measured in money (prices, nominal wages, i). <b>Real</b> variables are measured in physical units (output, the real wage, r).",
+   "more": [
+    "Real variables: Y, C, I, real wage W/P, real rental R/P, r, M/P, employment.",
+    "Nominal variables: P, W, R, i, M, nominal GDP."
+   ],
+   "connections": [
+    "classical-dichotomy",
+    "monetary-neutrality",
+    "real-money-balances"
+   ],
+   "example": "Your salary going from $50,000 to $52,000 is a nominal change. Whether you can afford more groceries depends on the real change.",
+   "played": [
+    "Nominal wage $30, price level 1.5 → real wage = 20 (in base-year dollars)."
+   ]
+  },
+  {
+   "id": "classical-dichotomy",
+   "n": 82,
+   "week": 3,
+   "starred": true,
+   "tags": [
+    "PE Q20",
+    "Ch 6 key concept"
+   ],
+   "term": "Classical dichotomy",
+   "simple": "The theoretical separation of real and nominal variables: <b>nominal variables do not affect real variables</b>.",
+   "more": [
+    "Real variables are determined by the real side (factors, technology, saving, investment). Money only sets nominal variables.",
+    "<b>The reverse is false</b>: real variables do affect nominal ones. A rise in Y, for instance, lowers P in the quantity theory. That reversal is a classic true/false trap."
+   ],
+   "connections": [
+    "monetary-neutrality",
+    "real-nominal",
+    "quantity-theory",
+    "classical-combined"
+   ],
+   "example": "Cutting six zeros off every price and wage overnight (as Turkey did in 2005, turning 1,000,000 old lira into 1 new lira) changes nothing real: same output, same jobs, same real wages."
+  },
+  {
+   "id": "monetary-neutrality",
+   "n": 83,
+   "week": 3,
+   "tags": [
+    "Ch 6 key concept"
+   ],
+   "term": "Monetary neutrality",
+   "simple": "Changes in the money supply do not affect real variables in the long run.",
+   "more": [
+    "The classical dichotomy applied to money. Most economists accept it in the long run; in the short run (later chapters) sticky prices let money affect output and jobs."
+   ],
+   "connections": [
+    "classical-dichotomy",
+    "quantity-theory",
+    "real-nominal"
+   ],
+   "played": [
+    "M doubles. Long run: P doubles, W doubles, nominal GDP doubles.",
+    "Y, W/P, r, employment: unchanged."
+   ],
+   "graph": "quantityTheory",
+   "starred": false
+  },
+  {
+   "id": "monetary-base",
+   "n": 84,
+   "week": 3,
+   "starred": true,
+   "tags": [
+    "PE Q16c"
+   ],
+   "term": "Monetary base",
+   "simple": "Currency in circulation plus bank reserves. <b>Not</b> the sum of all currency and deposits.",
+   "formula": "<i>B</i><span class=\"op\">=</span><i>C</i><span class=\"op\">+</span><i>R</i>",
+   "more": [
+    "It's the money the Fed directly creates: cash in the public's hands plus the deposits banks hold at the Fed (reserves).",
+    "Deposits in your checking account are in M1, not in the base. That distinction is what PE Q16c tests."
+   ],
+   "connections": [
+    "m1",
+    "omo",
+    "seigniorage",
+    "money"
+   ],
+   "example": "When the Fed buys a Treasury bond from a bank, it pays by crediting the bank's reserve account: the monetary base rises instantly.",
+   "numbers": [
+    [
+     "US currency in circulation (2025, approx.)",
+     "≈ $2.4 trillion"
+    ]
+   ],
+   "numbersSource": "Federal Reserve, approximate.",
+   "graph": "moneyAggregates"
+  },
+  {
+   "id": "m1",
+   "n": 85,
+   "week": 3,
+   "starred": true,
+   "tags": [
+    "PE Q16b",
+    "PS2"
+   ],
+   "term": "M1",
+   "simple": "Currency plus checkable deposits. Since a 2020 Fed rule change it also includes savings deposits, which caused an artificial jump in measured M1.",
+   "more": [
+    "In May 2020 the Fed reclassified savings deposits as “transaction accounts” (it had removed the six-withdrawals-a-month limit). Measured M1 roughly tripled overnight from about $4.9 trillion to about $16 trillion, without any new money being created.",
+    "M2 = M1 + small time deposits + retail money-market funds."
+   ],
+   "connections": [
+    "monetary-base",
+    "money",
+    "velocity"
+   ],
+   "example": "The 2020 jump is a measurement break, not a policy action: always check definitions before reading a chart.",
+   "numbers": [
+    [
+     "M1, Apr 2020",
+     "≈ $4.9 trillion"
+    ],
+    [
+     "M1, May 2020 (after reclassification)",
+     "≈ $16 trillion"
+    ],
+    [
+     "M1, Feb 2026",
+     "≈ $19.4 trillion"
+    ]
+   ],
+   "numbersSource": "Federal Reserve H.6 (approximate levels).",
+   "graph": "moneyAggregates"
+  },
+  {
+   "id": "omo",
+   "n": 86,
+   "week": 3,
+   "starred": true,
+   "tags": [
+    "PE Q16d"
+   ],
+   "term": "Open market operations",
+   "simple": "The Fed changes the money supply by buying or selling assets such as short-term government debt.",
+   "more": [
+    "<b>Buy</b> bonds → pays with new reserves → money supply up, interest rates down. <b>Sell</b> bonds → absorbs reserves → money supply down, rates up.",
+    "Today the Fed mainly steers rates with administered rates (interest on reserve balances), but open market operations are still how it changes the size of its balance sheet (QE and QT)."
+   ],
+   "connections": [
+    "monetary-base",
+    "fed-funds",
+    "forward-guidance"
+   ],
+   "example": "Quantitative easing in 2008–14 and 2020–22 was open market purchases on a huge scale: the Fed bought trillions of dollars of Treasuries and mortgage-backed securities.",
+   "played": [
+    "Fed buys $1 billion of T-bills from a bank.",
+    "Bank's bonds −$1B, its reserves at the Fed +$1B.",
+    "Monetary base +$1B; banks can lend more."
+   ]
+  },
+  {
+   "id": "forward-guidance",
+   "n": 87,
+   "week": 3,
+   "starred": true,
+   "tags": [
+    "PE Q2"
+   ],
+   "term": "Forward guidance",
+   "simple": "The Fed giving information about its expected future policy. It keeps the economy stable by anchoring expectations about future inflation.",
+   "more": [
+    "Because long-term interest rates depend on expected future short rates, telling markets what the Fed plans moves long rates today.",
+    "Works only if it's credible: the Fed has to follow through."
+   ],
+   "connections": [
+    "fed-funds",
+    "omo",
+    "ex-ante-post"
+   ],
+   "example": "In August 2011 the Fed said it expected to keep rates exceptionally low “at least through mid-2013”. Long-term Treasury yields fell immediately, though the Fed hadn't changed the rate that day."
+  },
+  {
+   "id": "fed-funds",
+   "n": 88,
+   "week": 3,
+   "tags": [
+    "L5"
+   ],
+   "term": "Federal funds rate",
+   "simple": "The overnight interest rate banks charge each other for reserves. The FOMC sets a target range for it.",
+   "more": [
+    "The Federal Open Market Committee meets eight times a year. It moves the rate into its target range mainly by setting the interest rate on reserve balances (IORB)."
+   ],
+   "connections": [
+    "omo",
+    "forward-guidance",
+    "nominal-real-rate",
+    "recent-inflation"
+   ],
+   "example": "On September 16, 2026 the FOMC raised the target by a quarter point to 3.75–4.00% by a 12–0 vote, its first hike since 2023, citing elevated inflation.",
+   "numbers": [
+    [
+     "Target range, Sep 17, 2026 →",
+     "3.75–4.00%"
+    ],
+    [
+     "Previous range (Dec 2025 – Sep 2026)",
+     "3.50–3.75%"
+    ],
+    [
+     "Mar 2020 – Mar 2022",
+     "0–0.25%"
+    ],
+    [
+     "Jul 2023 – Sep 2024",
+     "5.25–5.50%"
+    ],
+    [
+     "Early 1981 (Volcker)",
+     "≈ 20%"
+    ]
+   ],
+   "numbersSource": "Federal Reserve FOMC statements.",
+   "graph": "inflationVsRates",
+   "starred": false
+  },
+  {
+   "id": "recent-inflation",
+   "n": 89,
+   "week": 3,
+   "starred": true,
+   "tags": [
+    "PE Q10"
+   ],
+   "term": "Causes of the recent inflation",
+   "simple": "<b>Supply</b>: COVID disrupted supply chains and the workforce. <b>Demand</b>: monetary and fiscal stimulus boosted spending.",
+   "more": [
+    "Supply side: shipping snarls, chip shortages, workers out sick or retiring, and in 2022 the energy and food shock from Russia's invasion of Ukraine.",
+    "Demand side: about $5 trillion of pandemic fiscal relief, near-zero interest rates and Fed asset purchases, and a shift in spending from services to goods that supply couldn't meet."
+   ],
+   "connections": [
+    "inflation",
+    "qt-growth-rates",
+    "fed-funds"
+   ],
+   "example": "Used-car prices rose about 40% in a year in 2021 because a chip shortage stopped new-car production just as stimulus-funded demand surged: supply and demand at once.",
+   "numbers": [
+    [
+     "CPI peak, Jun 2022 (12-mo.)",
+     "9.1%"
+    ],
+    [
+     "2022 annual average",
+     "8.0%, highest since 1981"
+    ],
+    [
+     "Aug 2026",
+     "3.4%"
+    ]
+   ],
+   "numbersSource": "BLS CPI.",
+   "graph": "cpiHistory"
+  },
+  {
+   "id": "classical-combined",
+   "n": 90,
+   "week": 3,
+   "tags": [
+    "PS3"
+   ],
+   "term": "Classical combined model",
+   "simple": "The real side sets r from S = I(r); money growth sets π; then i = r + π. Higher G raises r and i but not inflation.",
+   "more": [
+    "Step through it in order: (1) production function → Y. (2) loanable funds → r. (3) quantity theory → π. (4) Fisher → i. (5) money demand with that i → P.",
+    "This is the classical dichotomy in action: the money block takes r as given; the real block never looks at M."
+   ],
+   "connections": [
+    "loanable-funds",
+    "qt-growth-rates",
+    "fisher-equation",
+    "classical-dichotomy"
+   ],
+   "played": [
+    "Loanable funds gives r = 5%. Money grows 4%, Y grows 1% → π = 3%. So i = 8%.",
+    "Now G rises: S falls, r rises to 7%. π still 3% (money growth unchanged). i rises to 10%."
+   ],
+   "graph": {
+    "key": "loanableFunds",
+    "args": {
+     "shift": "left"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "natural-rate",
+   "n": 91,
+   "week": 4,
+   "tags": [
+    "L7"
+   ],
+   "term": "Natural rate of unemployment",
+   "simple": "The average rate around which actual unemployment fluctuates. In the flows model it's the steady-state rate.",
+   "more": [
+    "It's never zero: frictional unemployment (search) and structural unemployment (wage rigidity) persist even in good times.",
+    "The gap between actual and natural unemployment is cyclical unemployment: high in recessions, negative in booms."
+   ],
+   "connections": [
+    "ss-unemployment-rate",
+    "frictional",
+    "structural",
+    "unemployment-rate",
+    "recession"
+   ],
+   "example": "Before the pandemic, in late 2019, unemployment fell to 3.5%, below most estimates of the natural rate, and inflation stayed calm, which led economists to revise their natural-rate estimates down.",
+   "numbers": [
+    [
+     "Unemployment, Sep 2026",
+     "4.2%"
+    ],
+    [
+     "CBO noncyclical rate (approx.)",
+     "≈ 4.3–4.4%"
+    ]
+   ],
+   "numbersSource": "BLS; Congressional Budget Office estimate of the noncyclical rate of unemployment, approximate.",
+   "graph": "unemploymentPath",
+   "starred": false
+  },
+  {
+   "id": "separation-rate",
+   "n": 92,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE P2 Q2"
+   ],
+   "term": "Job separation rate (s)",
+   "simple": "The fraction of employed workers who lose their jobs each period.",
+   "more": [
+    "Includes layoffs and quits into unemployment. A higher s raises the natural rate.",
+    "Policy can lower s: e.g. better matching so jobs last longer."
+   ],
+   "connections": [
+    "finding-rate",
+    "steady-state-condition",
+    "ss-unemployment-rate"
+   ],
+   "example": "Textbook rough US monthly numbers (Mankiw): about 1% of the employed lose their jobs each month, s ≈ 0.01.",
+   "played": [
+    "E = 9,500 workers, s = 0.02.",
+    "Job losses this period = 0.02 × 9,500 = 190."
+   ],
+   "graph": "flows"
+  },
+  {
+   "id": "finding-rate",
+   "n": 93,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE P2 Q2"
+   ],
+   "term": "Job finding rate (f)",
+   "simple": "The fraction of unemployed workers who find jobs each period.",
+   "more": [
+    "A higher f lowers the natural rate. Anything that speeds up matching (job boards, less generous or shorter UI, better information) raises f."
+   ],
+   "connections": [
+    "separation-rate",
+    "steady-state-condition",
+    "frictional",
+    "ui"
+   ],
+   "example": "Textbook rough US monthly numbers (Mankiw): about 20% of the unemployed find a job each month, f ≈ 0.20. Together with s ≈ 0.01, that gives u = 0.01 / 0.21 ≈ 4.8%.",
+   "played": [
+    "U = 500, f = 0.28.",
+    "Hires out of unemployment = 0.28 × 500 = 140."
+   ],
+   "graph": "flows"
+  },
+  {
+   "id": "unemployment-dynamics",
+   "n": 94,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE P2 Q2"
+   ],
+   "term": "Unemployment dynamics",
+   "simple": "Next period's unemployed = those who stayed unemployed + newly separated workers.",
+   "formula": "<i>U</i><sub><i>t</i>+1</sub><span class=\"op\">=</span>(1 − <i>f</i>)<i>U</i><sub><i>t</i></sub><span class=\"op\">+</span><i>s E</i><sub><i>t</i></sub>",
+   "more": [
+    "Read the pieces: (1 − f)U<sub>t</sub> didn't find a job; sE<sub>t</sub> lost one."
+   ],
+   "connections": [
+    "employment-dynamics",
+    "steady-state-condition",
+    "stock-flow"
+   ],
+   "played": [
+    "L = 10,000. Start U = 1,200, E = 8,800 (u = 12%). s = 0.02, f = 0.28.",
+    "U<sub>t+1</sub> = 0.72 × 1,200 + 0.02 × 8,800 = 864 + 176 = <b>1,040</b> (10.4%).",
+    "Next: 0.72 × 1,040 + 0.02 × 8,960 = 749 + 179 = 928 (9.3%). Converging toward 667."
+   ],
+   "graph": "unemploymentPath"
+  },
+  {
+   "id": "employment-dynamics",
+   "n": 95,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE P2 Q2"
+   ],
+   "term": "Employment dynamics",
+   "simple": "Next period's employed = those who kept their jobs + unemployed who found one.",
+   "formula": "<i>E</i><sub><i>t</i>+1</sub><span class=\"op\">=</span>(1 − <i>s</i>)<i>E</i><sub><i>t</i></sub><span class=\"op\">+</span><i>f U</i><sub><i>t</i></sub>",
+   "more": [
+    "Adds up with the unemployment equation: E<sub>t+1</sub> + U<sub>t+1</sub> = E<sub>t</sub> + U<sub>t</sub> = L (fixed labor force)."
+   ],
+   "connections": [
+    "unemployment-dynamics",
+    "steady-state-condition"
+   ],
+   "played": [
+    "E = 8,800, U = 1,200, s = 0.02, f = 0.28.",
+    "E<sub>t+1</sub> = 0.98 × 8,800 + 0.28 × 1,200 = 8,624 + 336 = <b>8,960</b>.",
+    "Check: 8,960 + 1,040 = 10,000 = L ✓"
+   ],
+   "graph": "unemploymentPath"
+  },
+  {
+   "id": "steady-state-condition",
+   "n": 96,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE P2 Q2b"
+   ],
+   "term": "Steady-state condition",
+   "simple": "Flows into unemployment equal flows out.",
+   "formula": "<i>s E</i><span class=\"op\">=</span><i>f U</i>",
+   "more": [
+    "When the flows balance, U and E stop changing, even though people keep moving between them every period."
+   ],
+   "connections": [
+    "ss-unemployment-rate",
+    "separation-rate",
+    "finding-rate"
+   ],
+   "played": [
+    "Steady state with L = 10,000, s = 0.02, f = 0.28: U = 667, E = 9,333.",
+    "Inflow sE = 0.02 × 9,333 = 187. Outflow fU = 0.28 × 667 = 187 ✓"
+   ],
+   "graph": "flows"
+  },
+  {
+   "id": "ss-unemployment-rate",
+   "n": 97,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE P2 Q2"
+   ],
+   "term": "Steady-state unemployment rate",
+   "simple": "Substitute E = L − U into sE = fU and solve: the natural rate depends only on s and f.",
+   "formula": "<span class=\"fr\"><span><i>U</i></span><span><i>L</i></span></span><span class=\"op\">=</span><span class=\"fr\"><span><i>s</i></span><span><i>s</i> + <i>f</i></span></span>",
+   "more": [
+    "Derivation: s(L − U) = fU → sL = (s + f)U → U/L = s/(s + f).",
+    "Policies that lower s or raise f lower the natural rate."
+   ],
+   "connections": [
+    "steady-state-condition",
+    "natural-rate",
+    "separation-rate",
+    "finding-rate"
+   ],
+   "example": "With the textbook US numbers s = 0.01 and f = 0.20, the steady state is 0.01 / 0.21 ≈ 4.8%, close to US averages.",
+   "played": [
+    "s = 0.02, f = 0.28.",
+    "u = 0.02 / (0.02 + 0.28) = 0.02 / 0.30 = <b>6.67%</b>.",
+    "If f rises to 0.38: u = 0.02 / 0.40 = 5%."
+   ],
+   "graph": "unemploymentPath"
+  },
+  {
+   "id": "frictional",
+   "n": 98,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE Q8"
+   ],
+   "term": "Frictional unemployment",
+   "simple": "Unemployment from the time it takes to match workers and jobs. Updating a résumé or holding out for a good match is frictional.",
+   "more": [
+    "Caused by job search: workers and jobs differ, information is imperfect, and moving takes time. It's partly useful: a good match is more productive.",
+    "Sectoral shifts (jobs moving from one industry or region to another) add to it."
+   ],
+   "connections": [
+    "structural",
+    "finding-rate",
+    "ui",
+    "natural-rate"
+   ],
+   "example": "A new graduate spends six weeks interviewing before accepting an offer, or a nurse moves from Ohio to Texas and needs time to find a hospital job.",
+   "numbers": [
+    [
+     "US job openings, peak (Mar 2022)",
+     "≈ 12 million"
+    ]
+   ],
+   "numbersSource": "BLS JOLTS. Even with more openings than unemployed people, unemployment never hit zero: search takes time.",
+   "graph": "flows"
+  },
+  {
+   "id": "structural",
+   "n": 99,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE Q8"
+   ],
+   "term": "Structural unemployment",
+   "simple": "Unemployment from wages held above the market-clearing level, so more labor is supplied than demanded. In class: <b>unions</b> and a <b>minimum wage</b> above equilibrium.",
+   "more": [
+    "Unlike frictional unemployment, these workers aren't still searching for a good match: there just aren't enough jobs at the going wage. They wait for openings.",
+    "Three sources of the wage rigidity behind it: minimum wages, unions, efficiency wages."
+   ],
+   "connections": [
+    "wage-rigidity",
+    "unions",
+    "minimum-wage",
+    "efficiency-wages",
+    "frictional"
+   ],
+   "played": [
+    "Labor demand: L<sup>d</sup> = 100 − 5w. Supply: L<sup>s</sup> = 40 + 5w. Equilibrium w = 6, L = 70.",
+    "Wage floor at w = 8: L<sup>d</sup> = 60, L<sup>s</sup> = 80.",
+    "Structural unemployment = 80 − 60 = <b>20</b>."
+   ],
+   "graph": {
+    "key": "wageFloor",
+    "args": {
+     "label": "wage held above equilibrium"
+    }
+   }
+  },
+  {
+   "id": "wage-rigidity",
+   "n": 100,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE Q8",
+    "BG"
+   ],
+   "term": "Wage rigidity",
+   "simple": "Wages failing to fall to the level where supply equals demand. It's the source of structural unemployment.",
+   "more": [
+    "Sources: minimum-wage laws, union bargaining, efficiency wages, and the reluctance to cut nominal pay."
+   ],
+   "connections": [
+    "structural",
+    "minimum-wage",
+    "unions",
+    "efficiency-wages",
+    "benefit-inflation"
+   ],
+   "example": "In the Great Recession, many firms laid workers off rather than cut everyone's pay. Studies of payroll data found nominal wage cuts were rare even when unemployment hit 10%.",
+   "graph": {
+    "key": "wageFloor",
+    "args": {
+     "label": "rigid wage"
+    }
+   }
+  },
+  {
+   "id": "unions",
+   "n": 101,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE Q8b"
+   ],
+   "term": "Unions and unemployment",
+   "simple": "Unions can push members' wages above the going rate in non-union workplaces, reducing jobs (structural unemployment).",
+   "more": [
+    "Insiders (union members with jobs) gain; outsiders (those who would like those jobs) lose, and may end up unemployed or in lower-paid non-union work.",
+    "Union power differs a lot across countries, one reason European unemployment has often been higher than US unemployment."
+   ],
+   "connections": [
+    "structural",
+    "wage-rigidity",
+    "minimum-wage"
+   ],
+   "numbers": [
+    [
+     "US union membership rate, 2024",
+     "9.9%"
+    ],
+    [
+     "Mid-1950s",
+     "about one-third"
+    ]
+   ],
+   "numbersSource": "BLS Union Members release (2024); historical estimates for the 1950s.",
+   "graph": {
+    "key": "wageFloor",
+    "args": {
+     "label": "union wage"
+    }
+   }
+  },
+  {
+   "id": "minimum-wage",
+   "n": 102,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE Q8c",
+    "L3"
+   ],
+   "term": "Minimum wage and unemployment",
+   "simple": "A minimum wage well above equilibrium creates structural unemployment.",
+   "more": [
+    "Matters most for teenagers and low-skill workers, whose equilibrium wage is closest to the floor.",
+    "Empirical debate: modest increases (Card & Krueger's New Jersey study, 1994) show small job losses; large ones relative to local wages are riskier."
+   ],
+   "connections": [
+    "structural",
+    "wage-rigidity",
+    "unions",
+    "wage-compression"
+   ],
+   "example": "The federal minimum has been $7.25 an hour since July 2009, now below market wages in most of the country, so it binds for very few workers. Many states and cities set much higher minimums of $15 or more.",
+   "numbers": [
+    [
+     "Federal minimum wage (since Jul 2009)",
+     "$7.25/hour"
+    ]
+   ],
+   "numbersSource": "US Department of Labor.",
+   "played": [
+    "Teen labor market: equilibrium wage $12, 1,000 teens employed.",
+    "Minimum set at $16: firms want 800, 1,200 want to work.",
+    "400 teens structurally unemployed; 200 jobs lost."
+   ],
+   "graph": {
+    "key": "wageFloor",
+    "args": {
+     "label": "minimum wage"
+    }
+   }
+  },
+  {
+   "id": "efficiency-wages",
+   "n": 103,
+   "week": 4,
+   "tags": [
+    "BG"
+   ],
+   "term": "Efficiency wages",
+   "simple": "Firms pay above market wages to raise productivity: less turnover and more effort. Another source of wage rigidity. (Not in the practice key, so confirm in your notes.)",
+   "more": [
+    "Reasons: well-paid workers quit less (lower hiring and training costs), shirk less (they'd lose a good job), are healthier, and the high wage attracts better applicants.",
+    "Because the wage stays high voluntarily, the labor market doesn't clear: structural unemployment without any law or union."
+   ],
+   "connections": [
+    "wage-rigidity",
+    "structural",
+    "unions"
+   ],
+   "example": "In 1914 Henry Ford doubled pay to $5 a day. Turnover, which had been around 370% a year, collapsed, absenteeism fell, productivity rose, and thousands lined up outside the factory for jobs.",
+   "graph": {
+    "key": "wageFloor",
+    "args": {
+     "label": "efficiency wage"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "ui",
+   "n": 104,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE Q12"
+   ],
+   "term": "Unemployment insurance (UI)",
+   "simple": "A program funded by taxes on employers (and employees) that replaces part of an unemployed worker's income, usually 30–50%, for a limited time, usually up to 26 weeks, while they search.",
+   "more": [
+    "Trade-off: it eases hardship and lets people hold out for a better match, but it lowers the urgency to accept a job, so it reduces f and raises frictional unemployment.",
+    "Firms with more past layoffs pay higher UI taxes (“experience rating”), which discourages layoffs, but only partially."
+   ],
+   "connections": [
+    "finding-rate",
+    "frictional",
+    "ss-unemployment-rate"
+   ],
+   "example": "In 2020 the CARES Act added $600 a week on top of state benefits. For many low-wage workers that meant more income on UI than at work, and a lively debate about whether it slowed rehiring.",
+   "numbers": [
+    [
+     "Typical maximum duration",
+     "26 weeks"
+    ],
+    [
+     "Typical replacement rate",
+     "30–50%"
+    ],
+    [
+     "CARES Act top-up, 2020",
+     "$600/week"
+    ]
+   ],
+   "numbersSource": "US Department of Labor; CARES Act (2020).",
+   "played": [
+    "UI makes the unemployed search longer: f falls from 0.28 to 0.23.",
+    "u = 0.02 / (0.02 + 0.23) = 8% (was 6.67%)."
+   ],
+   "graph": "unemploymentPath"
+  },
+  {
+   "id": "unemployment-imperfect",
+   "n": 105,
+   "week": 4,
+   "starred": true,
+   "tags": [
+    "PE Q3"
+   ],
+   "term": "Why the unemployment rate is imperfect",
+   "simple": "It ignores discouraged workers outside the labor force. If unemployed people give up and leave, the rate falls even though conditions didn't improve.",
+   "more": [
+    "It also ignores underemployment: part-timers who want full-time work and graduates in jobs that don't need a degree.",
+    "So economists check the employment-population ratio, prime-age participation and broader rates (U-6) alongside it."
+   ],
+   "connections": [
+    "discouraged",
+    "epop",
+    "not-in-lf",
+    "unemployment-rate"
+   ],
+   "example": "After the Great Recession, unemployment fell from 10% in 2009 to under 5% by 2016, but part of that fall came from people leaving the labor force; the employment-population ratio recovered much more slowly.",
+   "played": [
+    "E = 90, U = 10: u = 10%, E/pop (pop = 150) = 60%.",
+    "2 unemployed give up: u = 8/98 = 8.2%; E/pop still 60%."
+   ],
+   "graph": "laborForceTree"
+  },
+  {
+   "id": "income-wellbeing",
+   "n": 106,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PE Q7"
+   ],
+   "term": "Income per worker as a measure of well-being",
+   "simple": "Justified because it is <b>correlated with many other things we care about</b>, and it is <b>easy to compute consistently</b> for many countries.",
+   "more": [
+    "Richer countries have longer lives, lower child mortality, more schooling and more leisure. Income per worker isn't happiness, but it's a strong proxy.",
+    "Consistency matters for comparing countries and decades: national accounts are built to common standards; most other measures aren't."
+   ],
+   "connections": [
+    "gdp-wellbeing",
+    "solow",
+    "per-worker"
+   ],
+   "example": "A child born in a rich country can expect to live into their 80s; in the poorest countries life expectancy is around the low 60s. The ranking by income and the ranking by life expectancy are strikingly similar."
+  },
+  {
+   "id": "solow",
+   "n": 107,
+   "week": 5,
+   "tags": [
+    "Ch 9 key concept"
+   ],
+   "term": "Solow growth model",
+   "simple": "A model of how saving, depreciation, and (in extensions) population growth and technology determine capital per worker and income per worker over time.",
+   "more": [
+    "Core idea: saving adds capital, depreciation wears it out, and diminishing returns mean each new unit of capital adds less. So capital accumulation alone can't keep income growing forever: the economy settles at a <b>steady state</b>.",
+    "Long-run growth in income per worker has to come from technology."
+   ],
+   "connections": [
+    "capital-accumulation",
+    "steady-state",
+    "solow-diagram",
+    "saving-growth"
+   ],
+   "example": "Robert Solow won the 1987 Nobel Prize for this model. It explains why war-damaged Japan and Germany grew so fast after 1945, and why that fast growth slowed.",
+   "played": [
+    "y = k<sup>1/2</sup>, s = 0.3, δ = 0.1, starting at k = 4: y = 2.",
+    "Investment 0.3 × 2 = 0.6, depreciation 0.4 → k rises to 4.2.",
+    "Repeat: k keeps rising, by less each time, toward k* = 9."
+   ],
+   "graph": {
+    "key": "solow",
+    "args": {
+     "mode": "basic"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "per-worker",
+   "n": 108,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PS5",
+    "PE P2 Q1"
+   ],
+   "term": "Capital per worker and output per worker",
+   "simple": "Divide everything by L. Constant returns let output per worker depend only on capital per worker.",
+   "formula": "<i>k</i><span class=\"op\">=</span><span class=\"fr\"><span><i>K</i></span><span><i>L</i></span></span>,<span style=\"display:inline-block;width:16px\"></span><i>y</i><span class=\"op\">=</span><span class=\"fr\"><span><i>Y</i></span><span><i>L</i></span></span><span class=\"op\">=</span><i>f</i>(<i>k</i>)<span class=\"op\">=</span><i>k</i><sup>α</sup>",
+   "more": [
+    "Derivation: Y = K<sup>α</sup>L<sup>1−α</sup> → Y/L = K<sup>α</sup>L<sup>−α</sup> = (K/L)<sup>α</sup>.",
+    "f(k) is concave: diminishing marginal product of capital per worker."
+   ],
+   "connections": [
+    "crs",
+    "solow",
+    "capital-accumulation",
+    "cobb-douglas"
+   ],
+   "played": [
+    "K = 900, L = 100 → k = 9.",
+    "With α = 1/2: y = 9<sup>1/2</sup> = 3. Total output Y = 3 × 100 = 300."
+   ],
+   "graph": {
+    "key": "solow",
+    "args": {
+     "mode": "basic"
+    }
+   }
+  },
+  {
+   "id": "inv-cons-per-worker",
+   "n": 109,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PS5",
+    "PE P2 Q1"
+   ],
+   "term": "Investment and consumption per worker",
+   "simple": "A fraction s of output is saved and invested; the rest is consumed.",
+   "formula": "<i>i</i><span class=\"op\">=</span><i>s f</i>(<i>k</i>),<span style=\"display:inline-block;width:16px\"></span><i>c</i><span class=\"op\">=</span>(1 − <i>s</i>)<i>f</i>(<i>k</i>)",
+   "more": [
+    "<i>s</i> is the saving rate, exogenous in the Solow model. Closed economy, no government: saving = investment."
+   ],
+   "connections": [
+    "per-worker",
+    "capital-accumulation",
+    "golden-rule"
+   ],
+   "numbers": [
+    [
+     "US gross national saving (approx.)",
+     "≈ 18% of GDP"
+    ],
+    [
+     "China gross national saving (approx.)",
+     "≈ 43% of GDP"
+    ]
+   ],
+   "numbersSource": "IMF/World Bank national accounts, approximate recent levels.",
+   "played": [
+    "k = 9, y = 3, s = 0.3.",
+    "i = 0.3 × 3 = <b>0.9</b>; c = 0.7 × 3 = <b>2.1</b>."
+   ],
+   "graph": {
+    "key": "solow",
+    "args": {
+     "mode": "basic"
+    }
+   }
+  },
+  {
+   "id": "depreciation",
+   "n": 110,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PS5",
+    "PE P2 Q1"
+   ],
+   "term": "Depreciation (δ)",
+   "simple": "The fraction of the capital stock that wears out each period. Depreciation per worker is δk.",
+   "formula": "depreciation per worker<span class=\"op\">=</span>δ<i>k</i>",
+   "more": [
+    "Proportional to k: the more capital you have, the more you have to replace. That's why δk is a straight line through the origin in the Solow diagram, while investment s f(k) flattens out. They must cross."
+   ],
+   "connections": [
+    "capital-accumulation",
+    "steady-state",
+    "solow-diagram"
+   ],
+   "example": "A laptop that's useless after four years depreciates at roughly 25% a year; a factory building might last 40 years (about 2.5%). Mankiw's US calibration has δ ≈ 4% for the whole capital stock.",
+   "played": [
+    "k = 9, δ = 0.1 → depreciation = 0.9 per worker per period."
+   ],
+   "graph": {
+    "key": "solow",
+    "args": {
+     "mode": "basic"
+    }
+   }
+  },
+  {
+   "id": "capital-accumulation",
+   "n": 111,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PE P2 Q1",
+    "PS5"
+   ],
+   "term": "Capital accumulation",
+   "simple": "Next period's capital = what survives depreciation + new investment. Per worker: the change in k is investment minus depreciation.",
+   "formula": "<i>K</i><sub><i>t</i>+1</sub><span class=\"op\">=</span>(1 − δ)<i>K</i><sub><i>t</i></sub><span class=\"op\">+</span><i>I</i><sub><i>t</i></sub><span style=\"display:inline-block;width:14px\"></span>Δ<i>k</i><span class=\"op\">=</span><i>s f</i>(<i>k</i>)<span class=\"op\">−</span>δ<i>k</i>",
+   "more": [
+    "This one equation drives the whole Solow model. If sf(k) > δk, k grows; if sf(k) < δk, k shrinks."
+   ],
+   "connections": [
+    "stock-flow",
+    "depreciation",
+    "inv-cons-per-worker",
+    "steady-state"
+   ],
+   "played": [
+    "k = 4: Δk = 0.3 × 2 − 0.1 × 4 = 0.6 − 0.4 = +0.2.",
+    "k = 16: Δk = 0.3 × 4 − 0.1 × 16 = 1.2 − 1.6 = −0.4.",
+    "k = 9: Δk = 0.9 − 0.9 = 0 (steady state)."
+   ],
+   "graph": {
+    "key": "solow",
+    "args": {
+     "mode": "basic"
+    }
+   }
+  },
+  {
+   "id": "steady-state",
+   "n": 112,
+   "week": 5,
+   "tags": [
+    "Ch 9 key concept",
+    "PS5"
+   ],
+   "term": "Steady state",
+   "simple": "The capital per worker at which investment just covers depreciation, so k stops changing.",
+   "formula": "<i>s f</i>(<i>k</i>*)<span class=\"op\">=</span>δ<i>k</i>*",
+   "more": [
+    "It's <b>stable</b>: from any starting k, the economy moves toward k*.",
+    "In the basic model, income per worker stops growing there; only population and technology growth keep total output growing."
+   ],
+   "connections": [
+    "ss-capital",
+    "capital-accumulation",
+    "solow-diagram",
+    "golden-rule"
+   ],
+   "played": [
+    "0.3 × k<sup>1/2</sup> = 0.1 × k → k<sup>1/2</sup> = 3 → <b>k* = 9</b>."
+   ],
+   "graph": {
+    "key": "solow",
+    "args": {
+     "mode": "basic"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "ss-capital",
+   "n": 113,
+   "week": 5,
+   "tags": [
+    "PS5"
+   ],
+   "term": "Steady-state capital per worker",
+   "simple": "For y = k<sup>α</sup>, solve sk<sup>α</sup> = δk.",
+   "formula": "<i>k</i>*<span class=\"op\">=</span>(<span class=\"fr\"><span><i>s</i></span><span>δ</span></span>)<sup>1/(1−α)</sup>, <i>y</i>*<span class=\"op\">=</span>(<span class=\"fr\"><span><i>s</i></span><span>δ</span></span>)<sup>α/(1−α)</sup>, <i>c</i>*<span class=\"op\">=</span>(1 − <i>s</i>)<i>y</i>*",
+   "more": [
+    "Higher saving s → higher k* and y*. Higher depreciation δ → lower k* and y*.",
+    "With α = 1/3 the exponents are 3/2 and 1/2."
+   ],
+   "connections": [
+    "steady-state",
+    "saving-growth",
+    "golden-capital-cd"
+   ],
+   "played": [
+    "α = 1/2, s = 0.3, δ = 0.1: s/δ = 3.",
+    "k* = 3<sup>2</sup> = <b>9</b>; y* = 3<sup>1</sup> = <b>3</b>; c* = 0.7 × 3 = <b>2.1</b>.",
+    "With α = 1/3 instead: k* = 3<sup>1.5</sup> = 5.2, y* = 3<sup>0.5</sup> = 1.73."
+   ],
+   "graph": {
+    "key": "solow",
+    "args": {
+     "mode": "basic"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "solow-diagram",
+   "n": 114,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PE P2 Q1b"
+   ],
+   "term": "Solow diagram",
+   "simple": "k on the horizontal axis; the concave curve sf(k); the straight line δk from the origin. They cross at k*. Left of k*, k rises; right of it, k falls. Label every line and intersection.",
+   "more": [
+    "Exam checklist: axis labels, f(k) (optional but nice), sf(k), δk, k* marked on the axis, arrows showing the direction k moves on each side.",
+    "Vertical gap between sf(k) and δk = Δk. Gap between f(k) and sf(k) = consumption."
+   ],
+   "connections": [
+    "steady-state",
+    "capital-accumulation",
+    "saving-growth",
+    "pop-growth"
+   ],
+   "graph": {
+    "key": "solow",
+    "args": {
+     "mode": "diagram"
+    }
+   }
+  },
+  {
+   "id": "saving-growth",
+   "n": 115,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PE Q17",
+    "Ch 9 #5"
+   ],
+   "term": "Saving rate and growth",
+   "simple": "A higher saving rate raises the steady-state <b>level</b> of income per worker, with only temporarily faster growth. It does <b>not</b> raise the long-run growth rate.",
+   "more": [
+    "Diminishing returns: the extra capital adds less and less until depreciation catches up again at the new, higher k*.",
+    "Across countries, high savers are richer (higher level), consistent with the model."
+   ],
+   "connections": [
+    "ss-capital",
+    "golden-rule",
+    "solow-diagram",
+    "convergence"
+   ],
+   "example": "Singapore and South Korea saved and invested very heavily from the 1960s, grew very fast for decades, and are now rich. But their growth has slowed to rich-country rates, as the model predicts.",
+   "played": [
+    "s rises 0.3 → 0.4 (δ = 0.1).",
+    "New k* = 4<sup>2</sup> = 16, y* = 4 (was 3): a 33% higher level.",
+    "During the transition y grows fast; once at y* = 4, growth in y returns to zero."
+   ],
+   "graph": "savingPath"
+  },
+  {
+   "id": "golden-rule",
+   "n": 116,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "Ch 9 key concept",
+    "PS5",
+    "PE P2 Q1a"
+   ],
+   "term": "Golden rule level of capital",
+   "simple": "The steady-state capital per worker that <b>maximizes consumption per worker</b>.",
+   "more": [
+    "More capital isn't always better: past some point, the extra output from more capital doesn't even cover the extra depreciation, so you'd have to consume less to keep it.",
+    "A policymaker can pick s to land on k_gold."
+   ],
+   "connections": [
+    "golden-condition",
+    "golden-capital-cd",
+    "golden-saving",
+    "below-above-golden"
+   ],
+   "played": [
+    "c* = f(k*) − δk*. Try k* = 9: 3 − 0.9 = 2.1. k* = 25: 5 − 2.5 = <b>2.5</b>. k* = 49: 7 − 4.9 = 2.1.",
+    "Consumption peaks at k = 25: the golden rule."
+   ],
+   "graph": {
+    "key": "solow",
+    "args": {
+     "mode": "golden"
+    }
+   }
+  },
+  {
+   "id": "golden-condition",
+   "n": 117,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PE P2 Q1a",
+    "Ch 9 #2d"
+   ],
+   "term": "Golden rule condition",
+   "simple": "Maximize c* = f(k*) − δk*: set the derivative to zero. At the golden rule, the marginal product of capital equals depreciation.",
+   "formula": "<i>f</i>′(<i>k</i><sub>gold</sub>)<span class=\"op\">=</span>δ<span style=\"display:inline-block;width:16px\"></span>(MPK<span class=\"op\">=</span>δ)",
+   "more": [
+    "Intuition: one more unit of capital adds MPK of output but costs δ of upkeep every period. Keep adding capital while MPK > δ."
+   ],
+   "connections": [
+    "golden-rule",
+    "mpk",
+    "golden-capital-cd",
+    "below-above-golden"
+   ],
+   "example": "Mankiw's US calibration: capital ≈ 2.5 × GDP, depreciation ≈ 10% of GDP, capital income ≈ 30% of GDP. So δ = 0.1/2.5 = 4% and MPK = 0.3/2.5 = 12%. MPK > δ, so the US has <b>less</b> capital than the golden rule.",
+   "played": [
+    "f(k) = k<sup>1/2</sup>, f′(k) = 0.5 k<sup>−1/2</sup>.",
+    "Set 0.5 k<sup>−1/2</sup> = 0.1 → k<sup>1/2</sup> = 5 → <b>k_gold = 25</b>."
+   ],
+   "graph": {
+    "key": "solow",
+    "args": {
+     "mode": "golden"
+    }
+   }
+  },
+  {
+   "id": "golden-capital-cd",
+   "n": 118,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PE P2 Q1a",
+    "PS5"
+   ],
+   "term": "Golden rule capital (Cobb-Douglas)",
+   "simple": "For y = k<sup>α</sup>, MPK = αk<sup>α−1</sup>. Set it equal to δ and solve.",
+   "formula": "α<i>k</i><sup>α−1</sup><span class=\"op\">=</span>δ<span class=\"op\">⇒</span><i>k</i><sub>gold</sub><span class=\"op\">=</span>(<span class=\"fr\"><span>α</span><span>δ</span></span>)<sup>1/(1−α)</sup>",
+   "connections": [
+    "golden-condition",
+    "golden-saving",
+    "ss-capital"
+   ],
+   "played": [
+    "α = 1/2, δ = 0.1: k_gold = (0.5/0.1)<sup>2</sup> = 5<sup>2</sup> = <b>25</b>.",
+    "α = 1/3, δ = 0.1: k_gold = (3.33)<sup>1.5</sup> = <b>6.09</b>."
+   ],
+   "graph": {
+    "key": "solow",
+    "args": {
+     "mode": "golden"
+    }
+   }
+  },
+  {
+   "id": "golden-saving",
+   "n": 119,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PE P2 Q1a",
+    "PS5"
+   ],
+   "term": "Golden rule saving rate",
+   "simple": "Plug k_gold into sf(k) = δk. Under Cobb-Douglas the golden-rule saving rate equals α. Show the derivation on the exam: stating it alone loses points.",
+   "formula": "<i>s</i><sub>gold</sub><span class=\"op\">=</span>α",
+   "more": [
+    "Derivation: s = δk / f(k) = δk / k<sup>α</sup> = δk<sup>1−α</sup>. At k_gold, k<sup>1−α</sup> = α/δ, so s = δ × α/δ = α.",
+    "Intuition: at the golden rule, investment δk exactly equals capital's income MPK × k = αy. So you save capital's share."
+   ],
+   "connections": [
+    "golden-capital-cd",
+    "capital-share",
+    "golden-rule",
+    "below-above-golden"
+   ],
+   "example": "With α ≈ 1/3, the golden-rule saving rate is about 33%. The US saves well under that (≈ 18% gross), China a bit over it (≈ 43%).",
+   "played": [
+    "α = 1/2, δ = 0.1, k_gold = 25, f(25) = 5.",
+    "s = δk / f(k) = (0.1 × 25) / 5 = 2.5 / 5 = <b>0.5 = α</b> ✓"
+   ],
+   "graph": "goldenHump"
+  },
+  {
+   "id": "below-above-golden",
+   "n": 120,
+   "week": 5,
+   "tags": [
+    "Ch 9 summary",
+    "PS5"
+   ],
+   "term": "Below vs above the golden rule",
+   "simple": "<b>Below</b> (k* < k_gold): raising saving lowers consumption now and raises it later. <b>Above</b>: cutting saving raises consumption at every date.",
+   "more": [
+    "Below: a genuine trade-off between generations; the current generation must sacrifice.",
+    "Above: a free lunch. Cutting s means eating more today, and since you're moving toward the golden rule, steady-state consumption rises too. So a policymaker would never choose to stay above it."
+   ],
+   "connections": [
+    "golden-rule",
+    "golden-saving",
+    "saving-growth"
+   ],
+   "played": [
+    "Below: s = 0.3, c* = 2.1. Raise s to 0.5: c drops right away to 0.5 × 3 = 1.5, then climbs to 2.5.",
+    "Above: s = 0.7, k* = 49, c* = 0.3 × 7 = 2.1. Cut s to 0.5: c jumps to 0.5 × 7 = 3.5, then eases down to 2.5 > 2.1."
+   ],
+   "graph": "goldenHump",
+   "starred": false
+  },
+  {
+   "id": "lf-fall",
+   "n": 121,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PE P2 Q1b",
+    "PS5 (Ch 9 #3)"
+   ],
+   "term": "Fall in the labor force",
+   "simple": "K unchanged, L falls, so k = K/L jumps above k*. Income per worker jumps up, then declines (negative growth) back to the <b>same</b> steady state. Total output falls.",
+   "more": [
+    "Nothing about s, δ or f changed, so k* is the same. Above k*, depreciation exceeds investment and k falls back.",
+    "Watch the per-worker vs total distinction: y goes up then back; Y falls and stays lower."
+   ],
+   "connections": [
+    "consumption-lf-fall",
+    "steady-state",
+    "capital-accumulation",
+    "pop-growth"
+   ],
+   "example": "The Black Death (1347–51) killed perhaps a third of Europe's population but left buildings, tools and land intact. Output per worker and real wages rose for decades afterwards.",
+   "played": [
+    "K = 900, L = 100 → k = 9 = k*, y = 3, Y = 300.",
+    "L falls to 81: k = 900 / 81 = 11.1, y = 3.33 (up), Y = 270 (down).",
+    "Over time K falls to 729: k = 9, y = 3 again, Y = 243."
+   ],
+   "graph": {
+    "key": "solowShock",
+    "args": {
+     "v": "y"
+    }
+   }
+  },
+  {
+   "id": "consumption-lf-fall",
+   "n": 122,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PE P2 Q1c"
+   ],
+   "term": "Consumption after a labor-force fall",
+   "simple": "With s unchanged, c = (1 − s)y follows income: it jumps up, then declines back to its original steady-state level.",
+   "formula": "<i>c</i><span class=\"op\">=</span>(1 − <i>s</i>)<i>y</i>",
+   "connections": [
+    "lf-fall",
+    "inv-cons-per-worker"
+   ],
+   "played": [
+    "Before: y = 3, c = 0.7 × 3 = 2.1.",
+    "Right after: y = 3.33, c = 2.33.",
+    "Long run: y = 3, c = 2.1 again."
+   ],
+   "graph": {
+    "key": "solowShock",
+    "args": {
+     "v": "c"
+    }
+   }
+  },
+  {
+   "id": "pop-growth",
+   "n": 123,
+   "week": 5,
+   "tags": [
+    "BG (Lecture 9 slides empty)"
+   ],
+   "term": "Population growth in the Solow model",
+   "simple": "With population growth n, capital per worker is diluted. Faster population growth lowers steady-state capital and income per worker.",
+   "formula": "Δ<i>k</i><span class=\"op\">=</span><i>s f</i>(<i>k</i>)<span class=\"op\">−</span>(δ + <i>n</i>)<i>k</i>",
+   "more": [
+    "Each period, new workers need capital too: break-even investment rises from δk to (δ + n)k.",
+    "In this steady state y is constant, but total output Y grows at rate n."
+   ],
+   "connections": [
+    "capital-accumulation",
+    "steady-state",
+    "pop-ideas",
+    "lf-fall"
+   ],
+   "example": "Across countries, those with faster population growth tend to have lower income per person, as the model predicts (though causation runs both ways).",
+   "played": [
+    "s = 0.3, δ = 0.1, n = 0.02: k* = (0.3 / 0.12)<sup>2</sup> = 2.5<sup>2</sup> = <b>6.25</b>.",
+    "y* = 2.5, down from 3 with n = 0."
+   ],
+   "graph": {
+    "key": "solow",
+    "args": {
+     "mode": "pop"
+    }
+   },
+   "starred": false
+  },
+  {
+   "id": "pop-ideas",
+   "n": 124,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PE Q4"
+   ],
+   "term": "Population growth and ideas",
+   "simple": "Declining population growth may slow innovation, because fewer people are generating new ideas. (True on the practice exam.)",
+   "more": [
+    "Ideas are non-rival: once invented, everyone can use them. More researchers means more ideas, and those ideas raise A for everybody.",
+    "This cuts against the basic Solow result (more people dilutes capital). Both effects are real: one is about capital per worker, the other about the growth of technology."
+   ],
+   "connections": [
+    "pop-growth",
+    "tfp",
+    "solow"
+   ],
+   "example": "South Korea's fertility rate fell to about 0.72 children per woman in 2023, the lowest in the world. Economists worry that shrinking cohorts of young researchers will slow innovation there and in other aging countries.",
+   "numbers": [
+    [
+     "South Korea fertility rate, 2023",
+     "≈ 0.72"
+    ],
+    [
+     "Replacement level",
+     "≈ 2.1"
+    ]
+   ],
+   "numbersSource": "Statistics Korea."
+  },
+  {
+   "id": "china",
+   "n": 125,
+   "week": 5,
+   "starred": true,
+   "tags": [
+    "PE Q6",
+    "L8"
+   ],
+   "term": "Why China's growth slowed",
+   "simple": "Unsustainable policy boosts; accumulated inefficiencies after long fast growth; recessions abroad hurting export demand; nearing its steady state; a pivot to consumption-led growth (lower saving).",
+   "more": [
+    "Solow reading: China's huge investment rates pushed k up fast, so diminishing returns set in and it's closer to its steady state.",
+    "Lower saving (a shift toward consumption) lowers k* and slows the transition.",
+    "Credit-fueled stimulus, a property bust and an aging, shrinking workforce add to the slowdown."
+   ],
+   "connections": [
+    "convergence",
+    "saving-growth",
+    "steady-state",
+    "golden-saving"
+   ],
+   "numbers": [
+    [
+     "China real GDP growth, 2010",
+     "10.6%"
+    ],
+    [
+     "2019",
+     "6.0%"
+    ],
+    [
+     "2025",
+     "5.0%"
+    ],
+    [
+     "2025 by quarter",
+     "5.4 → 5.2 → 4.8 → 4.5%"
+    ]
+   ],
+   "numbersSource": "National Bureau of Statistics of China. BOFIT estimates 2025 growth about 1 point below the official figure.",
+   "graph": "chinaGrowth"
+  },
+  {
+   "id": "convergence",
+   "n": 126,
+   "week": 5,
+   "tags": [
+    "L8",
+    "Ch 9"
+   ],
+   "term": "Catch-up (convergence) growth",
+   "simple": "Economies far below their steady state grow fast as capital accumulates, then slow down. Example: postwar Japan and Germany.",
+   "more": [
+    "Low k means high MPK, so each unit of investment adds a lot of output. As k approaches k*, growth fades.",
+    "Conditional convergence: countries converge to <i>their own</i> steady states (set by s, n, δ and technology), not necessarily to the same income level. That's why poor countries don't automatically catch up."
+   ],
+   "connections": [
+    "solow",
+    "steady-state",
+    "china",
+    "saving-growth"
+   ],
+   "example": "Japan's economy grew around 9–10% a year from the mid-1950s to the early 1970s, and West Germany's “economic miracle” ran about 8% a year in the 1950s. Both slowed to rich-country rates once rebuilt.",
+   "played": [
+    "Same s, δ: k* = 9. Country A starts at k = 1, country B at k = 8.",
+    "A: Δk = 0.3 × 1 − 0.1 × 1 = 0.2 (+20%). B: Δk = 0.3 × 2.83 − 0.8 = 0.05 (+0.6%).",
+    "The poorer country grows far faster."
+   ],
+   "graph": "convergence",
+   "starred": false
+  }
+ ]
+}
