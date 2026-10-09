@@ -1,0 +1,611 @@
+import { fr, op } from "./helpers.mjs";
+
+const W = 2;
+
+// One running Cobb-Douglas economy is used across this week's cards so the
+// numbers connect: α = 1/3, A = 1, K = 8,000, L = 1,000.
+//   Y = 1 × 8000^(1/3) × 1000^(2/3) = 20 × 100 = 2,000
+//   MPL = (2/3)(2000/1000) = 4/3 ≈ 1.33     MPK = (1/3)(2000/8000) = 1/12 ≈ 0.083
+// And one loanable-funds economy (Mankiw-style):
+//   Y = 5,000, T = G = 1,000, C = 250 + 0.75(Y − T), I = 1,000 − 50r
+//   C = 3,250, S = 750, r = 5, I = 750
+
+export default [
+  {
+    id: "production-function", n: 26, week: W, tags: ["Ch 3", "L3"],
+    term: "Production function",
+    simple: "Output depends on capital, labor and technology. In the long-run model K and L are fixed, so output is fixed.",
+    formula: `<i>Y</i>${op("=")}<i>F</i>(<i>K</i>, <i>L</i>)${op("⇒")}<i>Y̅</i>${op("=")}<i>F</i>(<i>K̅</i>, <i>L̅</i>)`,
+    more: [
+      "The production function describes technology: how inputs turn into output. Better technology means more output from the same K and L.",
+      "In Chapter 3's classical model factor supplies are given, so <b>output is pinned down by the supply side</b>; demand only decides how that output is divided among C, I and G.",
+    ],
+    connections: ["crs", "cobb-douglas", "mpl", "goods-market-eq"],
+    example: "A pizzeria: ovens (K) and cooks (L) turn into pizzas (Y). A better dough recipe (technology) means more pizzas from the same ovens and cooks.",
+    played: [
+      "Running example: Y = K<sup>1/3</sup>L<sup>2/3</sup>, K = 8,000, L = 1,000.",
+      "Y = 8000<sup>1/3</sup> × 1000<sup>2/3</sup> = 20 × 100 = 2,000.",
+      "With K and L fixed, Y̅ = 2,000 no matter what happens to G or T.",
+    ],
+    graph: { key: "production", args: { x: "L" } },
+  },
+  {
+    id: "crs", n: 27, week: W, starred: true, tags: ["Ch 3 #3", "PE Q13c"],
+    term: "Constant returns to scale",
+    simple: "Scale every input by <i>z</i> and output scales by exactly <i>z</i>.",
+    formula: `<i>F</i>(<i>zK</i>, <i>zL</i>)${op("=")}<i>z</i>·<i>F</i>(<i>K</i>, <i>L</i>)`,
+    more: [
+      "Increasing returns: output more than doubles. Decreasing returns: less than doubles.",
+      "Why it matters: with CRS and competition, paying each factor its marginal product uses up exactly all output (zero economic profit). It also lets you write everything <b>per worker</b>: y = f(k), the starting point of the Solow model.",
+    ],
+    connections: ["cobb-douglas", "zero-profit", "per-worker", "production-function"],
+    example: "Building a second identical factory with the same number of workers should, roughly, double output. That's the idea behind CRS.",
+    played: [
+      "Y = K<sup>1/3</sup>L<sup>2/3</sup> with K = 8,000, L = 1,000 → Y = 2,000.",
+      "Double both: K = 16,000, L = 2,000 → Y = 16000<sup>1/3</sup> × 2000<sup>2/3</sup> = 25.2 × 158.7 = 4,000.",
+      "Output doubled exactly: CRS, because 1/3 + 2/3 = 1.",
+    ],
+    graph: "crs",
+  },
+  {
+    id: "cobb-douglas", n: 28, week: W, starred: true, tags: ["PE P2 Q3", "Ch 3"],
+    term: "Cobb-Douglas production function",
+    simple: "The workhorse production function. α is capital's share of income; A is productivity (technology).",
+    formula: `<i>Y</i>${op("=")}<i>A K</i><sup>α</sup><i>L</i><sup>1−α</sup>`,
+    more: [
+      "Exponents add to 1, so it has constant returns to scale.",
+      "Its key property: factor <b>shares</b> of income are constant (α to capital, 1 − α to labor) no matter how K, L or A change.",
+      "In the US, α is usually taken to be about 1/3.",
+    ],
+    connections: ["crs", "cd-marginal", "labor-share", "capital-share", "tfp", "backing-out"],
+    example: "Paul Douglas noticed in the 1920s that labor's share of US income stayed near 3/4 while capital and labor grew at very different rates. Charles Cobb found the function with that property.",
+    played: [
+      "A = 1, α = 1/3, K = 8,000, L = 1,000.",
+      "Y = 8000<sup>1/3</sup> × 1000<sup>2/3</sup> = 20 × 100 = <b>2,000</b>.",
+    ],
+    graph: "incomeSplit",
+  },
+  {
+    id: "tfp", n: 29, week: W, starred: true, tags: ["PE P2 Q3b", "Ch 3 #1"],
+    term: "Total factor productivity (A)",
+    simple: "The technology term. A higher A raises output, the real wage and the real rental rate together.",
+    more: [
+      "It's measured as a residual (the Solow residual): whatever output growth isn't explained by more K and L.",
+      "Because A multiplies everything, MPL and MPK rise in proportion. Income shares (α, 1 − α) don't change.",
+    ],
+    connections: ["cobb-douglas", "cd-marginal", "neoclassical-distribution", "backing-out"],
+    example: "The spread of computers, the internet, better management practices and new drugs all show up as higher A.",
+    numbers: [
+      ["US labor productivity growth, Q4 2024 → Q4 2025", "2.5%"],
+    ],
+    numbersSource: "BLS Productivity and Costs, revised March 24, 2026 (output per hour, nonfarm business). Labor productivity rises with A and with capital per worker.",
+    played: [
+      "Running example: A = 1 → Y = 2,000, MPL = 1.33, MPK = 0.083.",
+      "Raise A by 10% to 1.1: Y = 2,200.",
+      "MPL = (2/3)(2200/1000) = 1.47; MPK = (1/3)(2200/8000) = 0.092. Both rose 10%.",
+    ],
+    graph: { key: "production", args: { x: "L" } },
+  },
+  {
+    id: "mpl", n: 30, week: W, tags: ["Ch 3"],
+    term: "Marginal product of labor (MPL)",
+    simple: "The extra output from one more unit of labor, holding capital fixed.",
+    formula: `MPL${op("=")}${fr("∂<i>F</i>", "∂<i>L</i>")}`,
+    more: [
+      "<b>Diminishing marginal product</b>: it falls as L rises. With a fixed kitchen, each extra cook adds less than the last.",
+      "Graphically, it's the slope of the production function plotted against L.",
+    ],
+    connections: ["mpk", "labor-demand", "cd-marginal", "real-wage"],
+    example: "Adding a second barista to a busy coffee shop adds a lot of output. The tenth barista mostly gets in the way at one espresso machine.",
+    played: [
+      "Running example: MPL = (1 − α)Y/L = (2/3)(2000/1000) = 1.33 units of output per worker.",
+      "Raise L to 1,331 (+33%): Y = 20 × 1331<sup>2/3</sup> = 20 × 121 = 2,420.",
+      "New MPL = (2/3)(2420/1331) = 1.21. It fell: diminishing returns.",
+    ],
+    graph: { key: "production", args: { x: "L" } },
+  },
+  {
+    id: "mpk", n: 31, week: W, tags: ["Ch 3"],
+    term: "Marginal product of capital (MPK)",
+    simple: "The extra output from one more unit of capital, holding labor fixed. It falls as K rises.",
+    formula: `MPK${op("=")}${fr("∂<i>F</i>", "∂<i>K</i>")}`,
+    more: [
+      "Diminishing MPK is the engine of the Solow model: as capital piles up, each new machine adds less, so growth from capital alone eventually stops.",
+    ],
+    connections: ["mpl", "capital-demand", "cd-marginal", "golden-condition", "solow"],
+    example: "Giving a worker her first computer is a huge boost. A second monitor helps a bit. A fifth computer on the same desk adds almost nothing.",
+    played: [
+      "Running example: MPK = αY/K = (1/3)(2000/8000) = 0.083.",
+      "Double K to 16,000: Y = 25.2 × 100 = 2,520.",
+      "New MPK = (1/3)(2520/16000) = 0.053. It fell.",
+    ],
+    graph: { key: "production", args: { x: "K" } },
+  },
+  {
+    id: "profit", n: 32, week: W, starred: true, tags: ["PE P2 Q3a"],
+    term: "Firm's profit",
+    simple: "Revenue minus labor costs minus capital costs.",
+    formula: `Profit${op("=")}<i>PY</i>${op("−")}<i>WL</i>${op("−")}<i>RK</i>`,
+    more: [
+      "<i>W</i> is the nominal wage, <i>R</i> the nominal rental rate of capital, <i>P</i> the price of output.",
+      "The competitive firm takes P, W and R as given and chooses L and K to maximise profit. The first-order conditions are the labor and capital demand conditions on the next cards.",
+    ],
+    connections: ["labor-demand", "capital-demand", "zero-profit"],
+    example: "A bakery sells $500,000 of bread, pays $300,000 in wages and $150,000 in rent on ovens and space: profit is $50,000.",
+    played: [
+      "Set P = 1. Running example: Y = 2,000, L = 1,000, K = 8,000.",
+      "Pay W = MPL = 1.333 and R = MPK = 0.0833.",
+      "Profit = 2,000 − 1.333 × 1,000 − 0.0833 × 8,000 = 2,000 − 1,333 − 667 = <b>0</b>.",
+    ],
+  },
+  {
+    id: "labor-demand", n: 33, week: W, starred: true, tags: ["PE P2 Q3a", "PS2"],
+    term: "Labor demand condition",
+    simple: "Firms hire until the marginal product of labor equals the real wage.",
+    formula: `MPL${op("=")}${fr("<i>W</i>", "<i>P</i>")}`,
+    more: [
+      "Logic: hiring one more worker adds MPL units of output, worth P × MPL, and costs W. Keep hiring while P × MPL > W.",
+      "Because MPL falls as L rises, the MPL curve <b>is</b> the labor demand curve.",
+    ],
+    connections: ["mpl", "real-wage", "profit", "capital-demand"],
+    example: "A farm will hire another picker at $20/hour only if she picks at least $20 worth of berries an hour.",
+    played: [
+      "Real wage W/P = 1.33. Running example at L = 1,000: MPL = 1.33. Hire exactly 1,000.",
+      "If the real wage fell to 1.21, the firm would hire until MPL = 1.21, i.e. L = 1,331.",
+    ],
+    graph: { key: "factorMarket", args: { kind: "labor" } },
+  },
+  {
+    id: "capital-demand", n: 34, week: W, starred: true, tags: ["PE P2 Q3b", "PS2"],
+    term: "Capital demand condition",
+    simple: "Firms rent capital until its marginal product equals the real rental price of capital.",
+    formula: `MPK${op("=")}${fr("<i>R</i>", "<i>P</i>")}`,
+    more: [
+      "Same logic as labor: one more machine adds MPK units of output and costs R/P in output terms.",
+      "With K fixed in the long-run model, the MPK at K̅ sets the equilibrium real rental rate.",
+    ],
+    connections: ["mpk", "labor-demand", "profit", "capital-share"],
+    example: "A construction firm leases another excavator at $2,000 a month only if it lets the firm finish at least $2,000 more work a month.",
+    played: [
+      "Running example: MPK = 0.083 at K = 8,000.",
+      "So the equilibrium real rental rate R/P = 0.083 (8.3% of a unit of output per unit of capital per period).",
+    ],
+    graph: { key: "factorMarket", args: { kind: "capital" } },
+  },
+  {
+    id: "real-wage", n: 35, week: W, tags: ["Ch 3 #2"],
+    term: "Real wage",
+    simple: "The nominal wage divided by the price level: what your pay actually buys. In equilibrium it equals MPL.",
+    formula: `${fr("<i>W</i>", "<i>P</i>")}${op("=")}MPL`,
+    more: [
+      "If wages rise 3% and prices rise 3.4%, the real wage <b>fell</b> about 0.4%.",
+    ],
+    connections: ["labor-demand", "mpl", "wage-productivity", "wage-rigidity"],
+    example: "In 2022 average hourly earnings rose about 5% but CPI inflation was 8%, so real wages fell for most workers.",
+    numbers: [
+      ["CPI inflation, 12 mo. to Aug 2026", "3.4%"],
+    ],
+    numbersSource: "BLS. Compare with wage growth to get real wage growth: real ≈ nominal − inflation.",
+    played: [
+      "Nominal wage W = $30/hour, price of a meal P = $15.",
+      "Real wage = 30 / 15 = 2 meals per hour of work.",
+      "If W rises to $31.50 (+5%) but P rises to $16.20 (+8%): real wage = 1.94 meals (−3%).",
+    ],
+    graph: { key: "factorMarket", args: { kind: "labor" } },
+  },
+  {
+    id: "cd-marginal", n: 36, week: W, starred: true, tags: ["PE P2 Q3", "Ch 3 #4"],
+    term: "Cobb-Douglas marginal products",
+    simple: "Each marginal product is the factor's exponent times the average product.",
+    formula: `MPL${op("=")}(1 − α)${fr("<i>Y</i>", "<i>L</i>")}<span style="display:inline-block;width:18px"></span>MPK${op("=")}α${fr("<i>Y</i>", "<i>K</i>")}`,
+    more: [
+      "Derivation: ∂/∂L of A K<sup>α</sup> L<sup>1−α</sup> = (1 − α) A K<sup>α</sup> L<sup>−α</sup> = (1 − α) Y/L.",
+      "So MPL is proportional to <b>output per worker</b> (labor productivity), the link behind the real wage and labor productivity card.",
+    ],
+    connections: ["cobb-douglas", "mpl", "mpk", "wage-productivity", "labor-share"],
+    example: "If output per worker doubles, the Cobb-Douglas real wage doubles too.",
+    played: [
+      "Y = 2,000, L = 1,000, K = 8,000, α = 1/3.",
+      "MPL = (2/3)(2000/1000) = <b>1.33</b>.",
+      "MPK = (1/3)(2000/8000) = <b>0.083</b>.",
+    ],
+    graph: "incomeSplit",
+  },
+  {
+    id: "labor-share", n: 37, week: W, starred: true, tags: ["PE Q13a", "PE P2 Q3b"],
+    term: "Labor share of income",
+    simple: "The fraction of output paid to workers. Under Cobb-Douglas it's 1 − α and stays constant when K or L change.",
+    formula: `${fr("<i>WL</i>", "<i>PY</i>")}${op("=")}${fr("MPL · <i>L</i>", "<i>Y</i>")}${op("=")}1 − α`,
+    more: [
+      "Why constant: MPL × L / Y = (1 − α)(Y/L) × L / Y = 1 − α. The L's and Y's cancel, so it holds for any K and L. If L rises, MPL falls by just enough that the wage bill keeps the same share of output.",
+      "In US data the labor share has been falling since about 2000, which Cobb-Douglas can't explain; see the declining-share card.",
+    ],
+    connections: ["capital-share", "cobb-douglas", "declining-labor-share", "backing-out"],
+    example: "A company paying $1.33M in wages out of $2M in value added has a labor share of 2/3.",
+    numbers: [
+      ["Nonfarm business labor share, Q2 2026", "52.8% (record low)"],
+      ["Same measure, Q4 2025", "54.4%"],
+      ["Series begins", "1947"],
+    ],
+    numbersSource: "BLS Productivity and Costs / Economics Daily. BLS's measure differs from the textbook 2/3 because of how it treats self-employment and depreciation.",
+    played: [
+      "Running example: wage bill = MPL × L = 1.333 × 1,000 = 1,333.",
+      "Labor share = 1,333 / 2,000 = <b>2/3 = 1 − α</b>.",
+    ],
+    graph: "incomeSplit",
+  },
+  {
+    id: "capital-share", n: 38, week: W, starred: true, tags: ["PE P2 Q3b"],
+    term: "Capital share of income",
+    simple: "The fraction of output paid to capital owners. Under Cobb-Douglas it equals α.",
+    formula: `${fr("<i>RK</i>", "<i>PY</i>")}${op("=")}${fr("MPK · <i>K</i>", "<i>Y</i>")}${op("=")}α`,
+    more: [
+      "Labor share + capital share = 1: all output is paid out (zero economic profit).",
+    ],
+    connections: ["labor-share", "cobb-douglas", "zero-profit", "golden-saving"],
+    example: "In the US, about a third of national income goes to capital (rent, interest, profit) and about two-thirds to labor, which is why α ≈ 1/3 is the default.",
+    played: [
+      "Running example: MPK × K = 0.0833 × 8,000 = 667.",
+      "Capital share = 667 / 2,000 = <b>1/3 = α</b>.",
+    ],
+    graph: "incomeSplit",
+  },
+  {
+    id: "backing-out", n: 39, week: W, starred: true, tags: ["PE P2 Q3b"],
+    term: "Backing out α and A",
+    simple: "Get α from the labor share, then solve the production function for A.",
+    formula: `1 − α${op("=")}${fr("MPL · <i>L</i>", "<i>Y</i>")},<span style="display:inline-block;width:16px"></span><i>A</i>${op("=")}${fr("<i>Y</i>", "<i>K</i><sup>α</sup><i>L</i><sup>1−α</sup>")}`,
+    more: [
+      "Step 1 always: labor share → α. Step 2: plug α, Y, K, L into the production function and solve for A.",
+      "This is exactly how growth accountants measure TFP in real data.",
+    ],
+    connections: ["labor-share", "tfp", "cobb-douglas"],
+    example: "Given a country's GDP, capital stock, employment and total wages, you can back out its α and TFP. That's how the Penn World Table builds cross-country productivity numbers.",
+    played: [
+      "Data: Y = 2,000, K = 8,000, L = 1,000, total wages WL/P = 1,333.",
+      "1 − α = 1,333 / 2,000 = 2/3 → <b>α = 1/3</b>.",
+      "A = 2,000 / (8000<sup>1/3</sup> × 1000<sup>2/3</sup>) = 2,000 / (20 × 100) = <b>1</b>.",
+    ],
+  },
+  {
+    id: "zero-profit", n: 40, week: W, tags: ["Ch 3"],
+    term: "Zero economic profit",
+    simple: "With competition and constant returns, paying each factor its marginal product uses up all output.",
+    formula: `<i>Y</i>${op("=")}MPL · <i>L</i>${op("+")}MPK · <i>K</i>`,
+    more: [
+      "This is Euler's theorem for CRS functions.",
+      "“Zero economic profit” isn't zero accounting profit: accounting profit includes the return to capital the owners provide themselves.",
+    ],
+    connections: ["crs", "profit", "labor-share", "capital-share"],
+    example: "In a competitive industry with easy entry, any excess profit attracts new firms until it's competed away.",
+    played: [
+      "MPL × L = 1.333 × 1,000 = 1,333.",
+      "MPK × K = 0.0833 × 8,000 = 667.",
+      "Sum = 2,000 = Y. Nothing is left over.",
+    ],
+    graph: "incomeSplit",
+  },
+  {
+    id: "neoclassical-distribution", n: 41, week: W, tags: ["Ch 3 #1", "PS2"],
+    term: "Neoclassical theory of distribution",
+    simple: "Each factor is paid its marginal product. More labor lowers the real wage and raises the rental rate; less capital does the same; better technology raises both.",
+    more: [
+      "Think scarcity: whatever becomes relatively scarce earns more. Extra workers make capital relatively scarce (R/P up) and labor relatively plentiful (W/P down).",
+      "Technology (A up) raises both MPL and MPK.",
+    ],
+    connections: ["labor-demand", "capital-demand", "tfp", "real-wage"],
+    example: "The Black Death killed about a third of Europe's population in the 1300s. Land per worker jumped; over the following decades real wages rose sharply while land rents fell, exactly as the theory predicts.",
+    played: [
+      "Running example: L rises from 1,000 to 1,331 (+33%).",
+      "Y = 2,420. W/P = MPL: 1.33 → 1.21 (falls).",
+      "R/P = MPK: (1/3)(2420/8000) = 0.101, up from 0.083 (rises).",
+    ],
+    graph: { key: "factorMarket", args: { kind: "labor" } },
+  },
+  {
+    id: "wage-productivity", n: 42, week: W, starred: true, tags: ["PE Q13c", "L3"],
+    term: "Real wage and labor productivity",
+    simple: "Under competition and constant returns, the real wage is proportional to average labor productivity.",
+    formula: `${fr("<i>W</i>", "<i>P</i>")}${op("=")}(1 − α)${fr("<i>Y</i>", "<i>L</i>")}`,
+    more: [
+      "So real wages should grow at the same rate as output per worker. In the US they did, roughly, until about 1970-2000; since then productivity has grown faster than typical pay. That gap is the same fact as the falling labor share.",
+    ],
+    connections: ["cd-marginal", "labor-share", "declining-labor-share", "real-wage"],
+    example: "Across countries this works well: workers in high-productivity Switzerland or Norway earn far more than in low-productivity economies, roughly in proportion.",
+    played: [
+      "Y/L = 2,000 / 1,000 = 2. With 1 − α = 2/3, W/P = 1.33.",
+      "Productivity rises 10% to 2.2: W/P = (2/3)(2.2) = 1.47, also +10%.",
+    ],
+    graph: "laborShareShift",
+  },
+  {
+    id: "declining-labor-share", n: 43, week: W, starred: true, tags: ["PE Q13d", "L3"],
+    term: "Declining labor share: explanations",
+    simple: "(1) <b>Production technology</b>: offshoring and automation, capital displacing workers. (2) <b>Rising market power</b>: higher markups, superstar firms and concentration lowering wages relative to productivity.",
+    more: [
+      "Technology story: if capital and labor are easier to substitute than Cobb-Douglas assumes, cheaper machines (computers, robots) shift income from labor to capital.",
+      "Market-power story: firms that price above marginal cost keep the gap as profit, so neither labor nor capital is paid its full marginal product. Superstar firms (high profit, few workers) gaining market share pull the aggregate share down.",
+    ],
+    connections: ["labor-share", "markup", "wage-productivity", "cobb-douglas"],
+    example: "Instagram had 13 employees when Facebook bought it for $1 billion in 2012. Kodak, the photography giant it replaced, had employed over 100,000 people at its peak.",
+    numbers: [
+      ["BLS labor share, Q2 2026", "52.8%, lowest since 1947"],
+      ["Average US markup, 1980", "21% over cost"],
+      ["Average US markup, 2016", "61% over cost"],
+    ],
+    numbersSource: "BLS Productivity and Costs; De Loecker, Eeckhout & Unger (2020), Quarterly Journal of Economics.",
+    graph: "laborShareShift",
+  },
+  {
+    id: "markup", n: 44, week: W, tags: ["L3"],
+    term: "Markup",
+    simple: "Price above marginal cost (P > MC). Rising markups mean firms keep more of output, lowering the labor share.",
+    formula: `markup${op("=")}${fr("<i>P</i>", "<i>MC</i>")}`,
+    more: [
+      "Under perfect competition P = MC and the markup is 1. Market power lets a firm charge more.",
+      "The extra (P − MC) goes to profit, not to workers or to the competitive return on capital.",
+    ],
+    connections: ["declining-labor-share", "labor-share", "zero-profit"],
+    example: "A pill that costs a drugmaker $1 to make but sells for $50 under patent has a markup of 50.",
+    numbers: [
+      ["Average US markup, 1980", "1.21"],
+      ["Average US markup, 2016", "1.61"],
+    ],
+    numbersSource: "De Loecker, Eeckhout & Unger (2020).",
+    played: [
+      "MC of a coffee = $1.50; it sells for $4.50.",
+      "Markup = 4.50 / 1.50 = 3. Two-thirds of the price is above cost.",
+    ],
+  },
+  {
+    id: "wage-compression", n: 45, week: W, starred: true, tags: ["PE Q13b", "L3"],
+    term: "Wage compression after the pandemic",
+    simple: "Since the pandemic, wage growth has been fastest for low-income workers (around the 10th percentile).",
+    more: [
+      "Tight labor markets in 2021–23 (many more openings than job seekers) let low-wage workers switch jobs easily, and job switchers got big raises. That bid up pay at the bottom fastest.",
+      "Researchers estimate the surge reversed a sizeable part (roughly a third) of the rise in the gap between high and low earners since 1980.",
+    ],
+    connections: ["declining-labor-share", "real-wage", "minimum-wage"],
+    example: "Restaurant and warehouse wages jumped in 2021–22 as employers competed for workers: many fast-food chains moved starting pay well above the $7.25 federal minimum without any law forcing them.",
+    numbers: [
+      ["Share of 1980–2019 rise in 90/10 gap reversed", "≈ one third"],
+    ],
+    numbersSource: "Autor, Dube & McGrew, “The Unexpected Compression” (2023).",
+    graph: "wageCompression",
+  },
+  {
+    id: "disposable-income", n: 46, week: W, tags: ["Ch 3"],
+    term: "Disposable income",
+    simple: "Income after taxes.",
+    formula: `<i>Y</i>${op("−")}<i>T</i>`,
+    more: [
+      "T here is taxes <b>net of transfers</b>, so a stimulus check is a negative T.",
+    ],
+    connections: ["consumption-function", "mpc", "private-saving"],
+    example: "In 2020–21 stimulus checks (negative T) pushed US disposable income up even while unemployment was high.",
+    numbers: [
+      ["Personal saving rate, Jul 2026 (share of disposable income)", "3.0%"],
+    ],
+    numbersSource: "BEA Personal Income and Outlays, July 2026.",
+    played: [
+      "Running example: Y = 5,000, T = 1,000 → disposable income = 4,000.",
+    ],
+  },
+  {
+    id: "consumption-function", n: 47, week: W, starred: true, tags: ["PE Q5", "PE Q18"],
+    term: "Consumption function",
+    simple: "Consumption depends on disposable income.",
+    formula: `<i>C</i>${op("=")}<i>C</i>(<i>Y</i> − <i>T</i>)`,
+    more: [
+      "Usually linear in examples: C = a + MPC × (Y − T).",
+      "In the classical model with Y and T fixed, C is fixed too, which is why a change in G has to crowd out I.",
+    ],
+    connections: ["mpc", "disposable-income", "goods-market-eq", "private-saving"],
+    example: "When your take-home pay rises, you eat out more and save some of the rest.",
+    played: [
+      "C = 250 + 0.75(Y − T).",
+      "Y = 5,000, T = 1,000 → C = 250 + 0.75 × 4,000 = <b>3,250</b>.",
+    ],
+    graph: "consumption",
+  },
+  {
+    id: "mpc", n: 48, week: W, starred: true, tags: ["PE Q18"],
+    term: "Marginal propensity to consume (MPC)",
+    simple: "The extra consumption from an extra dollar of disposable income. Between 0 and 1.",
+    formula: `MPC${op("=")}${fr("∂<i>C</i>(<i>Y</i> − <i>T</i>)", "∂(<i>Y</i> − <i>T</i>)")},<span style="display:inline-block;width:12px"></span>0 < MPC < 1`,
+    more: [
+      "1 − MPC is the marginal propensity to save.",
+      "It matters for taxes: a tax cut of ΔT raises C by MPC × ΔT, so private saving rises by only (1 − MPC)ΔT.",
+    ],
+    connections: ["consumption-function", "tax-saving", "balanced-budget"],
+    example: "Studies of the 2008 stimulus payments found households spent roughly 50–90% of them within a few months, with lower-income households spending more.",
+    played: [
+      "MPC = 0.75. You get a $100 raise after tax.",
+      "You spend $75 and save $25.",
+    ],
+    graph: "consumption",
+  },
+  {
+    id: "investment-function", n: 49, week: W, starred: true, tags: ["PE Q5", "Ch 4"],
+    term: "Investment function",
+    simple: "Investment falls as the real interest rate rises, because borrowing costs more.",
+    formula: `<i>I</i>${op("=")}<i>I</i>(<i>r</i>)`,
+    more: [
+      "It's the <b>real</b> rate that matters: a firm repays the loan with output whose price rises with inflation.",
+      "Even firms using their own cash face r: it's the return they give up by not lending the money out.",
+    ],
+    connections: ["investment", "loanable-funds", "nominal-real-rate", "crowding-out"],
+    example: "When mortgage rates jumped from about 3% to about 7% in 2022, housing starts and home sales fell sharply: residential investment is the most interest-sensitive part of I.",
+    played: [
+      "I(r) = 1,000 − 50r.",
+      "r = 5 → I = 750. r = 10 → I = 500.",
+    ],
+    graph: "investment",
+  },
+  {
+    id: "goods-market-eq", n: 50, week: W, starred: true, tags: ["PE Q5", "PE P2 Q3c"],
+    term: "Goods-market equilibrium",
+    simple: "The real interest rate adjusts so that demand for output equals the fixed supply.",
+    formula: `<i>Y̅</i>${op("=")}<i>C</i>(<i>Y̅</i> − <i>T̅</i>)${op("+")}<i>I</i>(<i>r</i>)${op("+")}<i>G̅</i>`,
+    more: [
+      "Everything is fixed except r (and so I). r is the price that clears the market.",
+      "Subtract C and G from both sides and you get S = I(r): the same equilibrium seen from the loanable-funds market.",
+    ],
+    connections: ["loanable-funds", "consumption-function", "investment-function", "production-function"],
+    played: [
+      "5,000 = 3,250 + (1,000 − 50r) + 1,000.",
+      "5,000 = 5,250 − 50r → 50r = 250 → <b>r = 5</b>.",
+      "I = 1,000 − 250 = 750. Check: 3,250 + 750 + 1,000 = 5,000 ✓",
+    ],
+    graph: "loanableFunds",
+  },
+  {
+    id: "private-saving", n: 51, week: W, tags: ["Ch 4 #1, #3"],
+    term: "Private saving",
+    simple: "Disposable income that households don't consume.",
+    formula: `<i>S</i><sub>private</sub>${op("=")}<i>Y</i>${op("−")}<i>T</i>${op("−")}<i>C</i>`,
+    connections: ["public-saving", "national-saving", "disposable-income", "tax-saving"],
+    example: "During the 2020 lockdowns, with spending blocked and stimulus checks arriving, the US personal saving rate briefly spiked above 30%.",
+    numbers: [
+      ["Personal saving rate, Jul 2026", "3.0%"],
+      ["Jan 2026", "4.5%"],
+    ],
+    numbersSource: "BEA Personal Income and Outlays.",
+    played: [
+      "Y = 5,000, T = 1,000, C = 3,250.",
+      "S<sub>private</sub> = 5,000 − 1,000 − 3,250 = <b>750</b>.",
+    ],
+    graph: "loanableFunds",
+  },
+  {
+    id: "public-saving", n: 52, week: W, tags: ["Ch 4 #3"],
+    term: "Public saving",
+    simple: "Tax revenue minus government purchases. Negative means a budget deficit.",
+    formula: `<i>S</i><sub>public</sub>${op("=")}<i>T</i>${op("−")}<i>G</i>`,
+    more: [
+      "In the model, T is net taxes, so transfers are already subtracted.",
+    ],
+    connections: ["private-saving", "national-saving", "crowding-out", "government"],
+    example: "The US federal government ran a $1.8 trillion deficit in fiscal 2025: public saving was strongly negative.",
+    numbers: [
+      ["FY2025 revenue", "$5.2 trillion"],
+      ["FY2025 outlays", "$7.0 trillion"],
+      ["FY2025 deficit", "$1.8T (≈ 5.9% of GDP)"],
+      ["Net interest, FY2025", "> $1 trillion (first time)"],
+    ],
+    numbersSource: "CBO Monthly Budget Review, FY2025; share of GDP per CRFB/AAF.",
+    played: [
+      "T = 1,000, G = 1,000 → S<sub>public</sub> = 0 (balanced budget).",
+      "G rises to 1,250 → S<sub>public</sub> = −250 (a deficit).",
+    ],
+    graph: { key: "loanableFunds", args: { shift: "left" } },
+  },
+  {
+    id: "national-saving", n: 53, week: W, tags: ["Ch 4 #3", "PS3"],
+    term: "National saving",
+    simple: "Output not consumed by households or government. Private plus public saving.",
+    formula: `<i>S</i>${op("=")}<i>Y</i> − <i>C</i> − <i>G</i>${op("=")}(<i>Y</i> − <i>T</i> − <i>C</i>)${op("+")}(<i>T</i> − <i>G</i>)`,
+    more: [
+      "Add and subtract T and the total splits neatly into the private and public pieces.",
+      "In the closed-economy model this is the supply of loanable funds.",
+    ],
+    connections: ["private-saving", "public-saving", "loanable-funds", "expenditure-identity"],
+    played: [
+      "Y − C − G = 5,000 − 3,250 − 1,000 = 750.",
+      "Private 750 + public 0 = <b>750</b>.",
+    ],
+    graph: "loanableFunds",
+  },
+  {
+    id: "loanable-funds", n: 54, week: W, starred: true, tags: ["PE Q5", "Ch 4"],
+    term: "Loanable funds market",
+    simple: "Saving (supply) equals investment (demand). The real interest rate clears it.",
+    formula: `<i>S</i>${op("=")}<i>I</i>(<i>r</i>)`,
+    more: [
+      "Graph: <i>r</i> on the vertical axis. Saving is a <b>vertical</b> line (it doesn't depend on r in this model). Investment demand slopes <b>down</b>.",
+      "Anything that changes national saving shifts the vertical line; anything that changes the desire to invest at each r shifts the demand curve.",
+    ],
+    connections: ["national-saving", "investment-function", "crowding-out", "goods-market-eq"],
+    example: "A burst of optimism about AI makes firms want to build data centers at any given interest rate: investment demand shifts right, and with saving fixed, r rises.",
+    played: [
+      "S = 750 (vertical). I = 1,000 − 50r.",
+      "750 = 1,000 − 50r → r = 5.",
+    ],
+    graph: "loanableFunds",
+  },
+  {
+    id: "crowding-out", n: 55, week: W, starred: true, tags: ["PE Q5", "L3"],
+    term: "Crowding out",
+    simple: "Higher government spending lowers public saving, shifts saving left, raises r, and cuts investment one-for-one.",
+    more: [
+      "Because Y is fixed by the supply side, every extra dollar of G has to come out of something else. C is fixed (Y and T didn't change), so it comes out of I.",
+      "This is textbook Figure 3-9.",
+    ],
+    connections: ["loanable-funds", "public-saving", "government", "balanced-budget"],
+    example: "A long-run worry about large deficits: if government borrowing absorbs national saving, there's less left for private investment in factories and equipment, so the future capital stock is smaller.",
+    played: [
+      "G rises 1,000 → 1,250 (T unchanged). S falls 750 → 500.",
+      "500 = 1,000 − 50r → r = 10 (up from 5).",
+      "I = 500, down 250 = the rise in G. One-for-one crowding out.",
+    ],
+    graph: { key: "loanableFunds", args: { shift: "left" } },
+  },
+  {
+    id: "tax-saving", n: 56, week: W, tags: ["Ch 4 #1"],
+    term: "Tax change and saving",
+    simple: "A tax increase ΔT raises public saving by ΔT and lowers private saving by MPC·ΔT, so national saving rises by (1 − MPC)ΔT.",
+    formula: `Δ<i>S</i>${op("=")}(1 − MPC)Δ<i>T</i>`,
+    more: [
+      "National saving rises, r falls, investment rises.",
+      "Private saving falls by less than the tax because households cut consumption by MPC × ΔT and saving by the rest.",
+    ],
+    connections: ["mpc", "public-saving", "private-saving", "loanable-funds"],
+    played: [
+      "T rises 1,000 → 1,100, MPC = 0.75.",
+      "Public saving +100. C falls 75 → private saving falls 25.",
+      "S rises 750 → 825. 825 = 1,000 − 50r → r = 3.5, I = 825.",
+    ],
+    graph: { key: "loanableFunds", args: { shift: "right" } },
+  },
+  {
+    id: "balanced-budget", n: 57, week: W, tags: ["PS2 (Ch 4 #4)"],
+    term: "Balanced-budget increase",
+    simple: "Raising G and T by the same amount x still lowers national saving, by (1 − MPC)x, so r rises and investment falls.",
+    formula: `Δ<i>S</i>${op("=")}−(1 − MPC)<i>x</i>`,
+    more: [
+      "Public saving doesn't change (T − G constant). But the higher tax cuts consumption by only MPC × x, so private saving falls by (1 − MPC)x.",
+      "Equivalently: G took x, and C gave up only MPC × x, so I must give up the rest.",
+    ],
+    connections: ["crowding-out", "tax-saving", "mpc", "public-saving"],
+    played: [
+      "G and T both rise by 100, MPC = 0.75.",
+      "Public saving: unchanged. C falls 75 → private saving falls 25.",
+      "S = 725 → r = 5.5, I = 725 (down 25 = (1 − 0.75) × 100).",
+    ],
+    graph: { key: "loanableFunds", args: { shift: "left", cap: "Equal rises in G and T: public saving unchanged, private saving down (1 − MPC)x. S shifts left a little, r rises, I falls by (1 − MPC)x." } },
+  },
+  {
+    id: "exogenous", n: 58, week: W, starred: true, tags: ["PE Q14"],
+    term: "Exogenous variable",
+    simple: "A variable known beforehand and fed into the model, like K, L, G or T.",
+    more: [
+      "Exogenous = comes from outside the model. The model takes it as given; you change it to run experiments (“what if G rises?”).",
+    ],
+    connections: ["endogenous", "goods-market-eq"],
+    example: "In the long-run model: K̅, L̅, A, G̅, T̅ and (in Week 3) the money supply M are exogenous.",
+  },
+  {
+    id: "endogenous", n: 59, week: W, starred: true, tags: ["PE Q14"],
+    term: "Endogenous variable",
+    simple: "A variable of interest that comes out of the model, like r, C or I.",
+    more: [
+      "The model explains it. Change an exogenous variable and read off what happens to the endogenous ones.",
+    ],
+    connections: ["exogenous", "goods-market-eq"],
+    example: "In the long-run model: Y (via the production function), W/P, R/P, C, I and r are endogenous. In the Solow model, k* and y* are endogenous; s, δ and n are exogenous.",
+    played: [
+      "Exogenous shock: G rises 250.",
+      "Endogenous responses: r 5 → 10, I 750 → 500. C and Y unchanged.",
+    ],
+  },
+];
