@@ -33,7 +33,7 @@ jobs:
       - name: Build and check the deck, models and site
         run: |
           node tools/build.mjs
-          node --test tools/schedule.test.mjs tools/models.test.mjs
+          node --test tools/schedule.test.mjs tools/models.test.mjs tools/practice.test.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

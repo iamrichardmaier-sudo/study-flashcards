@@ -148,6 +148,7 @@ function shuffle(a) {
  * combine instead of one overwriting the other.
  *
  *   cards     per card, whichever copy was graded last
+ *   practice  per practice-exam question, the same way
  *   days      the larger count for each day (the streak)
  *   models    per walkthrough, the most recent result
  *   missed    both lists, newest first, no duplicates
@@ -165,6 +166,12 @@ function mergeProgress(into, other) {
     if (!a || stamp(b) > stamp(a)) into.cards[id] = b;
   }
   for (id in into.cards) if (stamp(into.cards[id]) < resetAt) delete into.cards[id];
+  into.practice = into.practice || {};
+  for (id in other.practice || {}) {
+    var pa = into.practice[id], pb = other.practice[id];
+    if (!pa || stamp(pb) > stamp(pa)) into.practice[id] = pb;
+  }
+  for (id in into.practice) if (stamp(into.practice[id]) < resetAt) delete into.practice[id];
   into.days = into.days || {};
   for (var d in other.days || {}) into.days[d] = Math.max(into.days[d] || 0, other.days[d]);
   into.models = into.models || {};

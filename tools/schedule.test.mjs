@@ -130,3 +130,17 @@ test("merging two copies keeps the latest grade per card and survives a reset", 
   const other = M.mergeProgress(JSON.parse(JSON.stringify(web)), phone);
   assert.deepEqual(other.cards, m.cards);
 });
+
+test("practice-exam answers merge like cards: latest wins, a phone without them keeps the web's", () => {
+  const M = {};
+  vm.runInNewContext(src + "\nout.mergeProgress = mergeProgress;", { out: M });
+  const web = { cards: {}, practice: { q1: { last: 200, rating: "missed" }, q2: { last: 50, rating: "confident" } } };
+  const phone = { cards: { a: { last: 10 } }, practice: { q1: { last: 300, rating: "confident" } } };
+  const m = M.mergeProgress(JSON.parse(JSON.stringify(web)), phone);
+  assert.equal(m.practice.q1.rating, "confident");
+  assert.equal(m.practice.q2.rating, "confident");
+  const noPractice = M.mergeProgress({ cards: { a: { last: 10 } } }, web);
+  assert.deepEqual(Object.keys(noPractice.practice).sort(), ["q1", "q2"]);
+  const reset = M.mergeProgress(JSON.parse(JSON.stringify(m)), { cards: {}, resetAt: 250 });
+  assert.deepEqual(Object.keys(reset.practice), ["q1"]);
+});

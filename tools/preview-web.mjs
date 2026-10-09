@@ -352,6 +352,90 @@ console.log("✓ account store refuses one write: retried and saved");
 await accountRun("hang");
 console.log("✓ account store write hangs: times out, retried and saved");
 
+// ------------------------------------------------------------ practice
+{
+  const { ctx, page: pp } = await newPage();
+  await pp.click('[data-tab="practice"]');
+  assert.match(await pp.textContent("#pq-drill"), /Drill 35 questions/);
+  await pp.keyboard.press("Enter");
+  const first = await pp.evaluate("EXAM.questions[0].id");
+  assert.equal(await pp.evaluate("document.querySelector('.pq-src').textContent.includes('Q1')"), true, "drill opens on Part 1 Q1");
+  // Q1 is select-all: tick a wrong one (a) only, check.
+  const pos = (opt) => pp.evaluate((o) => [...document.querySelectorAll(".pq-opt")].findIndex((b) => +b.dataset.opt === o), opt);
+  await pp.keyboard.press(String((await pos(0)) + 1));
+  await pp.keyboard.press("Enter");
+  assert.ok(await pp.$(".pq-verdict.bad"), "wrong select-all is marked wrong");
+  const why = await pp.textContent(".pq-box.why");
+  assert.match(why, /is false/); assert.match(why, /is true/);   // picked (a) wrongly, left out (c)
+  assert.equal(await pp.evaluate("document.querySelectorAll('.pq-steps li:not([hidden])').length"), 1, "one step at a time");
+  let p0 = await pp.evaluate("JSON.parse(localStorage.getItem('econ381-progress')).practice");
+  assert.equal(p0[first].rating, "missed");
+  const steps = await pp.evaluate("EXAM.questions[0].steps.length");
+  for (let k = 1; k < steps; k++) await pp.keyboard.press("Enter");
+  assert.equal(await pp.evaluate("document.querySelectorAll('.pq-steps li:not([hidden])').length"), steps);
+  assert.ok(await pp.$(".pq-graph svg"), "the graph appears once the working is all shown");
+  await pp.keyboard.press("Enter");
+  // Q2 pick-one: choose the right answer by its key.
+  const q2 = await pp.evaluate("EXAM.questions[1]");
+  const rightPos = await pos(q2.options.findIndex((o) => o.right));
+  await pp.keyboard.press(String(rightPos + 1));
+  assert.ok(await pp.$(".pq-verdict.ok"), "right answer is marked right");
+  assert.equal(await pp.$(".pq-box.why"), null, "no diagnosis when right");
+  p0 = await pp.evaluate("JSON.parse(localStorage.getItem('econ381-progress')).practice");
+  assert.equal(p0[q2.id].rating, "confident");
+  assert.ok(p0[q2.id].due > Date.now() + 3 * H, "a right answer comes back in hours");
+  // The missed Q1 went to the back of the session.
+  const q = await pp.evaluate("PRACTICEUI && document.querySelector('.pq-count').textContent");
+  assert.match(q, /\/ 36$/, "the missed question was added to the end: " + q);
+  await pp.keyboard.press("Escape");
+  assert.match(await pp.textContent("#practice"), /1 of 35 right/);
+  console.log("✓ practice: select-all and pick-one, diagnosis, step-by-step reveal, saved and requeued");
+
+  // Every question, with every wrong option picked, fits at both widths.
+  const problems = [];
+  for (const vw of [1280, 390]) {
+    await pp.setViewportSize({ width: vw, height: 860 });
+    const n = await pp.evaluate("EXAM.questions.length");
+    for (let k = 0; k < n; k++) {
+      const q = await pp.evaluate((k) => EXAM.questions[k], k);
+      for (let oi = 0; oi < q.options.length; oi++) {
+        if (q.options[oi].right) continue;
+        await pp.click("#tab-practice [data-pq-section='" + q.section + "']").catch(() => {});
+        await pp.evaluate(() => { const b = document.querySelector("#pq-quit"); if (b) b.click(); });
+        await pp.click("[data-pq-section='" + q.section + "']");
+        const idx = await pp.evaluate((id) => EXAM.questions.filter((x) => x.section === EXAM.questions.find((y) => y.id === id).section).findIndex((x) => x.id === id), q.id);
+        // jump straight to this question in the section session
+        for (let s = 0; s < idx; s++) {
+          await pp.evaluate(() => { const o = document.querySelector(".pq-opt"); o.click(); const c = document.querySelector("#pq-check"); if (c) c.click(); });
+          await pp.evaluate(() => { const b = document.querySelector("#pq-show"); if (b) b.click(); });
+          while (await pp.evaluate(() => /Next step/.test(document.querySelector("#pq-next").textContent))) await pp.click("#pq-next");
+          await pp.click("#pq-next");
+        }
+        const p = await pos(oi);
+        await pp.click(`.pq-opt >> nth=${p}`);
+        if (q.kind === "all") await pp.click("#pq-check");
+        await pp.evaluate(() => { const b = document.querySelector("#pq-show"); if (b) b.click(); });
+        while (await pp.evaluate(() => /Next step/.test(document.querySelector("#pq-next").textContent))) await pp.click("#pq-next");
+        const bad = await pp.evaluate(() => {
+          const out = [];
+          const w = document.documentElement.clientWidth;
+          if (document.querySelector("#shell").scrollWidth > w + 1) out.push("page scrolls sideways");
+          document.querySelectorAll(".pq *").forEach((el) => { const r = el.getBoundingClientRect(); if (r.width && r.right > w + 1) out.push(el.className || el.tagName); });
+          if (!document.querySelector(".pq-box.why") && document.querySelector(".pq-verdict.bad")) out.push("no diagnosis");
+          return out.slice(0, 3);
+        });
+        if (bad.length) problems.push(`${vw}px ${q.id} option ${oi}: ${bad.join(", ")}`);
+        if (k === 31 && oi === 1 && vw === 390) await pp.screenshot({ path: join(out, "web-practice-wrong-phone.png"), fullPage: true });
+        await pp.keyboard.press("Escape");
+        if (q.kind === "all") break;   // one wrong pattern per select-all is enough
+      }
+    }
+  }
+  assert.deepEqual(problems, []);
+  console.log("✓ practice: all 35 questions × every wrong answer render with a diagnosis, no overflow at 1280px and 390px");
+  await ctx.close();
+}
+
 // ------------------------------------------- the posted site (Supabase)
 // site/index.html is what GitHub Pages serves. Its saving goes to Supabase;
 // here Supabase is faked at the network layer so the page's real fetch code runs.
