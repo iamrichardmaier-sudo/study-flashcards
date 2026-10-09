@@ -20,12 +20,12 @@ body { font-family: Inter, -apple-system, system-ui, sans-serif; }
 /* tab bar: across the top on a computer, along the bottom on a phone */
 .tabs { position: sticky; top: 0; z-index: 20; background: rgba(251,248,243,.94); backdrop-filter: blur(8px);
         border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
-.tabs-in { max-width: 1240px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 20px; }
+.tabs-in { max-width: 1240px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 5px 20px; }
 .brand { display: flex; align-items: center; gap: 8px; font-weight: 800; letter-spacing: .06em; color: var(--primary); font-size: 14px; }
 .brand svg { width: 22px; height: 22px; }
 .tablist { display: flex; gap: 4px; }
 .tabbtn { display: flex; align-items: center; gap: 7px; border: 0; background: transparent; color: var(--muted); font: inherit; font-weight: 600;
-          font-size: 14px; padding: 9px 14px; border-radius: 14px; cursor: pointer; transition: background .15s, color .15s, transform .1s; }
+          font-size: 13.5px; padding: 7px 13px; border-radius: 12px; cursor: pointer; transition: background .15s, color .15s, transform .1s; }
 .tabbtn svg { width: 18px; height: 18px; }
 .tabbtn:hover { background: rgba(43,33,24,.06); color: var(--ink); }
 .tabbtn[aria-current="page"] { background: var(--primary); color: var(--primary-ink); box-shadow: 0 4px 12px -6px rgba(31,78,140,.6); }
@@ -33,7 +33,7 @@ body { font-family: Inter, -apple-system, system-ui, sans-serif; }
 
 .views { padding-bottom: 40px; }
 .wrap { max-width: 720px; margin: 0 auto; padding: 22px 20px 0; display: flex; flex-direction: column; gap: 18px; }
-.wrap.wide { max-width: 1240px; }
+.wrap.wide { max-width: 1240px; padding-top: 8px; gap: 10px; }
 
 /* home */
 .h-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
@@ -113,6 +113,18 @@ ul.plain { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.55; }
          font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink); }
 .m-confirm .yes { background: #C0392B; color: #fff; border-color: #C0392B; }
 .danger { color: #C0392B; }
+
+.signin { display: flex; flex-direction: column; gap: 8px; border-color: var(--primary); }
+.signin .sec { margin: 0; color: var(--primary); }
+.sgrid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; margin-top: 4px; }
+.sgrid input { min-width: 0; padding: 11px 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; font: inherit; font-size: 15px; color: var(--ink); }
+.sgrid input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+.go-btn { padding: 11px 18px; border-radius: 12px; border: 0; background: var(--primary); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.go-btn:disabled { opacity: .6; }
+.si-err { margin: 0; font-size: 13px; color: #C0392B; }
+.si-err:empty { display: none; }
+.acct { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 14px; }
+@media (max-width: 560px) { .sgrid { grid-template-columns: 1fr; } }
 
 /* the flashcard session (shared page) on a big screen */
 header, #quitline, #tip, footer { width: 100%; max-width: 680px; margin-inline: auto; }

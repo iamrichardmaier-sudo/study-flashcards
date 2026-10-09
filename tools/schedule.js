@@ -141,3 +141,42 @@ function shuffle(a) {
   }
   return a;
 }
+
+/**
+ * Folds `other` into `into` (mutating `into`), so two copies of progress
+ * (the phone's and the website's, or this browser's and the account's)
+ * combine instead of one overwriting the other.
+ *
+ *   cards     per card, whichever copy was graded last
+ *   days      the larger count for each day (the streak)
+ *   models    per walkthrough, the most recent result
+ *   missed    both lists, newest first, no duplicates
+ *   resetAt   a reset wins over anything graded before it, on every device
+ */
+function mergeProgress(into, other) {
+  if (!other) return into;
+  into.cards = into.cards || {};
+  var resetAt = Math.max(into.resetAt || 0, other.resetAt || 0);
+  if (resetAt) into.resetAt = resetAt;
+  var stamp = function (s) { return (s && (s.last || s.first)) || 0; };
+  var id;
+  for (id in other.cards || {}) {
+    var a = into.cards[id], b = other.cards[id];
+    if (!a || stamp(b) > stamp(a)) into.cards[id] = b;
+  }
+  for (id in into.cards) if (stamp(into.cards[id]) < resetAt) delete into.cards[id];
+  into.days = into.days || {};
+  for (var d in other.days || {}) into.days[d] = Math.max(into.days[d] || 0, other.days[d]);
+  into.models = into.models || {};
+  for (id in other.models || {}) {
+    var ma = into.models[id], mb = other.models[id];
+    if (!ma || (mb.at || 0) > (ma.at || 0)) into.models[id] = mb;
+  }
+  for (id in into.models) if ((into.models[id].at || 0) < resetAt) delete into.models[id];
+  var seen = {};
+  into.missed = (into.missed || []).concat(other.missed || [])
+    .filter(function (m) { var k = m.at + "|" + m.q; if (seen[k] || m.at < resetAt) return false; seen[k] = 1; return true; })
+    .sort(function (x, y) { return y.at - x.at; }).slice(0, 40);
+  if (other.last && (!into.last || (other.last.at || 0) > (into.last.at || 0))) into.last = other.last;
+  return into;
+}

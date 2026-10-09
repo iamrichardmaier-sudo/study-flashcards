@@ -29,6 +29,7 @@ the script.
 - **One week…**: due and new cards from one week. If that week is caught up, you can cram it instead.
 - **Cram all 126 · no scheduling**: a shuffled pass through everything. Nothing is saved or rescheduled.
 - **Progress & reset…**: seen and solid counts per week, the cards you've missed most, and a reset.
+- **Sign in to sync with the website…**: shown until you've signed in. See *Saving and sync* below.
 
 ## Grading
 
@@ -83,9 +84,9 @@ or the count isn't 126 cards with 65 starred. Then paste the new
 
 ## The website version
 
-`web/econ381.html` is the same review page for a computer, built from the same
-cards by `node tools/build.mjs` and published as a claude.ai Artifact. Same
-cards and graphs, same three grades and schedule, plus a start menu and keys:
+The same review page for a computer, built from the same cards by
+`node tools/build.mjs`. Same cards and graphs, same three grades and
+schedule, plus a Home tab, a Models tab, and keys:
 
 | Key | Front | Back |
 |---|---|---|
@@ -95,9 +96,43 @@ cards and graphs, same three grades and schedule, plus a start menu and keys:
 | **↑ / ↓** | | Missed |
 | **Esc** | menu | menu |
 
-Progress is saved to your claude.ai account (private to you), with a copy in
-the browser. It's separate from the phone's progress, which lives in iCloud.
-`node tools/preview-web.mjs` tests it end to end.
+Two builds:
+
+- **`site/index.html`**: the real website, posted by GitHub Pages at
+  <https://iamrichardmaier-sudo.github.io/study-flashcards/>. Saves to your account (below).
+- **`web/econ381.html`**: the claude.ai Artifact copy. Saves to your claude.ai account.
+
+## Saving and sync
+
+Progress (card grades, streak, walkthroughs, missed predictions) is saved in
+the Supabase project the Arabic app (Wazn) uses, in a table
+`econ381_progress` with one private row per person (row-level security: only
+you can read or write your row). Sign in with **your Wazn email and password**.
+
+- **Website:** the Home tab shows a sign-in box until you sign in. After that
+  every grade saves as you go; the site remembers the login (a session token,
+  never the password) in that browser. Sign out from the Progress tab.
+- **Phone:** the script signs in with the Wazn login already in the Keychain
+  (`wazn.email` / `wazn.password`). If it isn't there, pick **Sign in to sync
+  with the website…** in the start menu once. It syncs when you open it and
+  again when you finish; the widget pulls too. The menu says "· synced".
+- **Both at once:** each sync pulls first and keeps the most recent grade for
+  every card, so studying on the phone and the computer never overwrites the
+  other. A reset on either side wins over older grades.
+- **Offline or signed out:** everything still works and saves locally (iCloud
+  on the phone, the browser on a computer); the next sync catches up.
+
+### Posting the site
+
+`.github/workflows/pages.yml` builds, runs the tests and deploys `site/` on
+every push to `main`. One-time setup: in the repo's **Settings → Pages**, set
+**Source** to **GitHub Actions**.
+
+### Tests
+
+`node tools/preview.mjs` (phone, including sync against a fake Supabase) and
+`node tools/preview-web.mjs` (website, including the posted site's sign-in,
+pull, merged push and sign-out) test it end to end.
 
 ### Models tab (website only)
 

@@ -35,6 +35,17 @@
           <div class="streak" id="h-streak" title="Days in a row with something studied"></div>
         </div>
 
+        <form class="card pad signin" id="signin" hidden autocomplete="on">
+          <p class="sec">Sign in to save your progress</p>
+          <p class="dim small">Use the same email and password as your Arabic app (Wazn). Your cards and walkthroughs then save to your account, and the ECON 381 phone app shares them.</p>
+          <div class="sgrid">
+            <input id="si-email" type="email" name="email" autocomplete="username" placeholder="email" required>
+            <input id="si-pass" type="password" name="password" autocomplete="current-password" placeholder="password" required>
+            <button type="submit" class="go-btn" id="si-go">Sign in</button>
+          </div>
+          <p class="si-err" id="si-err" role="alert"></p>
+        </form>
+
         <button type="button" class="primary" id="h-primary"></button>
         <p class="save-state dim small"></p>
 

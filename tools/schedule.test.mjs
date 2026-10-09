@@ -108,3 +108,25 @@ test("summary names the card a review would open on", () => {
   assert.equal(st.nextCard.id, "c9");
   assert.equal(st.due, 1);
 });
+
+test("merging two copies keeps the latest grade per card and survives a reset", () => {
+  const M = {};
+  vm.runInNewContext(src + "\nout.mergeProgress = mergeProgress;", { out: M });
+  const phone = { cards: { a: { last: 100, step: 1 }, b: { last: 300, step: 2 } }, days: { "2026-10-09": 3 } };
+  const web = { cards: { a: { last: 200, step: 2 }, c: { last: 50, step: 0 } }, days: { "2026-10-09": 5, "2026-10-08": 1 },
+                models: { s1: { done: true, at: 10 } }, missed: [{ q: "x", at: 5 }] };
+  const m = M.mergeProgress(JSON.parse(JSON.stringify(phone)), web);
+  assert.equal(m.cards.a.last, 200);
+  assert.equal(m.cards.b.last, 300);
+  assert.equal(m.cards.c.last, 50);
+  assert.equal(m.days["2026-10-09"], 5);
+  assert.equal(m.models.s1.done, true);
+  // A reset on one device wipes older grades everywhere, but not newer ones.
+  const reset = { cards: {}, resetAt: 150 };
+  const after = M.mergeProgress(JSON.parse(JSON.stringify(m)), reset);
+  assert.deepEqual(Object.keys(after.cards).sort(), ["a", "b"]);
+  assert.equal(after.models.s1, undefined);
+  // Merging is order-independent for the cards.
+  const other = M.mergeProgress(JSON.parse(JSON.stringify(web)), phone);
+  assert.deepEqual(other.cards, m.cards);
+});

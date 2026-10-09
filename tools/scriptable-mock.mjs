@@ -6,8 +6,10 @@
 
 import { readFileSync } from "node:fs";
 
-export function makeEnv({ runsInWidget = false, widgetFamily = "small", alerts = [], onPresent, files = {} } = {}) {
-  const log = { alerts: [], widget: null, completed: false, html: null };
+export function makeEnv({ runsInWidget = false, widgetFamily = "small", alerts = [], onPresent, files = {},
+                          keychain = {}, server = null } = {}) {
+  const log = { alerts: [], widget: null, completed: false, html: null, requests: [] };
+  const keys = new Map(Object.entries(keychain));
   const fs = new Map(Object.entries(files));
 
   const need = (cond, msg) => { if (!cond) throw new TypeError(msg); };
@@ -45,13 +47,16 @@ export function makeEnv({ runsInWidget = false, widgetFamily = "small", alerts =
   class ListWidget extends Stack {}
 
   class Alert {
-    constructor() { this.actions = []; this.title = ""; this.message = ""; }
+    constructor() { this.actions = []; this.title = ""; this.message = ""; this.fields = []; this.values = []; }
+    addTextField(p, v) { this.fields.push(p); this.values.push(v || ""); }
+    addSecureTextField(p, v) { this.fields.push(p); this.values.push(v || ""); }
+    textFieldValue(k) { need(typeof k === "number" && k < this.fields.length, "no text field " + k); return this.values[k]; }
     addAction(s) { this.actions.push(s); }
     addDestructiveAction(s) { this.actions.push(s); }
     addCancelAction(s) { this.cancel = s; }
     async presentAlert() {
       const pick = alerts.shift();
-      const entry = { title: this.title, message: this.message, actions: this.actions.slice() };
+      const entry = { title: this.title, message: this.message, actions: this.actions.slice(), fields: this.fields.slice(), values: this.values };
       log.alerts.push(entry);
       if (pick === undefined) return this.cancel ? -1 : 0;
       if (typeof pick === "function") return pick(entry);
@@ -73,6 +78,28 @@ export function makeEnv({ runsInWidget = false, widgetFamily = "small", alerts =
     }
   }
 
+  const Keychain = {
+    contains: (k) => keys.has(k),
+    get: (k) => { need(keys.has(k), "Keychain has no " + k); return keys.get(k); },
+    set: (k, v) => { need(typeof v === "string", "Keychain.set needs a string"); keys.set(k, v); },
+    remove: (k) => { keys.delete(k); },
+  };
+
+  // Network: `server(req)` answers {status, json}; none means offline.
+  class Request {
+    constructor(url) { need(typeof url === "string", "Request(url)"); this.url = url; this.method = "GET"; this.headers = {}; this.body = undefined; }
+    async _go() {
+      const entry = { url: this.url, method: this.method, headers: { ...this.headers }, body: this.body };
+      log.requests.push(entry);
+      if (!server) throw new Error("The Internet connection appears to be offline.");
+      const res = await server(entry);
+      this.response = { statusCode: res.status || 200 };
+      return res.json;
+    }
+    async loadJSON() { return this._go(); }
+    async load() { await this._go(); return {}; }
+  }
+
   const globals = {
     config: { runsInWidget, widgetFamily },
     Script: {
@@ -81,10 +108,10 @@ export function makeEnv({ runsInWidget = false, widgetFamily = "small", alerts =
       complete: () => { log.completed = true; },
     },
     FileManager: { iCloud: () => fileManager("/icloud"), local: () => fileManager("/local") },
-    Alert, WebView, ListWidget, Color, Font, Size,
+    Alert, WebView, ListWidget, Color, Font, Size, Keychain, Request,
     Safari: { open() {} },
   };
-  return { globals, log, fs };
+  return { globals, log, fs, keys };
 }
 
 export async function runScript(path, opts) {

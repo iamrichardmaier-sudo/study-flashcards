@@ -40,30 +40,13 @@
     try { localStorage.setItem(LOCAL_KEY, JSON.stringify(progress)); } catch (e) { /* private window */ }
   }
 
-  /** Per card, keep whichever copy was graded last. Study days take the
-   *  larger count, walkthroughs count as done if either copy finished them,
-   *  and the missed-prediction lists are combined. */
+  /** Combine another copy of progress into ours (rules in tools/schedule.js). */
   function merge(other) {
     if (!other) return;
-    for (const id in other.cards || {}) {
-      const a = progress.cards[id], b = other.cards[id];
-      if (BY_ID[id] && (!a || (b.last || 0) > (a.last || 0))) progress.cards[id] = b;
-    }
-    progress.days = progress.days || {};
-    for (const d in other.days || {}) progress.days[d] = Math.max(progress.days[d] || 0, other.days[d]);
-    progress.models = progress.models || {};
-    for (const id in other.models || {}) {
-      const a = progress.models[id], b = other.models[id];
-      if (!a || (b.at || 0) > (a.at || 0)) progress.models[id] = b;
-    }
-    const seen = new Set();
-    progress.missed = (progress.missed || []).concat(other.missed || [])
-      .filter((m) => { const k = m.at + m.q; if (seen.has(k)) return false; seen.add(k); return true; })
-      .sort((a, b) => b.at - a.at).slice(0, 40);
-    if (other.last && (!progress.last || (other.last.at || 0) > (progress.last.at || 0))) progress.last = other.last;
+    mergeProgress(progress, other);
+    for (const id in progress.cards) if (!BY_ID[id]) delete progress.cards[id];
   }
 
-  let docRef = null;
   let writing = false, dirty = false, retryTimer = null;
   let saveState = "idle";        // "idle" | "saving" | "saved" | "retrying" | "local"
   let savedAt = 0;
@@ -83,15 +66,111 @@
     renderSaveState();
   }
 
-  // Failures that mean this view can never write to the account store.
-  const FINAL = ["invalid_argument", "not_granted", "revoked", "capability_disabled",
-    "capability_removed", "quota_exceeded"];
+  // ------------------------------------------------------------ backends
+  //
+  // Where progress is kept besides this browser. build.mjs picks one:
+  //   artifact   the claude.ai page: the Artifact `db` capability
+  //   supabase   the posted site: the Supabase project the Arabic app uses,
+  //              shared with the phone app, signed in with the Wazn login
+  // Each has connect() → bool, pull() → progress | null, push(progress).
+
+  const BACKEND = /*__BACKEND__*/ { kind: "artifact" };
+
+  function artifactRemote() {
+    let ref = null;
+    return {
+      kind: "artifact",
+      final: ["invalid_argument", "not_granted", "revoked", "capability_disabled", "capability_removed", "quota_exceeded"],
+      async connect() {
+        if (!window.claude || !window.claude.use) return false;
+        const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+        if (!db || !user) return false;
+        const id = await user.id();
+        if (!id) return false;
+        ref = db.collection("data/users/" + id).doc("econ381");
+        return true;
+      },
+      async pull() {
+        const snap = await withTimeout(ref.get(), 10000);
+        if (!snap.exists) return null;
+        try { return JSON.parse((snap.data() || {}).progress || "null"); } catch (e) { return null; }
+      },
+      async push(p) {
+        await withTimeout(ref.set({ progress: JSON.stringify(p), updated: Date.now() }), 10000);
+      },
+    };
+  }
+
+  function supabaseRemote(cfg) {
+    const SKEY = "econ381-session";
+    let session = null;
+    try { session = JSON.parse(localStorage.getItem(SKEY) || "null"); } catch (e) { /* none */ }
+    const keep = (s) => { session = s; try { s ? localStorage.setItem(SKEY, JSON.stringify(s)) : localStorage.removeItem(SKEY); } catch (e) { /* ignore */ } };
+    const call = (path, opts) => withTimeout(fetch(cfg.url + path, {
+      ...opts, headers: { apikey: cfg.key, "Content-Type": "application/json", ...((opts && opts.headers) || {}) },
+    }), 10000);
+    const fromAuth = (d, email) => ({
+      access_token: d.access_token, refresh_token: d.refresh_token, email: (d.user && d.user.email) || email,
+      user_id: d.user && d.user.id, expires_at: d.expires_at || Math.floor(Date.now() / 1000) + (d.expires_in || 3600),
+    });
+    async function token() {
+      if (!session) throw { code: "signed_out" };
+      if (session.expires_at * 1000 - Date.now() < 60000) {
+        const res = await call("/auth/v1/token?grant_type=refresh_token", { method: "POST", body: JSON.stringify({ refresh_token: session.refresh_token }) });
+        if (!res.ok) {
+          if (res.status === 400 || res.status === 401) { keep(null); throw { code: "signed_out" }; }
+          throw { code: "unavailable" };
+        }
+        keep(fromAuth(await res.json(), session.email));
+      }
+      return session.access_token;
+    }
+    const remote = {
+      kind: "supabase",
+      final: ["signed_out"],
+      email: () => session && session.email,
+      async connect() { return !!session; },
+      async signIn(email, password) {
+        const res = await call("/auth/v1/token?grant_type=password", { method: "POST", body: JSON.stringify({ email, password }) });
+        const d = await res.json().catch(() => ({}));
+        if (!res.ok) throw { code: "bad_login", message: d.error_description || d.msg || "That email and password didn't work." };
+        keep(fromAuth(d, email));
+      },
+      signOut() { keep(null); },
+      async pull() {
+        const t = await token();
+        const res = await call("/rest/v1/econ381_progress?select=data", { headers: { Authorization: "Bearer " + t } });
+        if (res.status === 401) { keep(null); throw { code: "signed_out" }; }
+        if (!res.ok) throw { code: "unavailable" };
+        const rows = await res.json();
+        return rows && rows[0] ? rows[0].data : null;
+      },
+      /** Read, combine, write: the phone may have graded cards since we
+       *  last looked, and this mustn't overwrite them. */
+      async push(p) {
+        const theirs = await remote.pull();
+        if (theirs) merge(theirs);
+        const t = await token();
+        const res = await call("/rest/v1/econ381_progress?on_conflict=user_id", {
+          method: "POST",
+          headers: { Authorization: "Bearer " + t, Prefer: "resolution=merge-duplicates,return=minimal" },
+          body: JSON.stringify({ user_id: session.user_id, data: p }),
+        });
+        if (res.status === 401) { keep(null); throw { code: "signed_out" }; }
+        if (!res.ok) throw { code: "unavailable" };
+      },
+    };
+    return remote;
+  }
+
+  const remote = BACKEND.kind === "supabase" ? supabaseRemote(BACKEND) : artifactRemote();
+  let connected = false;
 
   /** One write at a time; grades made while a write is in flight are folded
    *  into the next one. A failed or stuck write is retried rather than
    *  given up on, so a hiccup costs a few seconds, not the session. */
   async function accountSave() {
-    if (!docRef) return;
+    if (!connected) return;
     if (writing) { dirty = true; return; }
     writing = true;
     clearTimeout(retryTimer);
@@ -99,17 +178,20 @@
     try {
       do {
         dirty = false;
-        await withTimeout(docRef.set({ progress: JSON.stringify(progress), updated: Date.now() }), 10000);
+        await remote.push(progress);
       } while (dirty);
       writing = false;
+      localSave();
       setSaveState("saved");
+      refreshTab();
     } catch (e) {
       writing = false;
-      if (FINAL.includes(e && e.code)) {
-        docRef = null;
+      if (remote.final.includes(e && e.code)) {
+        connected = false;
         where = "local";
         setSaveState("local");
         renderStoreNote();
+        refreshTab();
       } else {
         // Timeout, rate limit or a passing outage: try again shortly. The
         // browser copy holds everything meanwhile.
@@ -121,41 +203,43 @@
 
   function save() {
     localSave();
-    if (docRef) accountSave();
+    if (connected) accountSave();
     else setSaveState("local");
   }
 
+  /** Connect to the account, bring in whatever is there, and send up
+   *  anything this browser has that it doesn't. */
   async function connectAccount() {
     try {
-      if (!window.claude || !window.claude.use) return setSaveState("local");
-      const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
-      if (!db || !user) return setSaveState("local");
-      const id = await user.id();
-      if (!id) return setSaveState("local");
-      const ref = db.collection("data/users/" + id).doc("econ381");
-      const snap = await withTimeout(ref.get(), 10000);
-      let remote = { cards: {} };
-      if (snap.exists) {
-        try { remote = JSON.parse((snap.data() || {}).progress || "{}") || remote; } catch (e) { /* unreadable */ }
-      }
-      merge(remote);
-      docRef = ref;
+      if (!(await remote.connect())) { setSaveState("local"); renderStoreNote(); refreshTab(); return; }
+      const theirs = await remote.pull();
+      merge(theirs);
+      connected = true;
       where = "account";
       localSave();
-      // Write only when this browser holds grades the account doesn't.
-      const keys = ["cards", "days", "models", "missed"];
       // Empty and missing count as the same, so opening the page with nothing
       // new writes nothing.
       const norm = (v) => (v && (Array.isArray(v) ? v.length : Object.keys(v).length) ? JSON.stringify(v) : "");
-      const differs = keys.some((k) => norm(progress[k]) !== norm(remote && remote[k]));
+      const differs = ["cards", "days", "models", "missed"].some((k) => norm(progress[k]) !== norm(theirs && theirs[k]));
       if (differs) accountSave();
       else setSaveState("saved");
       refreshTab();
       renderStoreNote();
     } catch (e) {
-      setSaveState("local");
+      connected = false;
+      where = "local";
+      setSaveState(e && e.code === "signed_out" ? "local" : "retrying");
+      renderStoreNote();
+      refreshTab();
+      if (!(e && e.code === "signed_out")) retryTimer = setTimeout(connectAccount, 8000);
     }
   }
+
+  /** Coming back to the tab: pick up anything graded on the phone meanwhile. */
+  document.addEventListener("visibilitychange", async () => {
+    if (document.visibilityState !== "visible" || !connected || writing) return;
+    try { merge(await remote.pull()); localSave(); refreshTab(); } catch (e) { /* next save retries */ }
+  });
 
   // ---------------------------------------------------------------- grading
 
@@ -281,11 +365,38 @@
   }
 
   function renderStoreNote() {
-    const t = where === "account"
-      ? "Progress is saved to your claude.ai account, so it follows you to any computer you sign in on. It's separate from the phone app's progress."
-      : "Progress is saved in this browser only. Open this page while signed in to claude.ai to keep it on your account.";
+    let t;
+    if (remote.kind === "supabase") {
+      t = where === "account"
+        ? "Progress is saved to your account (the same login as the Arabic app), and shared with the ECON 381 phone app."
+        : "Not signed in: progress is only kept in this browser until you sign in above.";
+    } else {
+      t = where === "account"
+        ? "Progress is saved to your claude.ai account, so it follows you to any computer you sign in on. It's separate from the phone app's progress."
+        : "Progress is saved in this browser only. Open this page while signed in to claude.ai to keep it on your account.";
+    }
     document.querySelectorAll(".store-note").forEach((el) => { el.textContent = t; });
+    const form = $("#signin");
+    if (form) form.hidden = !(remote.kind === "supabase" && where !== "account");
   }
+
+  // Sign in (posted site only).
+  document.addEventListener("submit", async (e) => {
+    if (e.target.id !== "signin") return;
+    e.preventDefault();
+    const btn = $("#si-go"), err = $("#si-err");
+    btn.disabled = true; btn.textContent = "Signing in…"; err.textContent = "";
+    try {
+      await remote.signIn($("#si-email").value.trim(), $("#si-pass").value);
+      $("#si-pass").value = "";
+      await connectAccount();
+      if (!connected) err.textContent = "Signed in, but your progress couldn't be loaded yet. It will retry.";
+    } catch (x) {
+      err.textContent = (x && x.message) || "Couldn't reach the server. Check your connection and try again.";
+    } finally {
+      btn.disabled = false; btn.textContent = "Sign in";
+    }
+  });
 
   // ------------------------------------------------------------------ home
 
@@ -417,7 +528,9 @@
       `<section class="card pad"><p class="sec">Reset</p>` + (confirming
         ? `<div class="m-confirm"><span>Reset all 126 cards and every walkthrough? This can't be undone.</span><button class="yes" type="button" data-m="reset-yes">Reset</button><button type="button" data-m="reset-no">Cancel</button></div>`
         : `<button class="m-small danger" type="button" data-m="reset">Reset all progress…</button>`) +
-      `<p class="store-note dim"></p></section>`;
+      `<p class="store-note dim"></p></section>` +
+      (remote.kind === "supabase" && where === "account"
+        ? `<section class="card pad acct"><span>Signed in as <b>${esc(remote.email() || "")}</b></span><button class="m-small" type="button" data-m="signout">Sign out</button></section>` : "");
     renderStoreNote();
   }
 
@@ -484,10 +597,18 @@
       return q.length ? begin(q, false) : begin(shuffle(ALL.filter((c) => c.week === k)), true);
     }
     if (b.dataset.model && b.classList.contains("hm")) return openModels(b.dataset.model);
+    if (b.dataset.m === "signout") {
+      remote.signOut();
+      connected = false; where = "local";
+      setSaveState("local"); renderStoreNote();
+      return showTab("home");
+    }
     if (b.dataset.m === "reset") return renderProgress(true);
     if (b.dataset.m === "reset-no") return renderProgress();
     if (b.dataset.m === "reset-yes") {
-      progress = { cards: {}, days: progress.days || {} };
+      // The reset is stamped, so older grades on the phone or the account
+      // don't come back on the next sync.
+      progress = { cards: {}, days: progress.days || {}, resetAt: Date.now() };
       save();
       return renderProgress();
     }

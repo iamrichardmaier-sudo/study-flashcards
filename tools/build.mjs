@@ -125,7 +125,16 @@ webJs = split(webJs, "/*__UI__*/{}", JSON.stringify(webUI));
 let webBody = page.body;
 webBody = split(webBody, "__QUIT__", "");
 webBody = split(webBody, "__DONE_ACTIONS__", '<button class="btn menu" id="toMenu" type="button">Back to menu <kbd>Enter</kbd></button>');
-const host = split(read("tools/web/host.js"), "/*__DECK__*/ null", JSON.stringify(deck).replace(/</g, "\\u003c"));
+const hostSrc = split(read("tools/web/host.js"), "/*__DECK__*/ null", JSON.stringify(deck).replace(/</g, "\\u003c"));
+// The Supabase project the Arabic app uses. The publishable key is meant to
+// ship to browsers; row-level security keeps each person's row private.
+const SUPABASE = {
+  kind: "supabase",
+  url: "https://fphpcfecgnfoogfaeihu.supabase.co",
+  key: "sb_publishable_UFHFJ-b988nrZ_QP2AbQ4g_64Jq_5s2",
+};
+const withBackend = (b) => split(hostSrc, '/*__BACKEND__*/ { kind: "artifact" }', JSON.stringify(b));
+const host = withBackend({ kind: "artifact" });
 
 // The Models tab: the engine, chart helpers, the six model definitions and
 // the dashboard, in that order (each uses the ones before it).
@@ -146,10 +155,24 @@ const web =
 mkdirSync(join(root, "web"), { recursive: true });
 writeFileSync(join(root, "web/econ381.html"), web);
 
+// The same app as its own website (GitHub Pages), saving to Supabase.
+const siteBody = web.replace(safe(host), () => safe(withBackend(SUPABASE)));
+if (siteBody === web) throw new Error("couldn't swap the backend for the site build");
+const site = '<!doctype html>\n<html lang="en"><head><meta charset="utf-8">\n' +
+  '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n' +
+  '<meta name="description" content="ECON 381 Midterm 1: flashcards and interactive model walkthroughs.">\n' +
+  '<meta name="theme-color" content="#FBF8F3">\n' +
+  "<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}" +
+  "body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>\n" +
+  "</head><body>\n" + siteBody + "</body></html>\n";
+mkdirSync(join(root, "site"), { recursive: true });
+writeFileSync(join(root, "site/index.html"), site);
+writeFileSync(join(root, "site/.nojekyll"), "");
+
 const kb = (s) => (Buffer.byteLength(s) / 1024).toFixed(0) + " KB";
 const count = (f) => cards.filter((c) => c[f] && (!Array.isArray(c[f]) || c[f].length)).length;
 console.log(
-  `Built ${cards.length} cards (${starred} ★) → scriptable/econ381-review.js (${kb(script)}), web/econ381.html (${kb(web)})\n` +
+  `Built ${cards.length} cards (${starred} ★) → scriptable/econ381-review.js (${kb(script)}), web/econ381.html (${kb(web)}), site/index.html\n` +
   `  with graph: ${count("graph")}, numbers: ${count("numbers")}, played out: ${count("played")}, ` +
   `example: ${count("example")}, connections: ${count("connections")}`,
 );

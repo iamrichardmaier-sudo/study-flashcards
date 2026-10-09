@@ -114,6 +114,90 @@ function saveProgress(progress) {
   }
 }
 
+// ------------------------------------------------------------------ sync
+//
+// The same progress the website keeps, in the Supabase project the Arabic
+// app (Wazn) uses. The phone signs in with the Wazn login it already keeps
+// in the Keychain (wazn.email / wazn.password, shared with the Wazn
+// scripts), pulls the website's progress, combines it with its own
+// (mergeProgress: the latest grade per card wins) and pushes the result.
+// Without a login or a connection everything still works from iCloud.
+
+const SUPABASE_URL = "https://fphpcfecgnfoogfaeihu.supabase.co";
+// Publishable key, meant to ship to apps; row-level security keeps each
+// person's row private.
+const SUPABASE_KEY = "sb_publishable_UFHFJ-b988nrZ_QP2AbQ4g_64Jq_5s2";
+const KEY_EMAIL = "wazn.email";
+const KEY_PASSWORD = "wazn.password";
+
+async function credentials(promptIfMissing) {
+  if (Keychain.contains(KEY_EMAIL) && Keychain.contains(KEY_PASSWORD)) {
+    return { email: Keychain.get(KEY_EMAIL), password: Keychain.get(KEY_PASSWORD) };
+  }
+  if (!promptIfMissing) return null;
+  const a = new Alert();
+  a.title = "Sign in to sync";
+  a.message = "Your Arabic app (Wazn) email and password. Kept in the iOS Keychain on this phone only.";
+  a.addTextField("Email", "");
+  a.addSecureTextField("Password");
+  a.addAction("Sign in");
+  a.addCancelAction("Cancel");
+  if ((await a.presentAlert()) === -1) return null;
+  const email = a.textFieldValue(0).trim(), password = a.textFieldValue(1);
+  if (!email || !password) return null;
+  Keychain.set(KEY_EMAIL, email);
+  Keychain.set(KEY_PASSWORD, password);
+  return { email, password };
+}
+
+async function signIn(promptIfMissing) {
+  const creds = await credentials(promptIfMissing);
+  if (!creds) return null;
+  const req = new Request(SUPABASE_URL + "/auth/v1/token?grant_type=password");
+  req.method = "POST";
+  req.headers = { apikey: SUPABASE_KEY, "Content-Type": "application/json" };
+  req.body = JSON.stringify({ email: creds.email, password: creds.password });
+  let res = null;
+  try { res = await req.loadJSON(); } catch (e) { return null; }   // offline
+  if (!res || !res.access_token) {
+    // A changed password: forget it so the next sign-in asks again.
+    if (promptIfMissing) { Keychain.remove(KEY_EMAIL); Keychain.remove(KEY_PASSWORD); }
+    return null;
+  }
+  return { token: res.access_token, userId: res.user && res.user.id };
+}
+
+function authHeaders(sess) {
+  return { apikey: SUPABASE_KEY, Authorization: "Bearer " + sess.token, "Content-Type": "application/json" };
+}
+
+async function pullRemote(sess) {
+  const req = new Request(SUPABASE_URL + "/rest/v1/econ381_progress?select=data");
+  req.headers = authHeaders(sess);
+  const rows = await req.loadJSON();
+  if (!Array.isArray(rows)) throw new Error("couldn't read progress");
+  return rows[0] ? rows[0].data : null;
+}
+
+/** Pull, combine, push: whatever the website graded comes in, and
+ *  whatever the phone graded goes up. Returns whether it got through. */
+async function syncNow(sess, progress) {
+  if (!sess) return false;
+  try {
+    mergeProgress(progress, await pullRemote(sess));
+    saveProgress(progress);
+    const req = new Request(SUPABASE_URL + "/rest/v1/econ381_progress?on_conflict=user_id");
+    req.method = "POST";
+    req.headers = Object.assign(authHeaders(sess), { Prefer: "resolution=merge-duplicates,return=minimal" });
+    req.body = JSON.stringify({ user_id: sess.userId, data: progress });
+    await req.load();
+    const code = req.response && req.response.statusCode;
+    return !code || code < 300;
+  } catch (e) {
+    return false;   // offline: iCloud has it, the next run syncs
+  }
+}
+
 // ---------------------------------------------------------------- widget
 
 function timeOf(ms) {
@@ -275,7 +359,7 @@ async function tell(title, message) {
 }
 
 /** The start menu. Returns {cards, mode} or null if cancelled. */
-async function chooseSession(progress) {
+async function chooseSession(progress, sess) {
   const now = Date.now();
   const st = summary(CARDS, progress, now);
   const starred = (c) => c.starred;
@@ -301,8 +385,12 @@ async function chooseSession(progress) {
   actions.push("cram");
   options.push("Progress & reset…");
   actions.push("stats");
+  if (!sess) {
+    options.push("Sign in to sync with the website…");
+    actions.push("signin");
+  }
 
-  let message = st.solid + " of " + st.total + " solid";
+  let message = st.solid + " of " + st.total + " solid" + (sess ? " · synced" : "");
   if (st.due + st.newLeft === 0) {
     message = "All caught up" +
       (st.upcoming < Infinity ? " · next card at " + timeOf(st.upcoming) : "") +
@@ -312,6 +400,7 @@ async function chooseSession(progress) {
   if (choice === -1) return null;
   const act = actions[choice];
 
+  if (act === "signin") return { signin: true };
   if (act === "review") {
     const q = buildQueue(CARDS, progress, now, null, st.newLeft);
     return { cards: interleave(q.due, q.fresh), mode: "review" };
@@ -382,7 +471,10 @@ async function showStats(progress) {
     sure.addDestructiveAction("Reset");
     sure.addCancelAction("Cancel");
     if ((await sure.presentAlert()) === 0) {
-      saveProgress({ cards: {} });
+      const fresh = { cards: {}, days: progress.days || {}, resetAt: Date.now() };
+      for (const k in progress) delete progress[k];
+      Object.assign(progress, fresh);
+      saveProgress(progress);
       await tell("Reset", "All 126 cards are new again.");
     }
   }
@@ -390,8 +482,16 @@ async function showStats(progress) {
 
 async function runReview() {
   const progress = await loadProgress();
-  const session = await chooseSession(progress);
-  if (!session || !session.cards.length) return;
+  let sess = await signIn(false);
+  if (sess && !(await syncNow(sess, progress))) sess = null;
+  let session = await chooseSession(progress, sess);
+  while (session && session.signin) {
+    sess = await signIn(true);
+    if (sess && (await syncNow(sess, progress))) await tell("Synced", "This phone and the website now share progress.");
+    else { sess = null; await tell("Couldn't sign in", "Check the email and password (the ones you use for Wazn) and your connection."); }
+    session = await chooseSession(progress, sess);
+  }
+  if (!session || !session.cards.length) { if (sess) await syncNow(sess, progress); return; }
   const practice = session.mode === "cram";
 
   // The page shows "Confident · in N hours" from each card's ladder step.
@@ -405,6 +505,9 @@ async function runReview() {
     if (practice || applied.has(seq) || !BY_ID[id]) return;
     if (!["missed", "shaky", "confident"].includes(rating)) return;
     progress.cards[id] = schedule(progress.cards[id], rating, t || Date.now());
+    progress.days = progress.days || {};
+    const day = isoDay(t || Date.now());
+    progress.days[day] = (progress.days[day] || 0) + 1;
     applied.add(seq);
     try {
       saveProgress(progress);
@@ -446,12 +549,17 @@ async function runReview() {
     /* nothing graded, or the page was gone */
   }
   graded.forEach((r, seq) => apply(seq, r.id, r.rating, r.t));
+  if (sess && !practice) await syncNow(sess, progress);
 }
 
 // ------------------------------------------------------------------ main
 
 if (config.runsInWidget) {
   const progress = await loadProgress();
+  try {
+    const sess = await signIn(false);
+    if (sess) { mergeProgress(progress, await pullRemote(sess)); saveProgress(progress); }
+  } catch (e) { /* offline: the iCloud copy is fine */ }
   Script.setWidget(buildWidget(summary(CARDS, progress, Date.now())));
   Script.complete();
 } else {

@@ -204,5 +204,66 @@ console.log("✓ fresh-install widget");
 const menu = await runScript(SCRIPT, { alerts: [undefined] });
 console.log("✓ start menu: " + menu.log.alerts[0].actions.join(" · "));
 
+// ------------------------------------------------------- 4. phone ⇄ web sync
+
+// A fake Supabase: one row per user, the auth endpoint takes one password.
+function fakeSupabase(row) {
+  const db = { row };
+  const server = async (req) => {
+    if (req.url.includes("/auth/v1/token")) {
+      const b = JSON.parse(req.body);
+      return b.password === "right" ? { json: { access_token: "tok", user: { id: "u1" } } } : { status: 400, json: { error: "invalid_grant" } };
+    }
+    assert.equal(req.headers.Authorization, "Bearer tok");
+    if (req.method === "GET") return { json: db.row ? [{ data: db.row }] : [] };
+    const b = JSON.parse(req.body);
+    assert.equal(b.user_id, "u1");
+    assert.ok(req.url.includes("on_conflict=user_id"));
+    db.row = b.data;
+    return { status: 201, json: null };
+  };
+  return { db, server };
+}
+
+// The website graded a card the phone has never seen; the phone graded another.
+const webDone = { cards: { [progress ? Object.keys(progress.cards)[0] : "gdp"]: { step: 2, due: Date.now() + 864e5, seen: 3, lapses: 0, first: 1, last: Date.now() } } };
+const webCard = Object.keys(webDone.cards)[0];
+{
+  const fake = fakeSupabase({ cards: { "web-only-card-test": { step: 1, due: 0, seen: 1, lapses: 0, first: 1, last: 2 }, ...webDone.cards } });
+  const run = await runScript(SCRIPT, {
+    keychain: { "wazn.email": "me@example.com", "wazn.password": "right" },
+    server: fake.server,
+    alerts: ["Review"],
+    onPresent: async () => [],
+  });
+  const saved = JSON.parse(run.fs.get("/icloud/econ381-progress.json"));
+  assert.ok(saved.cards[webCard], "the website's grade came down to the phone");
+  assert.ok(fake.db.row.cards[webCard], "and the merged progress went back up");
+  assert.ok(run.log.alerts[0].message.includes("synced"), "menu says synced");
+  console.log("✓ phone sync: silent sign-in from the Keychain, pull, merge, push");
+}
+{
+  // Not signed in yet: the menu offers sign-in; a wrong password is forgotten, a right one sticks.
+  const fake = fakeSupabase(null);
+  const typed = (pw) => (entry) => { entry.values[0] = "me@example.com"; entry.values[1] = pw; return 0; };
+  const run = await runScript(SCRIPT, {
+    server: fake.server,
+    alerts: ["Sign in", typed("wrong"), 0, "Sign in", typed("right"), 0, undefined],
+  });
+  assert.ok(run.log.alerts.some((a) => a.title === "Couldn't sign in"));
+  assert.ok(run.log.alerts.some((a) => a.title === "Synced"));
+  assert.equal(run.keys.get("wazn.password"), "right");
+  assert.ok(fake.db.row && fake.db.row.cards, "progress uploaded after signing in");
+  console.log("✓ phone sign-in from the menu: wrong password rejected, right one saved to the Keychain");
+}
+{
+  // Offline with a saved login: still reviews, nothing breaks.
+  const run = await runScript(SCRIPT, { keychain: { "wazn.email": "a", "wazn.password": "right" }, alerts: [undefined] });
+  assert.ok(!run.log.alerts[0].message.includes("synced"));
+  const w = await runScript(SCRIPT, { runsInWidget: true, keychain: { "wazn.email": "a", "wazn.password": "right" } });
+  assert.ok(w.log.widget);
+  console.log("✓ offline with a saved login: menu and widget still work");
+}
+
 await browser.close();
 console.log("Screenshots in " + out);

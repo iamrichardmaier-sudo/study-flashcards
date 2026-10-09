@@ -352,6 +352,76 @@ console.log("✓ account store refuses one write: retried and saved");
 await accountRun("hang");
 console.log("✓ account store write hangs: times out, retried and saved");
 
+// ------------------------------------------- the posted site (Supabase)
+// site/index.html is what GitHub Pages serves. Its saving goes to Supabase;
+// here Supabase is faked at the network layer so the page's real fetch code runs.
+{
+  const site = readFileSync(join(root, "site/index.html"), "utf8");
+  assert.ok(site.startsWith("<!doctype html>"), "site is a full document");
+  const SB = "https://fphpcfecgnfoogfaeihu.supabase.co";
+  const phoneCard = await page.evaluate("CARDS[5].id");
+  const db = { row: { cards: { [phoneCard]: { step: 2, due: Date.now() + 864e5, seen: 2, lapses: 0, first: 1, last: Date.now() - 5000 } } }, writes: 0 };
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 860 } });
+  await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
+  await ctx.route("https://iamrichardmaier-sudo.github.io/**", (r) => r.fulfill({ contentType: "text/html", body: site }));
+  await ctx.route(SB + "/**", async (r) => {
+    const req = r.request(), url = req.url();
+    const json = (status, body) => r.fulfill({ status, contentType: "application/json", body: JSON.stringify(body) });
+    if (url.includes("/auth/v1/token")) {
+      const b = JSON.parse(req.postData());
+      if (b.password !== "right") return json(400, { error: "invalid_grant", error_description: "Invalid login credentials" });
+      return json(200, { access_token: "tok", refresh_token: "ref", expires_in: 3600, user: { id: "u1", email: b.email } });
+    }
+    assert.equal(req.headers()["authorization"], "Bearer tok");
+    if (req.method() === "GET") return json(200, db.row ? [{ data: db.row }] : []);
+    const b = JSON.parse(req.postData());
+    assert.equal(b.user_id, "u1");
+    db.row = b.data; db.writes++;
+    return r.fulfill({ status: 201, body: "" });
+  });
+  const sp = await ctx.newPage();
+  sp.on("pageerror", (e) => errors.push(String(e)));
+  await sp.goto("https://iamrichardmaier-sudo.github.io/study-flashcards/");
+  await sp.waitForSelector("#signin:not([hidden])");
+  await sp.screenshot({ path: join(out, "web-site-signin.png") });
+  await sp.fill("#si-email", "me@example.com");
+  await sp.fill("#si-pass", "wrong");
+  await sp.click("#si-go");
+  await sp.waitForFunction("document.querySelector('#si-err').textContent.length > 0");
+  await sp.fill("#si-pass", "right");
+  await sp.click("#si-go");
+  await sp.waitForSelector("#signin", { state: "hidden" });
+  await sp.waitForTimeout(300);
+  const local = await sp.evaluate("JSON.parse(localStorage.getItem('econ381-progress') || '{}')");
+  assert.ok(local.cards && local.cards[phoneCard], "the phone's grade came down on sign-in");
+  assert.ok(!(await sp.evaluate("localStorage.getItem('econ381-session')")).includes("right"), "the password is never stored");
+
+  await sp.click("#h-primary");
+  const graded = await sp.evaluate("CARDS[0].id");
+  await sp.keyboard.press("Enter"); await sp.keyboard.press("ArrowRight");
+  await sp.waitForTimeout(260);
+  for (let k = 0; k < 40 && !(db.row.cards[graded]); k++) await sp.waitForTimeout(100);
+  assert.ok(db.row.cards[graded], "the web grade went up to Supabase");
+  assert.ok(db.row.cards[phoneCard], "without dropping the phone's grade");
+  await sp.keyboard.press("Escape");
+
+  // The phone grades something else meanwhile; a reload stays signed in and picks it up.
+  const phone2 = await sp.evaluate("CARDS[7].id");
+  db.row = { ...db.row, cards: { ...db.row.cards, [phone2]: { step: 1, due: Date.now() + 4 * H, seen: 1, lapses: 0, first: 2, last: Date.now() } } };
+  await sp.reload();
+  await sp.waitForTimeout(500);
+  assert.ok(await sp.evaluate("document.querySelector('#signin').hidden"), "still signed in after a reload");
+  const after = await sp.evaluate("JSON.parse(localStorage.getItem('econ381-progress'))");
+  assert.ok(after.cards[phone2] && after.cards[graded], "reload merged the phone's newer grade");
+
+  await sp.click('[data-tab="progress"]');
+  await sp.click('[data-m="signout"]');
+  await sp.click('[data-tab="home"]');
+  assert.ok(await sp.evaluate("!document.querySelector('#signin').hidden"), "signing out shows the form again");
+  await ctx.close();
+  console.log("✓ posted site: Supabase sign-in, pull on sign-in and reload, merged push, sign out");
+}
+
 const real = errors.filter((e) => !/ERR_FAILED/.test(e));
 assert.deepEqual(real, [], "page errors: " + real.join("; "));
 await browser.close();
