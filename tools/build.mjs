@@ -168,6 +168,10 @@ const site = '<!doctype html>\n<html lang="en"><head><meta charset="utf-8">\n' +
 mkdirSync(join(root, "site"), { recursive: true });
 writeFileSync(join(root, "site/index.html"), site);
 writeFileSync(join(root, "site/.nojekyll"), "");
+// The same page at the repo root, so GitHub Pages serves the app whether its
+// Source is "GitHub Actions" (deploys site/) or "Deploy from a branch" (main, root).
+writeFileSync(join(root, "index.html"), site);
+writeFileSync(join(root, ".nojekyll"), "");
 
 const kb = (s) => (Buffer.byteLength(s) / 1024).toFixed(0) + " KB";
 const count = (f) => cards.filter((c) => c[f] && (!Array.isArray(c[f]) || c[f].length)).length;

@@ -124,9 +124,10 @@ you can read or write your row). Sign in with **your Wazn email and password**.
 
 ### Posting the site
 
-`.github/workflows/pages.yml` builds, runs the tests and deploys `site/` on
-every push to `main`. One-time setup: in the repo's **Settings → Pages**, set
-**Source** to **GitHub Actions**.
+Either GitHub Pages setting works. With **Source: GitHub Actions**,
+`.github/workflows/pages.yml` builds, tests and deploys `site/` on every push
+to `main`. With **Deploy from a branch** (`main`, root), GitHub serves the copy
+of the same page that the build writes to `index.html` at the repo root.
 
 ### Tests
 
