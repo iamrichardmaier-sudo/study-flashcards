@@ -142,15 +142,49 @@ const modelFiles = ["engine.js", "charts.js", "defs/production.js", "defs/funds.
   "defs/flows.js", "defs/solow.js", "defs/golden.js", "ui.js"];
 const modelsJs = "var MODELS = [];\n" + modelFiles.map((f) => read("tools/models/" + f)).join("\n");
 
+// The Practice tab: the practice midterm's questions and the drill.
+const practiceJs = read("tools/practice/questions.js") + "\n" + read("tools/practice/ui.js");
+{
+  const sb = { window: {} };
+  new Function("window", read("tools/practice/questions.js") + "\nwindow.EXAM = EXAM;")(sb.window);
+  const P = sb.window.EXAM, seenQ = new Set(), secs = new Set(P.sections.map((x) => x.id));
+  const bad = (q, msg) => { throw new Error(`practice ${q.id}: ${msg}`); };
+  for (const q of P.questions) {
+    if (seenQ.has(q.id)) bad(q, "duplicate id");
+    seenQ.add(q.id);
+    if (!secs.has(q.section)) bad(q, "unknown section");
+    const rights = q.options.filter((o) => o.right).length;
+    if (q.kind === "one" && rights !== 1) bad(q, `needs exactly one right option, has ${rights}`);
+    if (!["one", "all"].includes(q.kind)) bad(q, "kind must be one or all");
+    for (const o of q.options) {
+      if (q.kind === "one" && !o.right && !o.why) bad(q, "a wrong option has no diagnosis: " + o.t);
+      if (q.kind === "all" && !o.why) bad(q, "select-all options each need a why");
+    }
+    if (!q.pattern || !q.steps || !q.steps.length) bad(q, "needs a pattern and steps");
+    for (const id of q.cards || []) if (!ids.has(id)) bad(q, `flashcard "${id}" doesn't exist`);
+    if (q.graph) {
+      const key = typeof q.graph === "string" ? q.graph : q.graph.key;
+      if (!GRAPHS[key]) bad(q, `graph "${key}" doesn't exist`);
+    }
+    const text = JSON.stringify(q);
+    for (const tag of ["b", "i", "sub", "sup", "em"]) {
+      const open = (text.match(new RegExp(`<${tag}[ >]`, "g")) || []).length;
+      const close = (text.match(new RegExp(`</${tag}>`, "g")) || []).length;
+      if (open !== close) bad(q, `unbalanced <${tag}>`);
+    }
+  }
+}
+
 const web =
   "<title>ECON 381 Flashcards</title>\n" +
   '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
   '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">\n' +
-  "<style>\n" + page.css + "\n" + read("tools/web/web.css") + "\n" + read("tools/models/models.css") + "</style>\n" +
+  "<style>\n" + page.css + "\n" + read("tools/web/web.css") + "\n" + read("tools/models/models.css") + "\n" + read("tools/practice/practice.css") + "</style>\n" +
   read("tools/web/web.html") + "\n" + webBody + "\n" +
   "<script>\n" + safe(graphSrc) + "\n</script>\n" +
   "<script>\n" + safe(webJs) + "</script>\n" +
   "<script>\n" + safe(modelsJs) + "\n</script>\n" +
+  "<script>\n" + safe(practiceJs) + "\n</script>\n" +
   "<script>\n" + safe(read("tools/schedule.js")) + "\n" + safe(host) + "</script>\n";
 mkdirSync(join(root, "web"), { recursive: true });
 writeFileSync(join(root, "web/econ381.html"), web);

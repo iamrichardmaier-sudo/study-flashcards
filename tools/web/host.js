@@ -45,7 +45,9 @@
     if (!other) return;
     mergeProgress(progress, other);
     for (const id in progress.cards) if (!BY_ID[id]) delete progress.cards[id];
+    for (const id in progress.practice || {}) if (!PQ_IDS[id]) delete progress.practice[id];
   }
+  const PQ_IDS = Object.fromEntries(EXAM.questions.map((q) => [q.id, true]));
 
   let writing = false, dirty = false, retryTimer = null;
   let saveState = "idle";        // "idle" | "saving" | "saved" | "retrying" | "local"
@@ -220,7 +222,7 @@
       // Empty and missing count as the same, so opening the page with nothing
       // new writes nothing.
       const norm = (v) => (v && (Array.isArray(v) ? v.length : Object.keys(v).length) ? JSON.stringify(v) : "");
-      const differs = ["cards", "days", "models", "missed"].some((k) => norm(progress[k]) !== norm(theirs && theirs[k]));
+      const differs = ["cards", "practice", "days", "models", "missed"].some((k) => norm(progress[k]) !== norm(theirs && theirs[k]));
       if (differs) accountSave();
       else setSaveState("saved");
       refreshTab();
@@ -330,6 +332,7 @@
     if (name === "review") renderReview();
     if (name === "progress") renderProgress();
     if (name === "models") ensureModels();
+    if (name === "practice") ensurePractice();
     renderSaveState();
   }
 
@@ -339,6 +342,7 @@
     if (currentTab === "home") renderHome();
     if (currentTab === "review") renderReview();
     if (currentTab === "progress") renderProgress();
+    if (currentTab === "practice" && practiceMounted) PRACTICEUI.refresh();
   }
 
   function timeOf(ms) {
@@ -407,6 +411,7 @@
     play: '<path d="M6 3l14 9-14 9z"/>',
     chev: '<path d="m9 18 6-6-6-6"/>',
     check: '<path d="M20 6 9 17l-5-5"/>',
+    pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   };
   const icon = (n, cls) => `<svg class="ic ${cls || ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
 
@@ -419,6 +424,8 @@
    *  owed, then an unfinished walkthrough, then the first model not done. */
   function primaryAction(st) {
     if (st.due) return { label: `Review ${st.due} card${st.due === 1 ? "" : "s"}`, sub: st.newLeft ? `plus ${st.newLeft} new` : "due now", icon: "layers", act: "review" };
+    const ps = PRACTICEUI.stats();
+    if (ps.due) return { label: `Retry ${ps.due} practice question${ps.due === 1 ? "" : "s"}`, sub: "the practice midterm questions you missed", icon: "pen", act: "practice" };
     if (st.newLeft) return { label: `Learn ${st.newLeft} new card${st.newLeft === 1 ? "" : "s"}`, sub: "today's new cards, tested ones first", icon: "cap", act: "review" };
     const last = progress.last;
     if (last && last.scenario && !((progress.models || {})[last.scenario] || {}).done) {
@@ -454,6 +461,11 @@
     const seen = st.total - st.unseen;
     const pct = (x) => (100 * x / st.total).toFixed(2) + "%";
     $("#h-bar").innerHTML = `<span style="width:${pct(st.solid)};background:#2E7D52"></span><span style="width:${pct(seen - st.solid)};background:var(--primary)"></span>`;
+
+    const ps = PRACTICEUI.stats();
+    $("#h-practice").innerHTML = ps.owed
+      ? `Drill the practice midterm<small>${ps.right} of ${ps.total} right · ${ps.due ? ps.due + " to retry" + (ps.fresh ? ", " : "") : ""}${ps.fresh ? ps.fresh + " not tried" : ""}</small>`
+      : `Practice midterm · ${ps.right} of ${ps.total} right<small>All caught up${ps.next < Infinity ? " · next back at " + timeOf(ps.next) : ""}</small>`;
 
     $("#h-models").innerHTML = MODELS.map((m) => {
       const ms = modelStats(m), w = DECK.weeks[m.week - 1];
@@ -523,15 +535,60 @@
     $("#p-body").innerHTML =
       `<section class="card pad"><p class="sec">Flashcards · ${st.solid} of ${st.total} solid · ${st.unseen} not seen</p>${weeks}` +
       (hard ? `<p class="sec gap">Cards missed most</p><ul class="plain">${hard}</ul>` : "") + "</section>" +
+      practiceSection() +
       `<section class="card pad"><p class="sec">Model walkthroughs</p><div class="pms">${models}</div>` +
       (missed ? `<p class="sec gap">Predictions you missed lately</p><ul class="plain">${missed}</ul>` : "") + "</section>" +
       `<section class="card pad"><p class="sec">Reset</p>` + (confirming
-        ? `<div class="m-confirm"><span>Reset all 126 cards and every walkthrough? This can't be undone.</span><button class="yes" type="button" data-m="reset-yes">Reset</button><button type="button" data-m="reset-no">Cancel</button></div>`
+        ? `<div class="m-confirm"><span>Reset all 126 cards, the practice midterm and every walkthrough? This can't be undone.</span><button class="yes" type="button" data-m="reset-yes">Reset</button><button type="button" data-m="reset-no">Cancel</button></div>`
         : `<button class="m-small danger" type="button" data-m="reset">Reset all progress…</button>`) +
       `<p class="store-note dim"></p></section>` +
       (remote.kind === "supabase" && where === "account"
         ? `<section class="card pad acct"><span>Signed in as <b>${esc(remote.email() || "")}</b></span><button class="m-small" type="button" data-m="signout">Sign out</button></section>` : "");
     renderStoreNote();
+  }
+
+  function practiceSection() {
+    const ps = PRACTICEUI.stats();
+    const rows = EXAM.sections.map((sec) => {
+      const qs = EXAM.questions.filter((q) => q.section === sec.id);
+      const pr = progress.practice || {};
+      const right = qs.filter((q) => pr[q.id] && pr[q.id].rating === "confident").length;
+      const tried = qs.filter((q) => pr[q.id]).length;
+      return `<div class="row"><span class="lbl">${esc(sec.title)}</span><span class="val">${tried}/${qs.length} tried · ${right} right</span></div>`;
+    }).join("");
+    return `<section class="card pad"><p class="sec">Practice midterm · ${ps.right} of ${ps.total} right on the latest try</p>${rows}</section>`;
+  }
+
+  // -------------------------------------------------------------- practice
+
+  let practiceMounted = false;
+
+  function ensurePractice() {
+    if (practiceMounted) return;
+    practiceMounted = true;
+    PRACTICEUI.mount($("#practice"), {
+      progress: () => progress,
+      renderSaveState,
+      cardTerm: (id) => (BY_ID[id] ? BY_ID[id].term : ""),
+      /** A practice answer: scheduled like a flashcard grade. A miss also
+       *  brings the related flashcards (ones already studied) back due now. */
+      grade(id, rating, cards) {
+        const t = Date.now();
+        progress.practice = progress.practice || {};
+        progress.practice[id] = schedule(progress.practice[id], rating, t);
+        for (const cid of cards || []) {
+          const s = progress.cards[cid];
+          if (s && s.due > t) progress.cards[cid] = { ...s, due: t, last: t };
+        }
+        studied(t);
+        save();
+      },
+    });
+  }
+
+  function openPractice(drill) {
+    showTab("practice");
+    if (drill) PRACTICEUI.drill();
   }
 
   // ---------------------------------------------------------------- models
@@ -574,7 +631,9 @@
     if (!b) return;
     if (b.closest("#toMenu") || b.id === "toMenu") return endSession();
     if (b.classList.contains("tabbtn")) {
+      b.blur();   // so Enter next starts the tab's big button, not this one again
       if (b.dataset.tab === "models") return openModels(null);
+      if (b.dataset.tab === "practice" && currentTab === "practice") { PRACTICEUI.menu(); return; }
       return showTab(b.dataset.tab);
     }
     if (!$("#shell").contains(b)) return;
@@ -583,7 +642,9 @@
       if (a === "review") return startReview();
       if (a === "model") return openModels(b.dataset.model, b.dataset.scenario);
       if (a === "tested") return begin(shuffle(ALL.filter((c) => c.starred)), true);
+      if (a === "practice") return openPractice(true);
     }
+    if (b.id === "h-practice") return openPractice(PRACTICEUI.stats().owed > 0);
     if (b.id === "r-review") return startReview();
     if (b.id === "h-learn-btn") return startReview();
     if (b.id === "r-tested" || b.id === "h-tested") {
@@ -624,6 +685,7 @@
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (!inSession()) {
       if (currentTab === "models") { MODELUI.handleKey(e); return; }
+      if (currentTab === "practice") { PRACTICEUI.handleKey(e); return; }
       // Enter on Home or Review starts what the big button says, unless a
       // control already has the focus.
       if (e.key === "Enter" && (!document.activeElement || document.activeElement === document.body)) {
@@ -667,6 +729,7 @@
   // ---------------------------------------------------------------- start
 
   merge(localLoad());
+  ensurePractice();
   $("#app").style.display = "none";
   showTab("home");
   connectAccount();

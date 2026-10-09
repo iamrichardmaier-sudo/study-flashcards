@@ -149,8 +149,8 @@ button:focus-visible, .btn:focus-visible { outline: 3px solid #E8A25E; outline-o
           padding-top: 0; padding-bottom: env(safe-area-inset-bottom, 0px); }
   .tabs-in { padding: 6px 8px; }
   .brand { display: none; }
-  .tablist { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); }
-  .tabbtn { flex-direction: column; gap: 3px; font-size: 11px; padding: 7px 4px; }
+  .tablist { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); }
+  .tabbtn { flex-direction: column; gap: 3px; font-size: 10.5px; padding: 7px 2px; }
   .tabbtn svg { width: 20px; height: 20px; }
   .views { padding-bottom: 96px; }
   .mdl-top { top: 0; }

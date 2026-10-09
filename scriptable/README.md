@@ -102,6 +102,28 @@ Two builds:
   <https://iamrichardmaier-sudo.github.io/study-flashcards/>. Saves to your account (below).
 - **`web/econ381.html`**: the claude.ai Artifact copy. Saves to your claude.ai account.
 
+### Practice tab (website)
+
+The practice midterm (`ECON381_Midterm1_Practice.pdf`) as a drill: all 20
+Part 1 questions and every Part 2 sub-question (35 in all), each as multiple
+choice. Short answers and worked problems become four options: the answer
+key's answer plus three wrong answers, each one the result of a specific,
+common mistake (W instead of W/P, the labor share taken for α, a step
+stopped early).
+
+- Pick an answer (keys 1–4 or A–D; select-all questions: tick, then Enter).
+- Right: it shows the general pattern, with the working one click away.
+- Wrong: it shows **the pattern** first, then **where it likely went wrong**,
+  read from the option you picked, then the solution **one step at a time**
+  (Enter for each step). The question goes to the back of the session, and
+  the flashcards it's about come due again.
+- Scheduling is the flashcards' ladder: right comes back in 4 hours, then 8,
+  then daily; wrong comes back now.
+
+Questions live in `tools/practice/questions.js`; `node --test
+tools/practice.test.mjs` re-derives every number, including each wrong
+option from the mistake its diagnosis names.
+
 ## Saving and sync
 
 Progress (card grades, streak, walkthroughs, missed predictions) is saved in

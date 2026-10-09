@@ -290,8 +290,8 @@ button:focus-visible, .btn:focus-visible { outline: 3px solid #E8A25E; outline-o
           padding-top: 0; padding-bottom: env(safe-area-inset-bottom, 0px); }
   .tabs-in { padding: 6px 8px; }
   .brand { display: none; }
-  .tablist { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); }
-  .tabbtn { flex-direction: column; gap: 3px; font-size: 11px; padding: 7px 4px; }
+  .tablist { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); }
+  .tabbtn { flex-direction: column; gap: 3px; font-size: 10.5px; padding: 7px 2px; }
   .tabbtn svg { width: 20px; height: 20px; }
   .views { padding-bottom: 96px; }
   .mdl-top { top: 0; }
@@ -427,6 +427,72 @@ svg .arrowhead { fill: var(--ink); opacity: .7; }
   .mdl-two, .facts { grid-template-columns: minmax(0, 1fr); }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* The Practice tab: one question at a time, in the flashcards' column. */
+#practice { --wk: #1F4E8C; --wk-soft: rgba(31,78,140,.10); }
+.pq { display: flex; flex-direction: column; gap: 14px; padding-bottom: 24px; }
+.pq-top { display: flex; align-items: center; gap: 12px; }
+.pq-count { font-size: 13px; font-weight: 800; letter-spacing: .04em; color: var(--wk); font-variant-numeric: tabular-nums; }
+.pq-bar { flex: 1; height: 6px; border-radius: 3px; background: rgba(43,33,24,.09); overflow: hidden; }
+.pq-bar span { display: block; height: 100%; transition: width .25s ease; }
+.pq-src { margin: 0; font-size: 11.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.pq-src b { letter-spacing: .07em; }
+.pq-setup { margin: 0; font-size: 14px; line-height: 1.55; padding: 12px 14px; border-radius: 14px; background: var(--wk-soft); }
+.pq-q { margin: 0; font-family: ui-serif, "New York", Georgia, serif; font-size: 21px; line-height: 1.4; }
+
+.pq-opts { display: flex; flex-direction: column; gap: 8px; }
+.pq-opts.tf { flex-direction: row; }
+.pq-opts.tf .pq-opt { flex: 1; justify-content: center; }
+.pq-opt { display: flex; align-items: flex-start; gap: 12px; text-align: left; width: 100%; padding: 13px 14px; border-radius: 14px;
+          border: 1.5px solid var(--line); background: var(--card); font: inherit; font-size: 15px; line-height: 1.45; color: var(--ink);
+          transition: border-color .12s, background .12s, transform .08s; }
+button.pq-opt { cursor: pointer; }
+button.pq-opt:hover { border-color: var(--wk); }
+button.pq-opt:active { transform: scale(.99); }
+.pq-opt.on { border-color: var(--wk); background: var(--wk-soft); }
+.pq-l { flex: none; width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-size: 12.5px; font-weight: 800;
+        background: rgba(43,33,24,.07); color: var(--ink); }
+.pq-opt.on .pq-l { background: var(--wk); color: #fff; }
+.pq-opts.done .pq-opt.ok { border-color: #2E7D52; background: rgba(46,125,82,.08); }
+.pq-opts.done .pq-opt.ok .pq-l { background: #2E7D52; color: #fff; }
+.pq-opts.done .pq-opt.bad { border-color: #C0392B; background: rgba(192,57,43,.07); }
+.pq-opts.done .pq-opt.bad .pq-l { background: #C0392B; color: #fff; }
+.pq-opts.done .pq-opt.dim { opacity: .55; }
+.pq-tag { font-style: normal; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-left: 6px; opacity: .7; white-space: nowrap; }
+.pq-check { align-self: flex-start; }
+.pq-hint { margin: 0; }
+
+.pq-verdict { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; font-size: 15px; }
+.pq-verdict.ok { background: rgba(46,125,82,.10); color: #1F5C3B; }
+.pq-verdict.bad { background: rgba(192,57,43,.09); color: #8E2A20; display: block; }
+.pq-verdict .ic { color: #2E7D52; }
+
+.pq-box { border-radius: 16px; padding: 14px 16px; border: 1px solid var(--line); background: var(--card); font-size: 14.5px; line-height: 1.55; }
+.pq-box.pattern { border-color: var(--wk); background: var(--wk-soft); }
+.pq-box.why { border-color: rgba(217,149,43,.6); background: rgba(217,149,43,.10); }
+.pq-box ul.plain { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.pq-h { margin: 0 0 6px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+        font-size: 11px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; color: var(--wk); }
+.pq-box.why .pq-h { color: #A4651A; }
+.pq-steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.pq-steps li::marker { color: var(--wk); font-weight: 800; }
+.pq-steps li.in { animation: pq-in .25s ease; }
+@keyframes pq-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.pq-graph { margin-top: 12px; }
+.pq-graph svg { width: 100%; height: auto; max-height: 340px; display: block; }
+.pq-graph .cap { font-size: 12.5px; opacity: .65; margin: 6px 2px 0; }
+.pq-rel { margin: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pq-chip { font-size: 12.5px; padding: 4px 10px; border-radius: 20px; background: var(--wk-soft); color: var(--wk); font-weight: 600; }
+.pq-next { position: sticky; bottom: 0; padding: 10px 0 4px; background: linear-gradient(to top, var(--bg) 70%, transparent); display: flex; justify-content: flex-end; }
+.pq-next .go-btn kbd { border-color: rgba(255,255,255,.6); }
+.pq-done h1 { margin: 10px 0 0; font-size: 28px; }
+.pq-score { margin: 0; font-size: 17px; }
+#pq-wrong:disabled { opacity: .5; cursor: default; }
+
+@media (max-width: 760px) {
+  .pq-next { bottom: 64px; }
+  .pq-q { font-size: 19px; }
+}
 </style>
 <div id="shell">
   <nav class="tabs" aria-label="Sections">
@@ -444,6 +510,9 @@ svg .arrowhead { fill: var(--ink); opacity: .7; }
         <button type="button" class="tabbtn" data-tab="review">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.8 2.2a2 2 0 0 0-1.6 0L2.6 6.1a1 1 0 0 0 0 1.8l8.6 3.9a2 2 0 0 0 1.6 0l8.6-3.9a1 1 0 0 0 0-1.8z"/><path d="m2 12.6 9.2 4.2a2 2 0 0 0 1.6 0L22 12.6"/><path d="m2 17.6 9.2 4.2a2 2 0 0 0 1.6 0L22 17.6"/></svg>
           <span>Review</span></button>
+        <button type="button" class="tabbtn" data-tab="practice">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>
+          <span>Practice</span></button>
         <button type="button" class="tabbtn" data-tab="models">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
           <span>Models</span></button>
@@ -493,6 +562,11 @@ svg .arrowhead { fill: var(--ink); opacity: .7; }
         </section>
 
         <section class="sect-h">
+          <h2>Practice midterm</h2>
+          <button type="button" class="second" id="h-practice"></button>
+        </section>
+
+        <section class="sect-h">
           <h2>Models</h2>
           <div class="grid3" id="h-models"></div>
         </section>
@@ -526,6 +600,10 @@ svg .arrowhead { fill: var(--ink); opacity: .7; }
           </div>
         </section>
       </div>
+    </section>
+
+    <section class="view" id="tab-practice" hidden>
+      <div class="wrap" id="practice"></div>
     </section>
 
     <section class="view" id="tab-models" hidden>
@@ -3751,6 +3829,1140 @@ var MODELUI = (function () {
 
 </script>
 <script>
+// The Midterm 1 practice exam (ECON381_Midterm1_Practice.pdf), as multiple
+// choice drills.
+//
+// Every question keeps the exam's wording and the answer key's answer. The
+// exam's short-answer and work-it-out questions become multiple choice: the
+// right option is the key's answer, and each wrong option is a mistake a
+// student actually makes, with `why` saying what that mistake was. Numeric
+// wrong answers are what you get by making that one slip (e.g. W instead of
+// W/P), so the diagnosis matches the number picked.
+//
+//   kind     "one" (pick one) or "all" (select all that apply, as on the exam)
+//   pattern  the general rule, shown first after answering
+//   steps    the worked solution, revealed one step at a time
+//   cards    related flashcards (ids in cards/econ381.json)
+//   graph    optional diagram from tools/graphs.js
+//
+// tools/practice.test.mjs re-derives every number here.
+
+var EXAM = {
+  title: "Midterm 1 · Practice 1",
+  sections: [
+    { id: "p1", title: "Part 1 · Short answer", sub: "20 questions · 2 points each" },
+    { id: "p2q1", title: "Part 2 · Q1 · Golden rule in 1860s Massachusetts", sub: "Solow model · 20 points" },
+    { id: "p2q2", title: "Part 2 · Q2 · Unemployment with “Supers”", sub: "Worker flows · 20 points" },
+    { id: "p2q3", title: "Part 2 · Q3 · An uncharted galaxy", sub: "Production, incomes, loanable funds · 20 points" },
+  ],
+  questions: [
+    // ------------------------------------------------------------ Part 1
+    {
+      id: "p1-01", section: "p1", label: "Q1", pts: 2, week: 1, kind: "all",
+      prompt: "Select <b>all</b> of the following statements about the GDP Deflator and the CPI which are true:",
+      options: [
+        { t: "The GDP Deflator measures prices over a fixed basket of items, whereas the CPI allows that basket to change over time.",
+          right: false, why: "This is backwards. The <b>CPI</b> prices a fixed basket (Laspeyres); the <b>deflator</b> uses whatever is produced this year, so its basket changes (Paasche)." },
+        { t: "The CPI measures prices for both goods and services, whereas the GDP Deflator only measures the prices of goods.",
+          right: false, why: "Both cover goods <i>and</i> services. The deflator covers everything in GDP, and services are most of GDP." },
+        { t: "The CPI includes imported foreign goods, whereas the GDP Deflator only includes domestic goods.",
+          right: true, why: "True: the CPI is what consumers buy, imports included (a Toyota made in Japan). The deflator is built from GDP, so only things produced here." },
+        { t: "The CPI doesn’t account for improvements in the quality of items purchased, whereas the GDP Deflator does.",
+          right: false, why: "Quality change is a measurement problem for <i>both</i> indexes. It isn’t one of the differences between them, which are the basket and imports." },
+      ],
+      pattern: "<b>CPI vs. deflator: two real differences.</b> (1) <i>What’s in it</i>: CPI = what consumers buy, imports included; deflator = everything produced domestically (including investment and government purchases). (2) <i>The basket</i>: CPI fixes it (Laspeyres, overstates inflation); the deflator lets it change (Paasche, understates). Both cover goods and services.",
+      steps: [
+        "Ask of each statement: is this about <i>what’s included</i> or about <i>how the basket is weighted</i>? Those are the only two real differences.",
+        "(a) swaps the baskets. The CPI is the fixed one. False.",
+        "(b) Both include services. False.",
+        "(c) Imports are in the CPI (consumers buy them), not in the deflator (not produced here). True.",
+        "(d) Quality bias hits both. It doesn’t separate them. False. Answer: <b>(c) only</b>.",
+      ],
+      cards: ["cpi-vs-deflator", "cpi", "gdp-deflator", "laspeyres-paasche"],
+      graph: "indexBias",
+    },
+    {
+      id: "p1-02", section: "p1", label: "Q2", pts: 2, week: 3, kind: "one",
+      prompt: "Explain what we mean by <b>forward guidance</b>, as it pertains to monetary policy, and why it may be useful for keeping the economy stable.",
+      options: [
+        { t: "The Fed telling the public what it expects to do with policy in the future, which helps anchor expectations, especially of future inflation.", right: true },
+        { t: "The Fed buying long-term bonds today to push down future interest rates.",
+          why: "That’s an <i>action</i> (an open market operation, or quantitative easing). Forward guidance is <i>communication</i>: words about future policy, not purchases now." },
+        { t: "The Fed committing to a fixed schedule of interest rates for the next year so banks can plan their lending.",
+          why: "Guidance is about shaping <i>expectations</i>, not a binding rate schedule for banks. Its point is what households and firms expect inflation to be." },
+        { t: "Congress announcing future spending and tax plans so households can smooth their consumption.",
+          why: "That’s fiscal policy (Congress). Forward guidance is a <i>monetary</i> tool, used by the Federal Reserve." },
+      ],
+      pattern: "<b>Forward guidance = the Fed talking about future policy.</b> Because people’s decisions today depend on what they expect inflation and rates to be, a credible statement about the future anchors those expectations, and anchored expectations keep inflation (and the economy) steadier.",
+      steps: [
+        "Who does it? The <b>Federal Reserve</b>, so it’s monetary policy.",
+        "What is it? Information about <b>expected future</b> policy actions. It’s words, not trades.",
+        "Why does it help? It <b>anchors expectations</b> of future inflation. If people expect 2%, they set wages and prices that way, and inflation stays near 2%.",
+      ],
+      cards: ["forward-guidance", "omo", "fed-funds"],
+    },
+    {
+      id: "p1-03", section: "p1", label: "Q3", pts: 2, week: 1, kind: "one",
+      prompt: "Why is it that the unemployment rate can be an imperfect measure of labor market conditions?",
+      options: [
+        { t: "It leaves out discouraged workers who want a job but stopped searching. If unemployed people give up and leave the labor force, the rate goes <i>down</i>.", right: true },
+        { t: "It counts part-time workers as unemployed, which overstates how weak the labor market is.",
+          why: "Part-time workers count as <b>employed</b>. If anything, that hides slack (people who want full-time work), the opposite of what this option says." },
+        { t: "It comes from payroll records, which miss the self-employed.",
+          why: "That describes the <b>establishment</b> survey. The unemployment rate comes from the <b>household</b> survey, which does include the self-employed." },
+        { t: "It divides the number unemployed by the whole adult population instead of the labor force.",
+          why: "It divides by the <b>labor force</b> (employed + unemployed). Dividing by population gives a different statistic, the employment-to-population ratio." },
+      ],
+      pattern: "<b>u = unemployed ÷ labor force</b>, and you only count as unemployed if you’re <i>searching</i>. Anyone who stops searching leaves both the top and the bottom, so u can fall even though nobody found a job. That’s the classic flaw: <b>discouraged workers</b>.",
+      steps: [
+        "Write the definition: u = U / (E + U), where U counts only people actively looking.",
+        "A discouraged worker wants a job but stopped looking, so they’re <b>not in the labor force</b> and not in U.",
+        "If an unemployed person gives up: U falls by 1 and the labor force falls by 1, so <b>u goes down</b> even though conditions got worse.",
+      ],
+      cards: ["unemployment-imperfect", "discouraged", "unemployment-rate", "labor-force"],
+      graph: "laborForceTree",
+    },
+    {
+      id: "p1-04", section: "p1", label: "Q4", pts: 2, week: 5, kind: "one", tf: true,
+      prompt: "True/False. One reason economists are concerned about declining population growth rates in high income countries is because slowing growth in the population may lead to slowing innovation, with fewer people entering the world to generate new ideas.",
+      options: [
+        { t: "True", right: true },
+        { t: "False", why: "You may have been thinking of the Solow model, where <i>slower</i> population growth raises capital per worker, so it looks good. The worry here is about <b>ideas</b>: new ideas come from people, so fewer people means fewer new ideas and slower technological growth." },
+      ],
+      pattern: "<b>Two different effects of population growth.</b> In Solow, faster n dilutes capital (lower k*). But in idea-based growth, people are the source of ideas, so slower population growth means fewer innovators and slower growth in technology.",
+      steps: [
+        "Ideas are non-rival: one person’s idea can be used by everyone.",
+        "More people means more potential inventors, so more ideas.",
+        "So declining population growth can slow innovation. <b>True</b>.",
+      ],
+      cards: ["pop-ideas", "pop-growth"],
+    },
+    {
+      id: "p1-05", section: "p1", label: "Q5", pts: 2, week: 2, kind: "one",
+      prompt: "Consider our model of national income, where <i>Ȳ</i> = C(<i>Ȳ</i> − <i>T̄</i>) + I(r) + <i>Ḡ</i>. In the market for loanable funds, how does an <b>increase in government spending</b> affect the equilibrium?",
+      options: [
+        { t: "The saving curve shifts left (national saving falls by ΔG); the real interest rate rises; investment falls along the I(r) curve.", right: true },
+        { t: "The investment curve shifts right, because government spending adds to demand; r rises and investment rises.",
+          why: "G isn’t investment. It enters through <b>saving</b>: S = Y − C − G, so more G means less national saving. Investment demand I(r) doesn’t move." },
+        { t: "The saving curve shifts left, r rises, and the investment curve also shifts left.",
+          why: "Investment falls, but as a <b>movement along</b> I(r) (higher r means less I). The curve itself stays put; only the saving curve shifts." },
+        { t: "Nothing changes, since Y is fixed by K and L.",
+          why: "Y is fixed, which is exactly why something else has to give. With Y fixed, more G must crowd out other spending (investment), through a higher r." },
+      ],
+      pattern: "<b>Loanable funds: S = Ȳ − C(Ȳ − T̄) − Ḡ is a vertical line; I(r) slopes down.</b> Fiscal changes move the <i>saving</i> line: G↑ or T↓ shifts S left, so r rises and I falls along its curve (<b>crowding out</b>). Only things like new technology or investment tax credits shift I(r).",
+      steps: [
+        "National saving S = Ȳ − C(Ȳ − T̄) − Ḡ. Nothing here depends on r, so S is a vertical line.",
+        "G rises by ΔG, so S falls by ΔG and the vertical line <b>shifts left</b>.",
+        "At the old r there’s now a shortage of loanable funds, so <b>r rises</b>.",
+        "Higher r means firms invest less: a <b>movement along I(r)</b>. I falls by exactly ΔG (crowding out).",
+        "On the exam: label both axes (r, S/I), both S lines, the I(r) curve, and both equilibria (r₁, r₂).",
+      ],
+      cards: ["loanable-funds", "crowding-out", "national-saving"],
+      graph: { key: "loanableFunds", args: { shift: "left" } },
+    },
+    {
+      id: "p1-06", section: "p1", label: "Q6", pts: 2, week: 5, kind: "one",
+      prompt: "Name two reasons for the recent slowdown in China’s growth in GDP per capita.",
+      options: [
+        { t: "China may be approaching its steady state, and it is pivoting to consumption-led growth (lower saving rates).", right: true },
+        { t: "China’s saving rate has been rising, and higher saving lowers growth in the Solow model.",
+          why: "Two slips. China is <i>lowering</i> its saving rate, and in Solow higher saving <i>raises</i> income (its level); it doesn’t lower growth." },
+        { t: "China has already passed the U.S. in GDP per capita, so there’s no catching up left.",
+          why: "China’s GDP per capita is still far below the U.S. Total GDP is big because the population is big. Per person it still has room to grow." },
+        { t: "Population growth has sped up, diluting capital per worker.",
+          why: "China’s population growth has <i>slowed</i> (it’s now shrinking), so dilution isn’t the story." },
+      ],
+      pattern: "<b>Why fast growers slow down:</b> transition growth fades as k approaches k* (convergence). The class list for China: unsustainable policy pushes, accumulated inefficiencies after long booms, recessions abroad hurting exports, <b>nearing the steady state</b>, and a <b>pivot to consumption</b> (saving less).",
+      steps: [
+        "In Solow, growth is fastest far below the steady state and slows as k nears k*.",
+        "China grew fast by catching up, and as it approaches k*, growth naturally slows.",
+        "Shifting from investment-led to consumption-led growth means a lower saving rate, so less capital accumulation.",
+      ],
+      cards: ["china", "convergence", "steady-state"],
+      graph: "chinaGrowth",
+    },
+    {
+      id: "p1-07", section: "p1", label: "Q7", pts: 2, week: 5, kind: "one",
+      prompt: "According to the reading and the discussion in class, what justification was given for why it is reasonable to measure growth in economic well-being using income per worker?",
+      options: [
+        { t: "Income per worker is correlated with many other things we care about, and it’s easy to compute consistently for many countries.", right: true },
+        { t: "Income per worker equals consumption per worker, and consumption is what well-being is.",
+          why: "Income isn’t consumption: y = c + i. And the argument in class wasn’t that income <i>is</i> well-being, but that it <b>moves with</b> the things that are." },
+        { t: "It captures how evenly income is shared within a country.",
+          why: "An average says nothing about distribution. Two countries with equal income per worker can have very different inequality." },
+        { t: "It includes non-market work like childcare and home production.",
+          why: "GDP-based income leaves non-market work <i>out</i>. That’s a known weakness, not the justification." },
+      ],
+      pattern: "<b>Why use income per worker?</b> Not because it <i>is</i> well-being, but because (1) it’s <b>correlated</b> with what we care about (health, life expectancy, education) and (2) it’s <b>measurable</b> the same way across many countries.",
+      steps: [
+        "Well-being has many parts that are hard to measure.",
+        "Income per worker tracks most of them: richer places tend to be healthier and better educated.",
+        "And it’s computed consistently for almost every country. Those two reasons are the answer.",
+      ],
+      cards: ["income-wellbeing", "gdp-wellbeing"],
+    },
+    {
+      id: "p1-08", section: "p1", label: "Q8", pts: 2, week: 4, kind: "all",
+      prompt: "Select <b>all</b> of the following reasons which we gave in class as primary reasons for why there could be <b>structural</b> unemployment:",
+      options: [
+        { t: "Laid-off workers need time to update their resumes before they are able to begin looking for work again.",
+          right: false, why: "Time spent getting ready to search is <b>frictional</b>: the normal time it takes to match. Structural unemployment means there aren’t enough jobs at the going wage." },
+        { t: "Unions may be able to pressure employers to pay a wage to union members that is higher than the going rate in non-unionized workplaces.",
+          right: true, why: "Yes: a union wage above market-clearing means more people want those jobs than there are jobs. That’s wage rigidity, so structural." },
+        { t: "The government passes a minimum wage well above what the wage would otherwise be in equilibrium.",
+          right: true, why: "Yes: a binding minimum wage holds the wage above equilibrium. Labor supplied > labor demanded, so structural." },
+        { t: "Because high-skilled workers are trying to find jobs that are a good match to their skills, they only apply to jobs which pay higher wages.",
+          right: false, why: "Searching for a good match is <b>frictional</b> unemployment. The wage isn’t being held above equilibrium; the worker is just taking time to search." },
+      ],
+      pattern: "<b>Frictional vs. structural.</b> Frictional = the time it takes to <i>match</i> workers and jobs (searching, preparing, moving). Structural = the <b>wage is stuck above market-clearing</b> (minimum wage, unions, efficiency wages), so there are fewer jobs than job-seekers.",
+      steps: [
+        "For each option ask: is the wage held above equilibrium (structural), or is it just time to match (frictional)?",
+        "(a) Updating a resume is time to get ready to search, so frictional.",
+        "(b) A union wage above market rate is wage rigidity, so structural. ✓",
+        "(c) A binding minimum wage is wage rigidity, so structural. ✓",
+        "(d) Searching for a good match is frictional. Answer: <b>(b), (c)</b>.",
+      ],
+      cards: ["structural", "frictional", "wage-rigidity", "unions", "minimum-wage"],
+      graph: { key: "wageFloor", args: { label: "wage held above equilibrium" } },
+    },
+    {
+      id: "p1-09", section: "p1", label: "Q9", pts: 2, week: 1, kind: "one", tf: true,
+      prompt: "True/False. One of the three fundamentals of modern macro models is that the model should be consistent with data evidence on GDP, prices and employment.",
+      options: [
+        { t: "True", why: "It sounds right, since good models should match the data. But checking a model against data is how we <i>judge</i> a model; it isn’t one of the three fundamentals of how modern macro models are <i>built</i>. (Check your notes for the exact three from class.)" },
+        { t: "False", right: true },
+      ],
+      pattern: "<b>Read “one of the three” questions literally.</b> A statement can be a sensible goal and still not be on the specific list from class. Here: matching data is a test we apply to models, not one of the listed building blocks.",
+      steps: [
+        "The question asks about a specific list: the three fundamentals of modern macro models given in class.",
+        "Consistency with data isn’t on that list. It’s how models are evaluated.",
+        "So <b>False</b>. (The answer key gives just “False”. Look up the three in your lecture notes so you can name them.)",
+      ],
+      cards: ["exogenous", "endogenous"],
+    },
+    {
+      id: "p1-10", section: "p1", label: "Q10", pts: 2, week: 3, kind: "one",
+      prompt: "Explain the two core factors described in class that account for elevated inflation in the last few years.",
+      options: [
+        { t: "Supply: COVID-19 disrupted supply chains and the workforce. Demand: monetary and fiscal stimulus boosted spending.", right: true },
+        { t: "The Fed shrinking the money supply, and higher taxes.",
+          why: "Both of those are <i>contractionary</i>: they push inflation down, not up. The story was the opposite: stimulus on the demand side." },
+        { t: "Faster productivity growth and higher immigration.",
+          why: "More productivity and more workers raise <i>supply</i>, which lowers prices. Inflation came from supply being <i>squeezed</i>." },
+        { t: "Rising minimum wages, and the switch from the CPI to the GDP deflator.",
+          why: "The way inflation is measured didn’t change. And minimum wages weren’t one of the two core factors from class." },
+      ],
+      pattern: "<b>Recent inflation = both sides at once.</b> <i>Supply</i>: COVID cut production (supply chains, fewer workers), so fewer goods. <i>Demand</i>: stimulus (fiscal checks plus low rates and money growth), so more spending. Less supply and more demand mean higher prices.",
+      steps: [
+        "Split it into supply and demand.",
+        "Supply fell: supply-chain breakdowns and workforce disruptions from COVID-19.",
+        "Demand rose: fiscal stimulus (government spending, transfers) and monetary stimulus (low rates, fast money growth).",
+      ],
+      cards: ["recent-inflation", "inflation"],
+      graph: "inflationVsRates",
+    },
+    {
+      id: "p1-11", section: "p1", label: "Q11", pts: 2, week: 3, kind: "one",
+      prompt: "Suppose that demand for real money balances is given by <b>M/P = 2Y / i<sup>0.5</sup></b>, where Y is real GDP and i is the nominal interest rate. If Y = 775 and i = 4, what will <b>velocity</b> be?",
+      options: [
+        { t: "V = 1", right: true },
+        { t: "V = 2",
+          why: "That’s V = i<sup>0.5</sup> = 2: you dropped the 2 from the money demand. Carry it through: M/(PY) = 2/i<sup>0.5</sup>, so V = i<sup>0.5</sup>/2." },
+        { t: "V = 4",
+          why: "That’s V = 2·i<sup>0.5</sup>: the 2 ended up on top. Since M/(PY) = 2/i<sup>0.5</sup>, V is its flip: i<sup>0.5</sup>/2." },
+        { t: "V = 387.5",
+          why: "That’s Y/2: you plugged Y in. But Y cancels out, because velocity divides by Y. V depends only on i here." },
+      ],
+      pattern: "<b>Velocity from money demand:</b> V = PY/M. Divide the money demand by Y to get M/(PY), then <b>flip it</b>. Y cancels whenever money demand is proportional to Y, so V depends only on i.",
+      steps: [
+        "Definition: V = PY / M.",
+        "Divide money demand by Y: M/(PY) = 2 / i<sup>0.5</sup>.",
+        "Flip it: V = i<sup>0.5</sup> / 2.",
+        "Plug in i = 4: V = 2 / 2 = <b>1</b>. (Y = 775 never enters.)",
+      ],
+      cards: ["velocity", "money-demand", "quantity-equation"],
+    },
+    {
+      id: "p1-12", section: "p1", label: "Q12", pts: 2, week: 4, kind: "one",
+      prompt: "What is the unemployment insurance program?",
+      options: [
+        { t: "A program funded by taxes on employers (and employees) that replaces part (usually 30–50%) of an unemployed worker’s income for a limited time (usually up to 26 weeks) while they search.", right: true },
+        { t: "A federal guarantee of a public job for anyone unemployed longer than 26 weeks.",
+          why: "UI pays <i>cash</i> while you search; it doesn’t provide jobs. 26 weeks is the usual <i>limit</i> on benefits, not when something starts." },
+        { t: "Private insurance workers buy to cover lost wages from illness or injury.",
+          why: "That’s disability insurance. UI is a <b>government</b> program for job loss, funded by payroll taxes." },
+        { t: "A payment to everyone out of work, including people not looking for a job.",
+          why: "UI requires you to be <b>searching</b> (and to have lost a job). People out of the labor force don’t qualify." },
+      ],
+      pattern: "<b>UI in one line:</b> payroll-tax funded, pays a <i>fraction</i> of lost wages, for a <i>limited</i> time, while you <i>search</i>. In the flows model it lowers the job-finding rate f (less pressure to take the first offer), which raises frictional unemployment.",
+      steps: [
+        "Who pays: taxes on employers (and employees).",
+        "What it pays: about 30–50% of previous income.",
+        "For how long: usually up to 26 weeks, while the worker searches for a new job.",
+      ],
+      cards: ["ui", "finding-rate", "frictional"],
+    },
+    {
+      id: "p1-13", section: "p1", label: "Q13", pts: 2, week: 2, kind: "all",
+      prompt: "Select <b>all</b> of the following statements about the labor share, Cobb-Douglas production, and U.S. inequality which are <b>true</b>:",
+      options: [
+        { t: "If production is Cobb-Douglas and markets are competitive, then an increase in the amount of capital in the economy will have no impact on the labor share.",
+          right: true, why: "True: with Cobb-Douglas the labor share is always 1 − α, whatever K or L are. More K raises wages, but the <i>share</i> stays 1 − α." },
+        { t: "Since the pandemic, wage growth has been fastest for lower income workers (10th percentile).",
+          right: true, why: "True: wage compression. The tight post-pandemic labor market raised wages fastest at the bottom." },
+        { t: "Under perfect competition and constant returns to scale, our model of national income predicts that real wages should be proportional to the average productivity of workers.",
+          right: true, why: "True: W/P = MPL = (1 − α)·Y/L. The real wage is a constant fraction of output per worker." },
+        { t: "One reason we gave in class for why the labor share may be declining is the rise of automation, with capital displacing workers (and their income).",
+          right: true, why: "True: automation is one of the explanations from class for the declining labor share (alongside markups)." },
+      ],
+      pattern: "<b>Cobb-Douglas facts to know cold:</b> labor share = 1 − α and capital share = α, <i>no matter</i> what K and L are; W/P = MPL = (1 − α)Y/L, so wages track average productivity. A falling labor share in the data means the economy isn’t fixed Cobb-Douglas (automation, markups).",
+      steps: [
+        "(a) Labor share = (W/P)·L / Y = MPL·L/Y = (1 − α). No K in it, so true.",
+        "(b) Post-pandemic wage compression: bottom wages grew fastest. True.",
+        "(c) MPL = (1 − α)Y/L is proportional to Y/L. True.",
+        "(d) Automation is one of the explanations from class. True. Answer: <b>all four</b>.",
+      ],
+      cards: ["labor-share", "cd-marginal", "wage-compression", "declining-labor-share", "wage-productivity"],
+      graph: "incomeSplit",
+    },
+    {
+      id: "p1-14", section: "p1", label: "Q14", pts: 2, week: 2, kind: "one",
+      prompt: "Explain the difference between exogenous and endogenous variables.",
+      options: [
+        { t: "Exogenous variables are taken as given and fed into the model; endogenous variables are what the model solves for.", right: true },
+        { t: "Endogenous variables are taken as given; exogenous variables come out of the model.",
+          why: "Reversed. <b>Ex</b>ogenous comes from <b>outside</b> (an input, e.g. K̄, L̄, Ḡ, T̄); <b>endo</b>genous is determined <b>inside</b> (an output, e.g. Y, r, C, I)." },
+        { t: "Exogenous variables are foreign (exports, imports); endogenous variables are domestic.",
+          why: "“External” here means outside the <i>model</i>, not outside the country." },
+        { t: "Exogenous variables are constant forever; endogenous variables change over time.",
+          why: "Exogenous variables can change. That’s what a comparative-statics question does (raise G, see what happens). The difference is whether the model <i>explains</i> the change." },
+      ],
+      pattern: "<b>Exo = in, endo = out.</b> Exogenous variables are given (the bars: K̄, L̄, Ḡ, T̄, M̄); you change them to run experiments. Endogenous variables are solved for (Y, r, C, I, P).",
+      steps: [
+        "Exogenous: known beforehand, fed into the model (inputs).",
+        "Endogenous: the variables of interest that come out of the model (outputs).",
+        "Example: in the loanable funds model, G and T are exogenous; r and I are endogenous.",
+      ],
+      cards: ["exogenous", "endogenous"],
+    },
+    {
+      id: "p1-15", section: "p1", label: "Q15", pts: 2, week: 3, kind: "one",
+      prompt: "Explain why we can think of seigniorage as an inflation tax.",
+      options: [
+        { t: "Printing money raises revenue but causes inflation (quantity theory), which lowers the value of the money people hold. It’s as if holders of money were taxed.", right: true },
+        { t: "Because the government raises income taxes whenever inflation rises.",
+          why: "No law ties tax rates to inflation. The “tax” is the lost value of the money you hold. Nobody sends a bill." },
+        { t: "Because inflation pushes people into higher tax brackets (bracket creep).",
+          why: "Bracket creep is a real effect, but it isn’t seigniorage. Seigniorage is revenue from <b>printing money</b>." },
+        { t: "Because the Fed’s interest earnings are taxed by the Treasury.",
+          why: "That’s about Fed profits. The inflation-tax idea is about who bears the cost of money creation: people holding cash." },
+      ],
+      pattern: "<b>Seigniorage = revenue from printing money.</b> More money leads to higher prices (MV = PY), so each dollar people already hold buys less. The government gains purchasing power and money-holders lose it, just like a tax on holding money.",
+      steps: [
+        "The government prints money to pay for spending (seigniorage).",
+        "Quantity theory: more M with V and Y fixed means higher P (inflation).",
+        "Everyone holding money loses purchasing power, and the government gained it. That’s an <b>inflation tax</b>.",
+      ],
+      cards: ["seigniorage", "inflation-tax", "quantity-theory"],
+    },
+    {
+      id: "p1-16", section: "p1", label: "Q16", pts: 2, week: 3, kind: "one",
+      prompt: "Which <b>one</b> of the following statements about the U.S. money supply and monetary policy is <b>false</b>?",
+      options: [
+        { t: "Since the middle of 2022, the U.S. money supply has been declining.",
+          why: "This one is true: as the Fed tightened in 2022, M2 actually fell, which is rare. You’re looking for the <b>false</b> statement." },
+        { t: "During the pandemic, the Federal Reserve changed banking regulations which generated an artificial surge in the measured amount of M1.",
+          why: "This one is true: in 2020 the Fed reclassified savings deposits into M1, so M1 jumped on paper. You’re looking for the <b>false</b> one." },
+        { t: "The monetary base measures the sum of all currency and deposits in the economy.", right: true },
+        { t: "The Federal Reserve commonly adjusts the supply of money in the economy by buying or selling assets like short-term government debt.",
+          why: "This one is true: that’s an open market operation, the Fed’s standard tool. You’re looking for the <b>false</b> one." },
+      ],
+      pattern: "<b>Monetary base ≠ money supply.</b> Base (M0) = currency + bank <i>reserves</i>: what the Fed directly controls. M1 = currency + checkable (and since 2020, savings) <i>deposits</i>; M2 adds more. And on a “which is false” question, check every option and pick the one that’s wrong.",
+      steps: [
+        "This asks for the <b>false</b> statement, so the other three are true facts.",
+        "(a) M2 fell from mid-2022. True. (b) The 2020 reclassification inflated M1. True. (d) OMOs. True.",
+        "(c) The monetary base is currency + <b>reserves</b>, not deposits (deposits are in M1/M2). False, so the answer is <b>(c)</b>.",
+      ],
+      cards: ["monetary-base", "m1", "omo", "money"],
+      graph: "moneyAggregates",
+    },
+    {
+      id: "p1-17", section: "p1", label: "Q17", pts: 2, week: 5, kind: "one", tf: true,
+      prompt: "True/False. In the Solow growth model and in the data, countries with higher savings rates had faster growth in GDP per worker.",
+      options: [
+        { t: "True", why: "Higher saving raises growth only <i>temporarily</i>, while k climbs to the new steady state. In the long run it raises the <b>level</b> of income per worker, not its growth rate." },
+        { t: "False", right: true },
+      ],
+      pattern: "<b>Saving: level effect, not growth effect.</b> In Solow, higher s raises k* and y*, so countries that save more are <i>richer</i>. Once there, growth is zero (or g with technology) regardless of s. Long-run growth comes only from technology.",
+      steps: [
+        "Higher s shifts s·f(k) up, so k* and y* rise.",
+        "During the transition, growth is temporarily faster.",
+        "In steady state, growth returns to the same rate. So high savers have higher <b>levels</b>, not faster growth. <b>False</b>.",
+      ],
+      cards: ["saving-growth", "steady-state", "solow-diagram"],
+      graph: "savingPath",
+    },
+    {
+      id: "p1-18", section: "p1", label: "Q18", pts: 2, week: 2, kind: "one",
+      prompt: "Explain, using words and math, what the marginal propensity to consume is.",
+      options: [
+        { t: "The extra consumption from one extra dollar of <b>disposable</b> income: MPC = ∂C(Y − T)/∂(Y − T), between 0 and 1.", right: true },
+        { t: "Total consumption divided by income, C/Y.",
+          why: "That’s the <i>average</i> propensity to consume. “Marginal” means the <b>extra</b> consumption from the next dollar: a derivative, not a ratio of totals." },
+        { t: "The extra consumption from one extra dollar of total income Y: ∂C/∂Y.",
+          why: "Close, but consumption depends on <b>disposable</b> income, Y − T. The derivative is with respect to (Y − T)." },
+        { t: "The fraction of each extra dollar that is saved.",
+          why: "That’s the marginal propensity to <b>save</b> = 1 − MPC." },
+      ],
+      pattern: "<b>Marginal = the next unit, a derivative.</b> MPC = ∂C/∂(Y − T): how much of one more dollar of disposable income is spent. With C = a + b(Y − T), MPC = b. MPS = 1 − MPC.",
+      steps: [
+        "Words: the extra (aggregate) consumption from an extra dollar of disposable income.",
+        "Math: MPC = ∂C(Y − T) / ∂(Y − T).",
+        "Example: C = 10 + 0.5(Y − T) gives MPC = 0.5, so half of each extra dollar is spent.",
+      ],
+      cards: ["mpc", "consumption-function", "disposable-income"],
+      graph: "consumption",
+    },
+    {
+      id: "p1-19", section: "p1", label: "Q19", pts: 2, week: 1, kind: "one",
+      prompt: "Give a definition of investment, consistent with how we have used the word in class.",
+      options: [
+        { t: "Goods bought by individuals or businesses for future use: machines, buildings, equipment (and new housing).", right: true },
+        { t: "Buying stocks and bonds.",
+          why: "That’s <i>financial</i> investment, just a change of ownership. In macro, investment means new <b>physical</b> capital." },
+        { t: "Money put into a savings account.",
+          why: "That’s saving. Saving <i>funds</i> investment (loanable funds), but investment is the purchase of capital goods." },
+        { t: "Government spending on roads and bridges.",
+          why: "Government purchases are counted in <b>G</b>, not I." },
+      ],
+      pattern: "<b>Investment (I) = new capital goods for future production</b>: equipment, structures, residential housing, inventories. Not stocks, not savings accounts, not government purchases.",
+      steps: [
+        "Ask: is a new physical thing bought now to be used to produce or provide later?",
+        "Machines, buildings, and houses: yes, that’s investment.",
+        "Stocks, bank deposits (saving), and government projects (G): no.",
+      ],
+      cards: ["investment", "expenditure-identity"],
+    },
+    {
+      id: "p1-20", section: "p1", label: "Q20", pts: 2, week: 3, kind: "one", tf: true,
+      prompt: "True/False. According to the classical dichotomy, changes in real variables, like consumption or investment, will have no impact on nominal variables, such as inflation.",
+      options: [
+        { t: "True", why: "The direction is reversed. The dichotomy says <b>nominal</b> variables (money, prices) don’t affect <b>real</b> ones. Real changes <i>can</i> move nominal variables (e.g. higher Y lowers P in MV = PY)." },
+        { t: "False", right: true },
+      ],
+      pattern: "<b>Classical dichotomy: nominal ⇏ real.</b> Real variables (Y, C, I, r) are determined by real factors; money only affects nominal ones (P, i, W). Monetary neutrality is the same idea. It only runs one way.",
+      steps: [
+        "The dichotomy: <b>nominal</b> variables don’t affect <b>real</b> variables.",
+        "The statement claims the reverse (real changes don’t affect nominal ones).",
+        "Real changes can move nominal variables: if Y rises with M and V fixed, P falls. So <b>False</b>.",
+      ],
+      cards: ["classical-dichotomy", "monetary-neutrality", "real-nominal"],
+    },
+
+    // ------------------------------------------- Part 2 · Q1 · Massachusetts
+    {
+      id: "p2-1a-k", section: "p2q1", label: "1(a) k*gold", pts: 5, week: 5, kind: "one",
+      setup: "1860s Massachusetts, described by the Solow model: Y<sub>t</sub> = K<sub>t</sub><sup>α</sup>L<sub>t</sub><sup>1−α</sup>, I<sub>t</sub> = sY<sub>t</sub>, C<sub>t</sub> = (1 − s)Y<sub>t</sub>, K<sub>t+1</sub> = (1 − δ)K<sub>t</sub> + I<sub>t</sub>. No population growth or technological change. α = 0.3, s = 0.3, δ = 0.07.",
+      prompt: "Solve for <b>k*<sub>gold</sub></b>, the level of capital per worker in the steady state that generates the maximum steady-state consumption per worker.",
+      options: [
+        { t: "k*<sub>gold</sub> ≈ 7.996", right: true },
+        { t: "k*<sub>gold</sub> ≈ 4.29",
+          why: "You stopped one step early: 4.29 is α/δ = k<sup>0.7</sup>. You still have to raise both sides to the power 1/0.7." },
+        { t: "k*<sub>gold</sub> ≈ 2.77",
+          why: "That’s 4.29<sup>0.7</sup>: you used the exponent 0.7 instead of 1/0.7. To undo k<sup>0.7</sup>, raise to 1/0.7 ≈ 1.43." },
+        { t: "k*<sub>gold</sub> ≈ 0.125",
+          why: "That’s (δ/α)<sup>1/0.7</sup>: the fraction is flipped. From αk<sup>α−1</sup> = δ you get k<sup>1−α</sup> = α/δ (α on top)." },
+      ],
+      pattern: "<b>Golden rule: MPK = δ.</b> Maximize c* = f(k*) − δk*. Set the derivative to zero: f′(k) = δ. With f(k) = k<sup>α</sup>: αk<sup>α−1</sup> = δ, so <b>k<sub>gold</sub> = (α/δ)<sup>1/(1−α)</sup></b>.",
+      steps: [
+        "Steady-state consumption: c* = (1 − s)f(k*) = f(k*) − s·f(k*) = f(k*) − δk*, using s·f(k*) = δk* in steady state.",
+        "Maximize over k*: f′(k) − δ = 0, so αk<sup>α−1</sup> = δ.",
+        "Plug in: 0.3·k<sup>−0.7</sup> = 0.07, so k<sup>0.7</sup> = 0.3/0.07 = 4.29.",
+        "Undo the exponent: k = 4.29<sup>1/0.7</sup> = <b>7.996</b>.",
+      ],
+      cards: ["golden-rule", "golden-condition", "golden-capital-cd"],
+      graph: "goldenHump",
+    },
+    {
+      id: "p2-1a-s", section: "p2q1", label: "1(a) s gold", pts: 4, week: 5, kind: "one",
+      setup: "Same economy: α = 0.3, δ = 0.07, and k*<sub>gold</sub> = 7.996.",
+      prompt: "Solve for the <b>savings rate</b> needed to reach k*<sub>gold</sub>.",
+      options: [
+        { t: "s<sub>gold</sub> = 0.3", right: true },
+        { t: "s<sub>gold</sub> = 0.7",
+          why: "0.7 is 1 − α, the <i>labor</i> share. The golden-rule saving rate equals the <b>capital</b> share α." },
+        { t: "s<sub>gold</sub> = 0.07",
+          why: "That’s δ. In the golden rule MPK = δ, but the saving rate is a different number. Plug k<sub>gold</sub> into s·f(k) = δk." },
+        { t: "s<sub>gold</sub> = 1",
+          why: "Saving everything maximizes <i>capital</i>, but consumption would be zero. The golden rule maximizes <b>consumption</b>." },
+      ],
+      pattern: "<b>Back out s from the steady-state condition.</b> s·f(k*) = δk*, so s = δk*/f(k*). With Cobb-Douglas, at the golden rule this always comes out to <b>s<sub>gold</sub> = α</b>, but show the work, since just stating it loses points.",
+      steps: [
+        "Steady state: s·f(k*) = δk*.",
+        "Plug in k<sub>gold</sub>: s·(7.996)<sup>0.3</sup> = 0.07 × 7.996.",
+        "(7.996)<sup>0.3</sup> ≈ 1.866 and 0.07 × 7.996 ≈ 0.560, so s = 0.560 / 1.866 = <b>0.3</b>.",
+        "Check: s<sub>gold</sub> = α = 0.3, which is always true with Cobb-Douglas. This economy is already at the golden rule.",
+      ],
+      cards: ["golden-saving", "ss-capital"],
+    },
+    {
+      id: "p2-1b-graph", section: "p2q1", label: "1(b) graph", pts: 4, week: 5, kind: "one",
+      setup: "Massachusetts starts in the golden-rule steady state. The Civil War permanently reduces the number of workers, L (a one-time drop).",
+      prompt: "On the Solow diagram (s·f(k) and δk against k), what happens when L falls?",
+      options: [
+        { t: "Neither curve moves. k = K/L jumps <b>right</b> to k₁ > k*, where δk is above s·f(k), so k then falls back toward k*.", right: true },
+        { t: "The s·f(k) curve shifts down, because there are fewer workers to produce output.",
+          why: "The curves are in <i>per-worker</i> terms and depend only on s, α, δ. Fewer workers doesn’t change them; it changes <b>where you are</b> on the k-axis." },
+        { t: "The δk line rotates down, so the steady state k* rises.",
+          why: "Depreciation δ didn’t change, and there’s no population <i>growth</i> term here. A one-time drop in L moves k, not the lines." },
+        { t: "k jumps left: losing workers means losing capital per worker.",
+          why: "Capital K didn’t go anywhere; workers did. k = K/L, so a smaller L makes k <b>bigger</b>." },
+      ],
+      pattern: "<b>Shock to a level (K or L) vs. a parameter (s, δ, α).</b> Parameters shift the curves and move k*. A one-time change in K or L <i>moves k along the axis</i>, with the curves fixed, and the economy returns to the <b>same</b> k*.",
+      steps: [
+        "k = K/L. The war cuts L and leaves K, so k jumps up to k₁ > k*.",
+        "s, α, δ unchanged means s·f(k) and δk don’t move, and k* is unchanged.",
+        "At k₁, δk₁ > s·f(k₁): depreciation outpaces investment, so k falls each year back toward k*.",
+        "Exam graph: label the x-axis k, the lines s·f(k) and δk, the old steady state k*, and the post-war point k₁ with an arrow back to k*.",
+      ],
+      cards: ["lf-fall", "solow-diagram", "steady-state"],
+      graph: { key: "solow", args: { mode: "diagram" } },
+    },
+    {
+      id: "p2-1b-y", section: "p2q1", label: "1(b) path of y", pts: 4, week: 5, kind: "one",
+      setup: "Same shock: a one-time permanent fall in L, starting from the golden-rule steady state.",
+      prompt: "What happens to income per worker, y<sub>t</sub>: immediately, in the years after, and in the long run?",
+      options: [
+        { t: "y jumps <b>up</b> immediately, then falls (negative growth) back to the <b>same</b> steady-state y* as before the war.", right: true },
+        { t: "y falls immediately (fewer workers, less output) and stays permanently lower.",
+          why: "Total output Y falls, but per <i>worker</i> it rises: the same capital is split among fewer workers. Watch Y vs. y." },
+        { t: "y jumps up and stays at the new higher level permanently.",
+          why: "The jump is temporary. k* depends only on s, α, δ, which didn’t change, so k and y slide back to their old steady state." },
+        { t: "y doesn’t change, since k* depends only on s, α and δ.",
+          why: "k* doesn’t change, so the long run is right. But the economy is knocked off the steady state first: y jumps up, then returns." },
+      ],
+      pattern: "<b>Off the steady state, then back.</b> When k is above k*, investment < depreciation, so k and y fall over time (negative growth) until they reach the unchanged k* and y*. Mirror image: a capital-destroying shock (an earthquake) gives a jump down, then growth back up.",
+      steps: [
+        "Immediately: k jumps up (fewer workers, same K), so y = k<sup>α</sup> jumps up.",
+        "After: k > k* means δk > s·f(k), so k falls, and y falls with it. Growth is negative.",
+        "Long run: back to the original k* and y*, since nothing that determines them changed.",
+      ],
+      cards: ["lf-fall", "steady-state"],
+      graph: { key: "solowShock", args: { v: "y" } },
+    },
+    {
+      id: "p2-1c", section: "p2q1", label: "1(c) path of c", pts: 3, week: 5, kind: "one",
+      setup: "The March family (“Little Women”) cares about consumption per worker, c<sub>t</sub>. Same shock: L falls once, permanently; s stays at 0.3.",
+      prompt: "What happens to consumption per worker as a result of the drop in population?",
+      options: [
+        { t: "c jumps up with income, then declines back to its original steady-state value, moving just like y.", right: true },
+        { t: "c falls, because households must save more to rebuild after the war.",
+          why: "The saving rate is fixed at s = 0.3 in Solow; households don’t re-optimize. c = (1 − s)y simply follows y." },
+        { t: "c rises permanently, because there are fewer people to share output with.",
+          why: "Only temporarily. Capital per worker drifts back down to k*, so c returns to its old level." },
+        { t: "c drops at first, then rises above its old level.",
+          why: "That’s the pattern after a <i>saving-rate increase</i> (c dips, then grows). Here s didn’t change; k jumped up, so c jumps <b>up</b> first." },
+      ],
+      pattern: "<b>With s fixed, c = (1 − s)·y.</b> Consumption per worker is a constant fraction of income per worker, so whatever y does, c does: same timing, same direction.",
+      steps: [
+        "c<sub>t</sub> = (1 − s)·y<sub>t</sub>, and s = 0.3 doesn’t change.",
+        "y jumps up then falls back, as in (b).",
+        "So c jumps up, then declines back to its original steady-state value.",
+      ],
+      cards: ["consumption-lf-fall", "inv-cons-per-worker"],
+      graph: { key: "solowShock", args: { v: "c" } },
+    },
+
+    // ------------------------------------------------ Part 2 · Q2 · Supers
+    {
+      id: "p2-2a-u1", section: "p2q2", label: "2(a) u at t = 1", pts: 5, week: 4, kind: "one",
+      setup: "f = 0.28, s = 0.02. U<sub>t+1</sub> = (1 − f)U<sub>t</sub> + sE<sub>t</sub>, E<sub>t+1</sub> = (1 − s)E<sub>t</sub> + fU<sub>t</sub>. At t = 0, u = 0.067 and the labor force is 15 million. “Supers” return: at t = 1 both the labor force and employment rise by 1 million; unemployment is unchanged.",
+      prompt: "What is the unemployment rate at <b>t = 1</b>?",
+      options: [
+        { t: "u<sub>1</sub> = 0.0625", right: true },
+        { t: "u<sub>1</sub> = 0.0667",
+          why: "That’s 1/15: you kept the old labor force. The Supers joined it, so L<sub>1</sub> = 16 million." },
+        { t: "u<sub>1</sub> = 0.0714",
+          why: "That’s 1/14: unemployed divided by <i>employed</i>. The rate divides by the labor force (E + U)." },
+        { t: "u<sub>1</sub> = 0.125",
+          why: "That’s 2/16: you added the million to unemployment too. The Supers went straight into <b>jobs</b>, so U stays at 1 million." },
+      ],
+      pattern: "<b>Turn rates into counts first.</b> U = u·L, E = L − U. Apply the shock to the counts, then divide by the <i>new</i> labor force.",
+      steps: [
+        "t = 0: U<sub>0</sub> = 0.067 × 15 ≈ 1 million, so E<sub>0</sub> = 14 million.",
+        "t = 1: employment +1 million gives E<sub>1</sub> = 15; U<sub>1</sub> = 1 (unchanged); L<sub>1</sub> = 16.",
+        "u<sub>1</sub> = U<sub>1</sub>/L<sub>1</sub> = 1/16 = <b>0.0625</b>.",
+      ],
+      cards: ["unemployment-rate", "labor-force"],
+    },
+    {
+      id: "p2-2a-u2", section: "p2q2", label: "2(a) u at t = 2", pts: 5, week: 4, kind: "one",
+      setup: "Continuing: at t = 1, U<sub>1</sub> = 1 million, E<sub>1</sub> = 15 million, L = 16 million. f = 0.28, s = 0.02.",
+      prompt: "Using U<sub>t+1</sub> = (1 − f)U<sub>t</sub> + sE<sub>t</sub>, what is the unemployment rate at <b>t = 2</b>?",
+      options: [
+        { t: "u<sub>2</sub> = 0.06375", right: true },
+        { t: "u<sub>2</sub> = 0.0625",
+          why: "You used E = 14 (employment before the Supers came back): 0.72 + 0.02×14 = 1.00. At t = 1, E<sub>1</sub> = <b>15</b>." },
+        { t: "u<sub>2</sub> = 0.03625",
+          why: "You used f where the equation has 1 − f: 0.28×1 + 0.3. Those who <b>stay</b> unemployed are the fraction (1 − f) = 0.72." },
+        { t: "u<sub>2</sub> = 0.0667",
+          why: "That’s the steady state s/(s + f) = 0.02/0.30. The economy only gets there over time. Here you need one step of the equation." },
+      ],
+      pattern: "<b>One step of the flows equation.</b> Next period’s unemployed = those who <i>didn’t</i> find a job, (1 − f)U, plus those who <i>lost</i> one, sE. Use this period’s counts, then divide by the labor force.",
+      steps: [
+        "U<sub>2</sub> = (1 − f)U<sub>1</sub> + sE<sub>1</sub> = (0.72)(1) + (0.02)(15).",
+        "= 0.72 + 0.30 = 1.02 million.",
+        "u<sub>2</sub> = 1.02 / 16 = <b>0.06375</b>, heading back up toward the steady state s/(s + f) ≈ 0.0667.",
+      ],
+      cards: ["unemployment-dynamics", "finding-rate", "separation-rate", "ss-unemployment-rate"],
+      graph: "unemploymentPath",
+    },
+    {
+      id: "p2-2b", section: "p2q2", label: "2(b) Violet’s model", pts: 10, week: 4, kind: "one",
+      setup: "Violet adds people outside the labor force: NL<sub>t+1</sub> = (1 − j)NL<sub>t</sub> + qE<sub>t</sub>, U<sub>t+1</sub> = (1 − f)U<sub>t</sub> + sE<sub>t</sub>, E<sub>t+1</sub> = (1 − s − q)E<sub>t</sub> + fU<sub>t</sub> + jNL<sub>t</sub>. Entrants and leavers skip unemployment.",
+      prompt: "What is the <b>steady-state unemployment rate</b> in Violet’s model?",
+      options: [
+        { t: "Ū/L̄ = s / (s + f), exactly the same as the baseline model", right: true },
+        { t: "Ū/L̄ = (s + q) / (s + q + f)",
+          why: "People leaving (q) exit to <b>outside</b> the labor force, not to unemployment. In steady state q·Ē = j·NL̄ cancels out of the E equation." },
+        { t: "Ū/L̄ = s / (s + f + j)",
+          why: "Entrants (j) go straight into <b>employment</b>, and in steady state their inflow exactly matches the q outflow. They don’t change the U–E flows." },
+        { t: "Ū/L̄ = q / (q + j)",
+          why: "That’s about the split between in and out of the labor force (NL vs. E), not the unemployment rate." },
+      ],
+      pattern: "<b>Steady state: set X<sub>t+1</sub> = X<sub>t</sub> and substitute.</b> The NL equation gives jNL̄ = qĒ. Plug that into E, and the q and j flows cancel, leaving the baseline equation. So u = s/(s + f).",
+      steps: [
+        "NL steady state: NL̄ = (1 − j)NL̄ + qĒ, so jNL̄ = qĒ.",
+        "E steady state: Ē = (1 − s − q)Ē + fŪ + jNL̄ = (1 − s − q)Ē + fŪ + qĒ = (1 − s)Ē + fŪ.",
+        "That’s the original model. Set Ē = L̄ − Ū: s(L̄ − Ū) = fŪ, so sL̄ = (s + f)Ū.",
+        "Ū/L̄ = <b>s/(s + f)</b>: the same as the baseline.",
+      ],
+      cards: ["steady-state-condition", "ss-unemployment-rate", "not-in-lf"],
+      graph: "flows",
+    },
+
+    // ------------------------------------------ Part 2 · Q3 · Uncharted galaxy
+    {
+      id: "p2-3a", section: "p2q3", label: "3(a) labor hired", pts: 6, week: 2, kind: "one",
+      setup: "Gamma Epsilon IV: Y = F(K, L) = 5K<sup>0.3</sup>L<sup>0.7</sup>. Firms are competitive and maximize profit, selling at price P, paying wage W and rental rate R.",
+      prompt: "With K = 1000, W = 5 and P = 2, how many workers will firms hire?",
+      options: [
+        { t: "L ≈ 3,069.7", right: true },
+        { t: "L ≈ 304.6",
+          why: "You set MPL equal to W = 5. Firms compare MPL with the <b>real</b> wage W/P = 5/2 = 2.5." },
+        { t: "L ≈ 10,079",
+          why: "You dropped the 0.7 when differentiating: MPL = <b>0.7</b>·5K<sup>0.3</sup>L<sup>−0.3</sup> = 3.5K<sup>0.3</sup>L<sup>−0.3</sup>." },
+        { t: "L ≈ 11.1",
+          why: "You stopped at L<sup>0.3</sup> = 11.12. Raise both sides to 1/0.3 to get L." },
+      ],
+      pattern: "<b>Labor demand: MPL = W/P.</b> Profit = PY − WL − RK; differentiate in L: P·MPL = W, so MPL = W/P (the <i>real</i> wage). For Y = AK<sup>α</sup>L<sup>1−α</sup>, MPL = (1 − α)AK<sup>α</sup>L<sup>−α</sup>; solve for L.",
+      steps: [
+        "Profit = PY − WL − RK. Set ∂/∂L = 0: P·∂Y/∂L = W, so <b>MPL = W/P</b>.",
+        "MPL = 5(0.7)K<sup>0.3</sup>L<sup>−0.3</sup> = 3.5K<sup>0.3</sup>L<sup>−0.3</sup>.",
+        "3.5(1000)<sup>0.3</sup>L<sup>−0.3</sup> = 5/2, so L<sup>0.3</sup> = 3.5 × 7.943 / 2.5 = 11.121.",
+        "L = 11.121<sup>1/0.3</sup> = <b>3,069.7</b>.",
+      ],
+      cards: ["labor-demand", "mpl", "cd-marginal", "real-wage"],
+      graph: { key: "factorMarket", args: { kind: "labor" } },
+    },
+    {
+      id: "p2-3b-a", section: "p2q3", label: "3(b) α", pts: 3, week: 2, kind: "one",
+      setup: "Theta Alpha III: Y = AK<sup>α</sup>L<sup>1−α</sup>, competitive firms. Observed: Y = 150, L = 200, MPL = 0.5, MPK = 0.5. K, α and A are unknown.",
+      prompt: "What is <b>α</b>?",
+      options: [
+        { t: "α = 1/3", right: true },
+        { t: "α = 2/3",
+          why: "MPL·L/Y = 2/3 is the <b>labor</b> share, which equals 1 − α. So α = 1 − 2/3 = 1/3." },
+        { t: "α = 1/2",
+          why: "MPL = MPK doesn’t mean equal shares. The shares depend on MPL·L and MPK·K, and L ≠ K." },
+        { t: "α = 1.5",
+          why: "That’s Y/(MPL·L), the fraction flipped. A share can’t be above 1: the labor share is MPL·L/Y = 100/150." },
+      ],
+      pattern: "<b>Back out α from the shares.</b> Competitive firms pay W/P = MPL, so the labor share (W/P)L/Y = MPL·L/Y = <b>1 − α</b>, and the capital share MPK·K/Y = <b>α</b>.",
+      steps: [
+        "Competitive: W/P = MPL, so the labor share = MPL·L/Y.",
+        "Cobb-Douglas: labor share = 1 − α.",
+        "1 − α = 0.5 × 200 / 150 = 100/150 = 2/3, so <b>α = 1/3</b>.",
+      ],
+      cards: ["backing-out", "labor-share", "capital-share"],
+    },
+    {
+      id: "p2-3b-k", section: "p2q3", label: "3(b) K", pts: 2, week: 2, kind: "one",
+      setup: "Theta Alpha III: Y = 150, MPK = 0.5, and α = 1/3.",
+      prompt: "What is <b>K</b>?",
+      options: [
+        { t: "K = 100", right: true },
+        { t: "K = 200",
+          why: "You used α = 2/3 (the labor share). Capital share α = 1/3: K = (1/3)(150)/0.5 = 100." },
+        { t: "K = 300",
+          why: "That’s Y/MPK = 150/0.5: you dropped α. Capital gets only the share α of output: MPK·K = αY." },
+        { t: "K = 25",
+          why: "You multiplied by MPK instead of dividing: (1/3)(150)(0.5) = 25. From α = MPK·K/Y, K = αY/MPK." },
+      ],
+      pattern: "<b>Capital share = α = MPK·K/Y</b>, so <b>K = αY/MPK</b>. Same trick as the labor share, from the other side.",
+      steps: [
+        "α = R/P · K/Y = MPK·K/Y.",
+        "1/3 = 0.5·K / 150.",
+        "K = (1/3)(150)/0.5 = <b>100</b>.",
+      ],
+      cards: ["capital-share", "mpk", "backing-out"],
+    },
+    {
+      id: "p2-3b-A", section: "p2q3", label: "3(b) A", pts: 2, week: 2, kind: "one",
+      setup: "Theta Alpha III: Y = 150, L = 200, K = 100, α = 1/3.",
+      prompt: "What is <b>A</b>?",
+      options: [
+        { t: "A ≈ 0.945", right: true },
+        { t: "A ≈ 1.190",
+          why: "You swapped the exponents: K gets α = 1/3 and L gets 1 − α = 2/3. That’s 100<sup>1/3</sup>·200<sup>2/3</sup>, not 100<sup>2/3</sup>·200<sup>1/3</sup>." },
+        { t: "A ≈ 0.655",
+          why: "You used K = 300 (from Y/MPK, which leaves out α). With K = 100: A = 150 / (100<sup>1/3</sup>·200<sup>2/3</sup>)." },
+        { t: "A ≈ 1.058",
+          why: "That’s the flipped fraction, K<sup>α</sup>L<sup>1−α</sup>/Y. A = Y divided by K<sup>α</sup>L<sup>1−α</sup>." },
+      ],
+      pattern: "<b>Once you have α and K, A is just the production function solved for A:</b> A = Y / (K<sup>α</sup>L<sup>1−α</sup>).",
+      steps: [
+        "Y = AK<sup>α</sup>L<sup>1−α</sup>, so 150 = A·100<sup>1/3</sup>·200<sup>2/3</sup>.",
+        "100<sup>1/3</sup> ≈ 4.642 and 200<sup>2/3</sup> ≈ 34.20, a product of ≈ 158.7.",
+        "A = 150 / 158.7 = <b>0.945</b>.",
+      ],
+      cards: ["tfp", "cobb-douglas", "backing-out"],
+    },
+    {
+      id: "p2-3c-y", section: "p2q3", label: "3(c) Y", pts: 2, week: 2, kind: "one",
+      setup: "Beta Xi VII: Y = K<sup>0.5</sup>L<sup>0.5</sup>, Y = C(Y − T) + I(r) + G, C = 10 + 0.5(Y − T), I(r) = 100 − 2r, G = 10, T = 10. K = 169, L = 225.",
+      prompt: "What is output <b>Y</b>?",
+      options: [
+        { t: "Y = 195", right: true },
+        { t: "Y = 38,025",
+          why: "That’s K×L: you left off the exponents. Y = √169 × √225 = 13 × 15." },
+        { t: "Y = 394",
+          why: "That’s K + L. Cobb-Douglas <b>multiplies</b> the inputs: Y = K<sup>0.5</sup>·L<sup>0.5</sup>." },
+        { t: "Y = 197",
+          why: "That’s the average of K and L. With exponents of 0.5 it’s the <i>geometric</i> mean: √(169 × 225) = 195." },
+      ],
+      pattern: "<b>Output comes from the supply side first.</b> In the classical model Ȳ = F(K̄, L̄) is fixed by the factors. Compute it before touching the demand side.",
+      steps: [
+        "Y = 169<sup>0.5</sup> × 225<sup>0.5</sup>.",
+        "= 13 × 15 = <b>195</b>.",
+      ],
+      cards: ["production-function", "goods-market-eq"],
+    },
+    {
+      id: "p2-3c-r", section: "p2q3", label: "3(c) r", pts: 3, week: 2, kind: "one",
+      setup: "Beta Xi VII: Y = 195, C = 10 + 0.5(Y − T), I(r) = 100 − 2r, G = 10, T = 10.",
+      prompt: "What is the real interest rate <b>r</b>?",
+      options: [
+        { t: "r = 8.75", right: true },
+        { t: "r = 3.75",
+          why: "You left G out of Y = C + I + G. Add the 10 back: 195 = 10 + 92.5 + 100 − 2r + 10." },
+        { t: "r = 11.25",
+          why: "You used 0.5·Y instead of 0.5·(Y − T). Consumption depends on <b>disposable</b> income: 0.5(195 − 10) = 92.5." },
+        { t: "r = −8.75",
+          why: "Sign slip when solving: 195 = 212.5 − 2r, so 2r = 212.5 − 195 = 17.5 and r = +8.75." },
+      ],
+      pattern: "<b>Goods-market equilibrium pins down r.</b> Y is fixed, so plug Y, T and G into Y = C(Y − T) + I(r) + G and solve the one unknown, r. (Same as S = I(r).)",
+      steps: [
+        "195 = 10 + 0.5(195 − 10) + 100 − 2r + 10.",
+        "0.5(185) = 92.5, so 195 = 212.5 − 2r.",
+        "2r = 17.5, so <b>r = 8.75</b>.",
+      ],
+      cards: ["goods-market-eq", "loanable-funds", "investment-function"],
+      graph: "loanableFunds",
+    },
+    {
+      id: "p2-3c-i", section: "p2q3", label: "3(c) I", pts: 2, week: 2, kind: "one",
+      setup: "Beta Xi VII: I(r) = 100 − 2r, and r = 8.75.",
+      prompt: "What is investment <b>I</b>?",
+      options: [
+        { t: "I = 82.5", right: true },
+        { t: "I = 117.5",
+          why: "Sign flip: you added 2r. I(r) = 100 <b>−</b> 2r, since a higher r means less investment." },
+        { t: "I = 91.25",
+          why: "You subtracted r, not 2r: 100 − 8.75. The slope is 2: I = 100 − 2(8.75) = 100 − 17.5." },
+        { t: "I = 77.5",
+          why: "That uses r = 11.25 (consumption on Y instead of Y − T). With r = 8.75: I = 82.5." },
+      ],
+      pattern: "<b>Plug r into I(r).</b> Check: S = Y − C − G = 195 − 102.5 − 10 = 82.5 = I. Saving equals investment, so the answer is consistent.",
+      steps: [
+        "I = 100 − 2(8.75) = 100 − 17.5 = <b>82.5</b>.",
+        "Check with saving: C = 10 + 92.5 = 102.5, so S = 195 − 102.5 − 10 = 82.5 ✓.",
+      ],
+      cards: ["investment-function", "national-saving"],
+    },
+  ],
+};
+
+// The Practice tab: the practice midterm as a multiple-choice drill.
+//
+// Each question: pick an answer, then see the general pattern, then (if it
+// was wrong) what the option you picked suggests went wrong, then the
+// worked solution one step at a time. A miss goes to the back of the
+// session and is scheduled like a missed flashcard; a first-try hit climbs
+// the same ladder as a confident card (tools/schedule.js).
+//
+// Questions live in tools/practice/questions.js. The host (tools/web/host.js)
+// owns progress and saving and hands this file a few callbacks.
+
+var PRACTICEUI = (function () {
+  "use strict";
+
+  var root, host;
+  var QS = EXAM.questions;
+  var BY = {};
+  QS.forEach(function (q, k) { q.n = k; BY[q.id] = q; });
+
+  var view = "menu";                 // "menu" | "ask" | "result" | "done"
+  var queue = [], at = 0;
+  var order = [];                    // the options of the question on screen, in display order
+  var picked = {};                   // option index → true
+  var shown = 0;                     // steps revealed so far
+  var wasRight = false;
+  var tally = { asked: 0, firstTry: 0, missedIds: [] };
+  var triedOnce = {};                // question id → already answered this session
+
+  function $(s) { return root.querySelector(s); }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function weekColor(w) { return (typeof WEEKS !== "undefined" && WEEKS[w - 1]) || { color: "#1F4E8C", soft: "rgba(31,78,140,.10)" }; }
+  function state(id) { return (host.progress().practice || {})[id] || null; }
+  function letter(k) { return "ABCDEFGH"[k]; }
+
+  // ------------------------------------------------------------- queues
+
+  /** Seen and due now (most overdue first), then never seen, in exam order. */
+  function drillQueue(filter, now) {
+    now = now || Date.now();
+    var due = [], fresh = [];
+    QS.forEach(function (q) {
+      if (filter && !filter(q)) return;
+      var s = state(q.id);
+      if (!s) fresh.push(q);
+      else if (s.due <= now) due.push(q);
+    });
+    due.sort(function (a, b) { return state(a.id).due - state(b.id).due || a.n - b.n; });
+    return due.concat(fresh).map(function (q) { return q.id; });
+  }
+
+  function stats() {
+    var now = Date.now(), seen = 0, right = 0, due = 0, next = Infinity;
+    QS.forEach(function (q) {
+      var s = state(q.id);
+      if (!s) return;
+      seen++;
+      if (s.rating === "confident") right++;
+      if (s.due <= now) due++; else if (s.due < next) next = s.due;
+    });
+    return { total: QS.length, seen: seen, right: right, due: due, fresh: QS.length - seen, next: next, owed: due + QS.length - seen };
+  }
+
+  // --------------------------------------------------------------- menu
+
+  function icon(d) {
+    return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + "</svg>";
+  }
+  var I = {
+    pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+    list: '<path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    chev: '<path d="m9 18 6-6-6-6"/>',
+  };
+  function timeOf(ms) { return new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); }
+
+  function renderMenu() {
+    view = "menu";
+    var st = stats();
+    var big = st.owed
+      ? '<button type="button" class="primary" id="pq-drill"><span class="pl">' + icon(I.pen) + "<span><b>Drill " + st.owed + " question" + (st.owed === 1 ? "" : "s") + "</b><small>" +
+        (st.due ? st.due + " to retry" + (st.fresh ? " + " + st.fresh + " new" : "") : "multiple choice · misses come back") +
+        '</small></span></span><span class="pr"><kbd>Enter</kbd>' + icon(I.chev) + "</span></button>"
+      : '<button type="button" class="primary" id="pq-drill" disabled><span class="pl">' + icon(I.check) + "<span><b>All caught up</b><small>" +
+        (st.next < Infinity ? "Next question comes back at " + timeOf(st.next) + ". Take a section again below meanwhile." : "Take a section again below.") +
+        "</small></span></span></button>";
+    var sections = EXAM.sections.map(function (sec) {
+      var qs = QS.filter(function (q) { return q.section === sec.id; });
+      var right = qs.filter(function (q) { var s = state(q.id); return s && s.rating === "confident"; }).length;
+      var w = weekColor(qs[0].week);
+      return '<button type="button" class="hm" data-pq-section="' + sec.id + '" style="--c:' + w.color + '">' +
+        '<span class="wk">' + esc(sec.sub) + '</span><span class="nm">' + esc(sec.title) + "</span>" +
+        '<span class="mini"><span style="width:' + (100 * right / qs.length).toFixed(0) + '%"></span></span>' +
+        '<span class="ct">' + right + " of " + qs.length + " right last time</span></button>";
+    }).join("");
+    var hard = QS.map(function (q) { return { q: q, s: state(q.id) }; })
+      .filter(function (x) { return x.s && x.s.lapses > 0; })
+      .sort(function (a, b) { return b.s.lapses - a.s.lapses; }).slice(0, 6)
+      .map(function (x) { return "<li>" + esc(sectionShort(x.q)) + " " + esc(x.q.label) + ' <span class="dim">missed ' + x.s.lapses + "×</span></li>"; }).join("");
+    root.innerHTML =
+      '<div class="h-top"><div><h1>Practice midterm</h1><p>' + esc(EXAM.title) + " · " + QS.length + " questions as multiple choice. Guess, then see the pattern and where it went wrong.</p></div></div>" +
+      big + '<p class="save-state dim small"></p>' +
+      '<section class="sect-h"><h2>Score</h2><div class="tiles">' +
+      '<div class="tile"><p class="tv">' + st.right + '</p><p class="tl">right last time</p></div>' +
+      '<div class="tile"><p class="tv">' + st.fresh + '</p><p class="tl">not tried yet</p></div></div>' +
+      '<div class="meter"><div class="m-bar"><span style="width:' + (100 * st.right / st.total).toFixed(1) + '%;background:#2E7D52"></span>' +
+      '<span style="width:' + (100 * (st.seen - st.right) / st.total).toFixed(1) + '%;background:#C0392B"></span></div>' +
+      '<p class="dim small">' + st.right + " of " + st.total + " right on the latest try · " + (st.seen - st.right) + " to fix</p></div></section>" +
+      '<section class="sect-h"><h2>Sections</h2><div class="grid3">' + sections + "</div>" +
+      '<div class="pair"><button type="button" class="second" id="pq-all">Whole exam in order<small>All ' + QS.length + ", Part 1 then Part 2</small></button>" +
+      '<button type="button" class="second" id="pq-wrong"' + (st.seen - st.right ? "" : " disabled") + ">Only the ones I got wrong<small>" + (st.seen - st.right) + " to fix</small></button></div></section>" +
+      (hard ? '<section class="sect-h"><h2>Missed most</h2><ul class="plain card pad">' + hard + "</ul></section>" : "") +
+      '<section class="sect-h"><h2>Keys</h2><div class="keys card pad">' +
+      "<span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd></span><span>Pick an answer (or A–D)</span>" +
+      "<span><kbd>Enter</kbd></span><span>Check a select-all answer · next step · next question</span>" +
+      "<span><kbd>Esc</kbd></span><span>Back to this menu (answers are already saved)</span></div></section>";
+    host.renderSaveState();
+  }
+
+  function sectionShort(q) { return q.section === "p1" ? "Part 1" : "Part 2"; }
+
+  // ------------------------------------------------------------ session
+
+  function start(ids) {
+    if (!ids.length) return;
+    queue = ids.slice();
+    at = 0;
+    tally = { asked: 0, firstTry: 0, missedIds: [] };
+    triedOnce = {};
+    ask();
+  }
+
+  function shuffled(n, keep) {
+    var a = [];
+    for (var k = 0; k < n; k++) a.push(k);
+    if (keep) return a;
+    for (k = n - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)); var t = a[k]; a[k] = a[j]; a[j] = t; }
+    return a;
+  }
+
+  function current() { return BY[queue[at]]; }
+
+  function ask() {
+    var q = current();
+    view = "ask";
+    picked = {};
+    shown = 0;
+    // True/False stays in that order; everything else is shuffled each time,
+    // so a retry tests the idea and not the position.
+    order = shuffled(q.options.length, !!q.tf);
+    render();
+  }
+
+  function head(q) {
+    var w = weekColor(q.week);
+    var sec = EXAM.sections.find(function (s) { return s.id === q.section; });
+    return '<div class="pq-top"><span class="pq-count">' + (at + 1) + " / " + queue.length + "</span>" +
+      '<div class="pq-bar"><span style="width:' + (100 * at / queue.length).toFixed(1) + "%;background:" + w.color + '"></span></div>' +
+      '<button type="button" class="m-small" id="pq-quit">Esc · menu</button></div>' +
+      '<p class="pq-src" style="color:' + w.color + '">' + esc(sec.title) + " · " + esc(q.label) + " · " + q.pts + " pts" +
+      (q.kind === "all" ? ' · <b>select all that apply</b>' : "") + "</p>" +
+      (q.setup ? '<p class="pq-setup">' + q.setup + "</p>" : "") +
+      '<p class="pq-q">' + q.prompt + "</p>";
+  }
+
+  function render() {
+    var q = current(), w = weekColor(q.week);
+    root.style.setProperty("--wk", w.color);
+    root.style.setProperty("--wk-soft", w.soft);
+    if (view === "ask") {
+      root.innerHTML = '<div class="pq">' + head(q) +
+        '<div class="pq-opts' + (q.tf ? " tf" : "") + '">' + order.map(function (oi, k) {
+          return '<button type="button" class="pq-opt' + (picked[oi] ? " on" : "") + '" data-opt="' + oi + '">' +
+            '<span class="pq-l">' + (q.kind === "all" ? (picked[oi] ? "✓" : letter(k)) : letter(k)) + "</span><span>" + q.options[oi].t + "</span></button>";
+        }).join("") + "</div>" +
+        (q.kind === "all"
+          ? '<button type="button" class="go-btn pq-check" id="pq-check">Check <kbd>Enter</kbd></button>'
+          : '<p class="pq-hint dim small">Press 1–' + order.length + " or click an answer</p>") +
+        "</div>";
+      return;
+    }
+    // result
+    var right = q.options.map(function (o) { return !!o.right; });
+    var opts = order.map(function (oi, k) {
+      var cls = right[oi] ? " ok" : picked[oi] ? " bad" : " dim";
+      var mark = right[oi] ? (picked[oi] || q.kind === "one" ? "✓" : "✓") : picked[oi] ? "✗" : letter(k);
+      return '<div class="pq-opt' + cls + (picked[oi] ? " was" : "") + '"><span class="pq-l">' + mark + "</span><span>" + q.options[oi].t +
+        (q.kind === "all" && right[oi] && !picked[oi] ? ' <em class="pq-tag">you left this out</em>' : "") +
+        (picked[oi] && !right[oi] ? ' <em class="pq-tag">your pick</em>' : "") + "</span></div>";
+    }).join("");
+    var verdict = wasRight
+      ? '<div class="pq-verdict ok">' + icon(I.check) + "<span><b>Right.</b> " + (triedOnce[q.id] > 1 ? "Got it on the retry." : "First try.") + "</span></div>"
+      : '<div class="pq-verdict bad"><b>Not quite.</b> <span>' + answerLine(q) + "</span></div>";
+    var diag = wasRight ? "" : diagnosis(q);
+    var steps = q.steps.map(function (s, k) {
+      return '<li class="' + (k === shown - 1 && shown > 1 ? "in" : "") + '"' + (k < shown ? "" : " hidden") + ">" + s + "</li>";
+    }).join("");
+    var allShown = shown >= q.steps.length;
+    var nextLabel = !allShown && !wasRight ? "Next step" : (at + 1 < queue.length ? "Next question" : "Finish");
+    var graph = "";
+    if (q.graph && typeof GRAPHS !== "undefined") {
+      var key = typeof q.graph === "string" ? q.graph : q.graph.key;
+      var g = GRAPHS[key] && GRAPHS[key](q.graph.args || {});
+      if (g) graph = '<div class="pq-graph">' + g.svg + (g.cap ? '<p class="cap">' + g.cap + "</p>" : "") + "</div>";
+    }
+    var related = (q.cards || []).map(function (id) { var t = host.cardTerm(id); return t ? '<span class="pq-chip">' + t + "</span>" : ""; }).join("");
+    root.innerHTML = '<div class="pq">' + head(q) +
+      '<div class="pq-opts done' + (q.tf ? " tf" : "") + '">' + opts + "</div>" + verdict +
+      '<section class="pq-box pattern"><p class="pq-h">The pattern</p><div>' + q.pattern + "</div></section>" +
+      diag +
+      '<section class="pq-box steps"><p class="pq-h">Step by step' + (wasRight && !allShown ? ' <button type="button" class="m-small" id="pq-show">Show the working</button>' : "") + "</p>" +
+      '<ol class="pq-steps">' + steps + "</ol>" + (allShown ? graph : "") + "</section>" +
+      (related ? '<p class="pq-rel"><span class="dim small">' + (wasRight ? "Flashcards on this:" : "Flashcards on this (marked due again):") + "</span> " + related + "</p>" : "") +
+      '<div class="pq-next"><button type="button" class="go-btn" id="pq-next">' + nextLabel + " <kbd>Enter</kbd></button></div>" +
+      "</div>";
+    var nb = $("#pq-next");
+    if (nb && nb.scrollIntoView && !wasRight && shown > 0) nb.scrollIntoView({ block: "nearest" });
+  }
+
+  function answerLine(q) {
+    var rights = [];
+    order.forEach(function (oi, k) { if (q.options[oi].right) rights.push(letter(k)); });
+    if (q.tf) return "The answer is <b>" + esc(q.options.find(function (o) { return o.right; }).t) + "</b>.";
+    return q.kind === "all"
+      ? "The true ones are <b>" + (rights.length ? rights.join(", ") : "none") + "</b>."
+      : "The answer is <b>" + rights[0] + "</b>.";
+  }
+
+  /** What the picked answer suggests went wrong: the `why` of every option
+   *  answered differently from the key. */
+  function diagnosis(q) {
+    var items = [];
+    order.forEach(function (oi, k) {
+      var o = q.options[oi];
+      if (q.kind === "one") {
+        if (picked[oi] && !o.right && o.why) items.push(o.why);
+      } else if (!!picked[oi] !== !!o.right && o.why) {
+        items.push("<b>" + letter(k) + " " + (o.right ? "is true" : "is false") + ".</b> " + o.why);
+      }
+    });
+    if (!items.length) return "";
+    return '<section class="pq-box why"><p class="pq-h">Where it likely went wrong</p>' +
+      (items.length === 1 ? "<div>" + items[0] + "</div>" : '<ul class="plain">' + items.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>") +
+      "</section>";
+  }
+
+  function choose(oi) {
+    var q = current();
+    if (view !== "ask") return;
+    if (q.kind === "all") { picked[oi] = !picked[oi]; render(); return; }
+    picked = {}; picked[oi] = true;
+    check();
+  }
+
+  function check() {
+    var q = current();
+    if (view !== "ask") return;
+    if (q.kind === "all" && !Object.keys(picked).some(function (k) { return picked[k]; }) && !confirmEmpty) {
+      // Selecting nothing is a real answer ("none are true"), but make it deliberate.
+      confirmEmpty = true;
+      var b = $("#pq-check");
+      if (b) b.innerHTML = "None are true? Press again <kbd>Enter</kbd>";
+      return;
+    }
+    confirmEmpty = false;
+    wasRight = q.options.every(function (o, oi) { return !!o.right === !!picked[oi]; });
+    triedOnce[q.id] = (triedOnce[q.id] || 0) + 1;
+    tally.asked++;
+    if (triedOnce[q.id] === 1 && wasRight) tally.firstTry++;
+    if (!wasRight && tally.missedIds.indexOf(q.id) === -1) tally.missedIds.push(q.id);
+    host.grade(q.id, wasRight ? "confident" : "missed", wasRight ? [] : (q.cards || []));
+    // A miss goes to the back of this session, like a missed flashcard.
+    if (!wasRight) queue.push(q.id);
+    view = "result";
+    shown = wasRight ? 0 : 1;
+    render();
+    // On a small screen the options fill the view: bring the verdict and
+    // the pattern up to where the eye is.
+    var v = $(".pq-verdict");
+    if (v && v.scrollIntoView && window.innerHeight < 900) v.scrollIntoView({ block: "start" });
+  }
+  var confirmEmpty = false;
+
+  function next() {
+    var q = current();
+    if (view !== "result") return;
+    if (!wasRight && shown < q.steps.length) { shown++; render(); return; }
+    at++;
+    if (at >= queue.length) return done();
+    ask();
+  }
+
+  function done() {
+    view = "done";
+    var first = Object.keys(triedOnce).length;
+    var missed = tally.missedIds.map(function (id) { var q = BY[id]; return "<li>" + esc(sectionShort(q)) + " " + esc(q.label) + "</li>"; }).join("");
+    root.innerHTML = '<div class="pq pq-done">' +
+      "<h1>Done</h1><p class=\"pq-score\"><b>" + tally.firstTry + " of " + first + "</b> right on the first try</p>" +
+      (missed ? '<section class="pq-box why"><p class="pq-h">Missed this round (they come back later)</p><ul class="plain">' + missed + "</ul></section>"
+        : '<section class="pq-box pattern"><p class="pq-h">Clean sweep</p><div>Every question right first time. They’ll come back in a few hours to make sure it sticks.</div></section>') +
+      '<div class="pq-next"><button type="button" class="go-btn" id="pq-menu">Back to practice <kbd>Enter</kbd></button></div></div>';
+  }
+
+  // ------------------------------------------------------------- events
+
+  function onClick(e) {
+    var b = e.target.closest("button");
+    if (!b || !root.contains(b)) return;
+    if (b.id === "pq-drill") return start(drillQueue());
+    if (b.id === "pq-all") return start(QS.map(function (q) { return q.id; }));
+    if (b.id === "pq-wrong") return start(QS.filter(function (q) { var s = state(q.id); return s && s.rating !== "confident"; }).map(function (q) { return q.id; }));
+    if (b.dataset.pqSection) {
+      var sid = b.dataset.pqSection;
+      return start(QS.filter(function (q) { return q.section === sid; }).map(function (q) { return q.id; }));
+    }
+    if (b.id === "pq-quit" || b.id === "pq-menu") return renderMenu();
+    if (b.dataset.opt != null && view === "ask") return choose(Number(b.dataset.opt));
+    if (b.id === "pq-check") return check();
+    if (b.id === "pq-next") return next();
+    if (b.id === "pq-show") { shown = current().steps.length; render(); }
+  }
+
+  function handleKey(e) {
+    var k = e.key;
+    var tag = document.activeElement && document.activeElement.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
+    if (view === "menu") {
+      if (k === "Enter" && (!document.activeElement || document.activeElement === document.body)) {
+        var d = $("#pq-drill");
+        if (d && !d.disabled) { e.preventDefault(); d.click(); }
+      }
+      return;
+    }
+    if (k === "Escape") { e.preventDefault(); return renderMenu(); }
+    if (e.repeat) return;
+    if (view === "done") { if (k === "Enter") { e.preventDefault(); renderMenu(); } return; }
+    if (view === "ask") {
+      var idx = "1234".indexOf(k);
+      if (idx === -1) idx = "abcd".indexOf(k.toLowerCase());
+      if (k.length === 1 && idx !== -1 && idx < order.length) { e.preventDefault(); return choose(order[idx]); }
+      if (current().kind === "all" && k === "Enter") { e.preventDefault(); return check(); }
+      return;
+    }
+    if (view === "result" && (k === "Enter" || k === "ArrowRight")) { e.preventDefault(); next(); }
+  }
+
+  function mount(el, h) {
+    root = el;
+    host = h;
+    root.addEventListener("click", onClick);
+    renderMenu();
+  }
+
+  return {
+    mount: mount,
+    handleKey: handleKey,
+    menu: function () { if (view === "menu" || view === "done") renderMenu(); },
+    refresh: function () { if (view === "menu") renderMenu(); },
+    stats: stats,
+    drill: function () { renderMenu(); start(drillQueue()); },
+    inSession: function () { return view === "ask" || view === "result"; },
+    questions: QS,
+  };
+})();
+
+</script>
+<script>
 // ------------------------------------------------------------- scheduling
 //
 // Accelerated Anki for exam week. Three grades:
@@ -3901,6 +5113,7 @@ function shuffle(a) {
  * combine instead of one overwriting the other.
  *
  *   cards     per card, whichever copy was graded last
+ *   practice  per practice-exam question, the same way
  *   days      the larger count for each day (the streak)
  *   models    per walkthrough, the most recent result
  *   missed    both lists, newest first, no duplicates
@@ -3918,6 +5131,12 @@ function mergeProgress(into, other) {
     if (!a || stamp(b) > stamp(a)) into.cards[id] = b;
   }
   for (id in into.cards) if (stamp(into.cards[id]) < resetAt) delete into.cards[id];
+  into.practice = into.practice || {};
+  for (id in other.practice || {}) {
+    var pa = into.practice[id], pb = other.practice[id];
+    if (!pa || stamp(pb) > stamp(pa)) into.practice[id] = pb;
+  }
+  for (id in into.practice) if (stamp(into.practice[id]) < resetAt) delete into.practice[id];
   into.days = into.days || {};
   for (var d in other.days || {}) into.days[d] = Math.max(into.days[d] || 0, other.days[d]);
   into.models = into.models || {};
@@ -3981,7 +5200,9 @@ function mergeProgress(into, other) {
     if (!other) return;
     mergeProgress(progress, other);
     for (const id in progress.cards) if (!BY_ID[id]) delete progress.cards[id];
+    for (const id in progress.practice || {}) if (!PQ_IDS[id]) delete progress.practice[id];
   }
+  const PQ_IDS = Object.fromEntries(EXAM.questions.map((q) => [q.id, true]));
 
   let writing = false, dirty = false, retryTimer = null;
   let saveState = "idle";        // "idle" | "saving" | "saved" | "retrying" | "local"
@@ -4156,7 +5377,7 @@ function mergeProgress(into, other) {
       // Empty and missing count as the same, so opening the page with nothing
       // new writes nothing.
       const norm = (v) => (v && (Array.isArray(v) ? v.length : Object.keys(v).length) ? JSON.stringify(v) : "");
-      const differs = ["cards", "days", "models", "missed"].some((k) => norm(progress[k]) !== norm(theirs && theirs[k]));
+      const differs = ["cards", "practice", "days", "models", "missed"].some((k) => norm(progress[k]) !== norm(theirs && theirs[k]));
       if (differs) accountSave();
       else setSaveState("saved");
       refreshTab();
@@ -4266,6 +5487,7 @@ function mergeProgress(into, other) {
     if (name === "review") renderReview();
     if (name === "progress") renderProgress();
     if (name === "models") ensureModels();
+    if (name === "practice") ensurePractice();
     renderSaveState();
   }
 
@@ -4275,6 +5497,7 @@ function mergeProgress(into, other) {
     if (currentTab === "home") renderHome();
     if (currentTab === "review") renderReview();
     if (currentTab === "progress") renderProgress();
+    if (currentTab === "practice" && practiceMounted) PRACTICEUI.refresh();
   }
 
   function timeOf(ms) {
@@ -4343,6 +5566,7 @@ function mergeProgress(into, other) {
     play: '<path d="M6 3l14 9-14 9z"/>',
     chev: '<path d="m9 18 6-6-6-6"/>',
     check: '<path d="M20 6 9 17l-5-5"/>',
+    pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   };
   const icon = (n, cls) => `<svg class="ic ${cls || ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
 
@@ -4355,6 +5579,8 @@ function mergeProgress(into, other) {
    *  owed, then an unfinished walkthrough, then the first model not done. */
   function primaryAction(st) {
     if (st.due) return { label: `Review ${st.due} card${st.due === 1 ? "" : "s"}`, sub: st.newLeft ? `plus ${st.newLeft} new` : "due now", icon: "layers", act: "review" };
+    const ps = PRACTICEUI.stats();
+    if (ps.due) return { label: `Retry ${ps.due} practice question${ps.due === 1 ? "" : "s"}`, sub: "the practice midterm questions you missed", icon: "pen", act: "practice" };
     if (st.newLeft) return { label: `Learn ${st.newLeft} new card${st.newLeft === 1 ? "" : "s"}`, sub: "today's new cards, tested ones first", icon: "cap", act: "review" };
     const last = progress.last;
     if (last && last.scenario && !((progress.models || {})[last.scenario] || {}).done) {
@@ -4390,6 +5616,11 @@ function mergeProgress(into, other) {
     const seen = st.total - st.unseen;
     const pct = (x) => (100 * x / st.total).toFixed(2) + "%";
     $("#h-bar").innerHTML = `<span style="width:${pct(st.solid)};background:#2E7D52"></span><span style="width:${pct(seen - st.solid)};background:var(--primary)"></span>`;
+
+    const ps = PRACTICEUI.stats();
+    $("#h-practice").innerHTML = ps.owed
+      ? `Drill the practice midterm<small>${ps.right} of ${ps.total} right · ${ps.due ? ps.due + " to retry" + (ps.fresh ? ", " : "") : ""}${ps.fresh ? ps.fresh + " not tried" : ""}</small>`
+      : `Practice midterm · ${ps.right} of ${ps.total} right<small>All caught up${ps.next < Infinity ? " · next back at " + timeOf(ps.next) : ""}</small>`;
 
     $("#h-models").innerHTML = MODELS.map((m) => {
       const ms = modelStats(m), w = DECK.weeks[m.week - 1];
@@ -4459,15 +5690,60 @@ function mergeProgress(into, other) {
     $("#p-body").innerHTML =
       `<section class="card pad"><p class="sec">Flashcards · ${st.solid} of ${st.total} solid · ${st.unseen} not seen</p>${weeks}` +
       (hard ? `<p class="sec gap">Cards missed most</p><ul class="plain">${hard}</ul>` : "") + "</section>" +
+      practiceSection() +
       `<section class="card pad"><p class="sec">Model walkthroughs</p><div class="pms">${models}</div>` +
       (missed ? `<p class="sec gap">Predictions you missed lately</p><ul class="plain">${missed}</ul>` : "") + "</section>" +
       `<section class="card pad"><p class="sec">Reset</p>` + (confirming
-        ? `<div class="m-confirm"><span>Reset all 126 cards and every walkthrough? This can't be undone.</span><button class="yes" type="button" data-m="reset-yes">Reset</button><button type="button" data-m="reset-no">Cancel</button></div>`
+        ? `<div class="m-confirm"><span>Reset all 126 cards, the practice midterm and every walkthrough? This can't be undone.</span><button class="yes" type="button" data-m="reset-yes">Reset</button><button type="button" data-m="reset-no">Cancel</button></div>`
         : `<button class="m-small danger" type="button" data-m="reset">Reset all progress…</button>`) +
       `<p class="store-note dim"></p></section>` +
       (remote.kind === "supabase" && where === "account"
         ? `<section class="card pad acct"><span>Signed in as <b>${esc(remote.email() || "")}</b></span><button class="m-small" type="button" data-m="signout">Sign out</button></section>` : "");
     renderStoreNote();
+  }
+
+  function practiceSection() {
+    const ps = PRACTICEUI.stats();
+    const rows = EXAM.sections.map((sec) => {
+      const qs = EXAM.questions.filter((q) => q.section === sec.id);
+      const pr = progress.practice || {};
+      const right = qs.filter((q) => pr[q.id] && pr[q.id].rating === "confident").length;
+      const tried = qs.filter((q) => pr[q.id]).length;
+      return `<div class="row"><span class="lbl">${esc(sec.title)}</span><span class="val">${tried}/${qs.length} tried · ${right} right</span></div>`;
+    }).join("");
+    return `<section class="card pad"><p class="sec">Practice midterm · ${ps.right} of ${ps.total} right on the latest try</p>${rows}</section>`;
+  }
+
+  // -------------------------------------------------------------- practice
+
+  let practiceMounted = false;
+
+  function ensurePractice() {
+    if (practiceMounted) return;
+    practiceMounted = true;
+    PRACTICEUI.mount($("#practice"), {
+      progress: () => progress,
+      renderSaveState,
+      cardTerm: (id) => (BY_ID[id] ? BY_ID[id].term : ""),
+      /** A practice answer: scheduled like a flashcard grade. A miss also
+       *  brings the related flashcards (ones already studied) back due now. */
+      grade(id, rating, cards) {
+        const t = Date.now();
+        progress.practice = progress.practice || {};
+        progress.practice[id] = schedule(progress.practice[id], rating, t);
+        for (const cid of cards || []) {
+          const s = progress.cards[cid];
+          if (s && s.due > t) progress.cards[cid] = { ...s, due: t, last: t };
+        }
+        studied(t);
+        save();
+      },
+    });
+  }
+
+  function openPractice(drill) {
+    showTab("practice");
+    if (drill) PRACTICEUI.drill();
   }
 
   // ---------------------------------------------------------------- models
@@ -4510,7 +5786,9 @@ function mergeProgress(into, other) {
     if (!b) return;
     if (b.closest("#toMenu") || b.id === "toMenu") return endSession();
     if (b.classList.contains("tabbtn")) {
+      b.blur();   // so Enter next starts the tab's big button, not this one again
       if (b.dataset.tab === "models") return openModels(null);
+      if (b.dataset.tab === "practice" && currentTab === "practice") { PRACTICEUI.menu(); return; }
       return showTab(b.dataset.tab);
     }
     if (!$("#shell").contains(b)) return;
@@ -4519,7 +5797,9 @@ function mergeProgress(into, other) {
       if (a === "review") return startReview();
       if (a === "model") return openModels(b.dataset.model, b.dataset.scenario);
       if (a === "tested") return begin(shuffle(ALL.filter((c) => c.starred)), true);
+      if (a === "practice") return openPractice(true);
     }
+    if (b.id === "h-practice") return openPractice(PRACTICEUI.stats().owed > 0);
     if (b.id === "r-review") return startReview();
     if (b.id === "h-learn-btn") return startReview();
     if (b.id === "r-tested" || b.id === "h-tested") {
@@ -4560,6 +5840,7 @@ function mergeProgress(into, other) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (!inSession()) {
       if (currentTab === "models") { MODELUI.handleKey(e); return; }
+      if (currentTab === "practice") { PRACTICEUI.handleKey(e); return; }
       // Enter on Home or Review starts what the big button says, unless a
       // control already has the focus.
       if (e.key === "Enter" && (!document.activeElement || document.activeElement === document.body)) {
@@ -4603,6 +5884,7 @@ function mergeProgress(into, other) {
   // ---------------------------------------------------------------- start
 
   merge(localLoad());
+  ensurePractice();
   $("#app").style.display = "none";
   showTab("home");
   connectAccount();
