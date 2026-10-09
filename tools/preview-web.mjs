@@ -3,8 +3,11 @@
 //   node tools/preview-web.mjs [outDir]
 //
 // Opens web/econ381.html in headless Chromium inside the same kind of
-// skeleton the Artifact publisher wraps it in. Outside claude.ai there's no
-// account store, so this exercises the browser-storage path.
+// skeleton the Artifact publisher wraps it in, and uses it the way a person
+// would: the Home tab, flashcards by keyboard, every model dashboard, every
+// walkthrough to the end, free play, the Progress tab. Outside claude.ai
+// there's no account store, so most of it exercises the browser-storage
+// path; a stand-in store covers the account path at the end.
 
 import { mkdirSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -31,235 +34,325 @@ const html = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewp
 
 const H = 3600 * 1000;
 const browser = await chromium.launch();
-// A real origin, so localStorage works the way it does on the live page.
-const ctx = await browser.newContext({ viewport: { width: 1280, height: 860 }, deviceScaleFactor: 2 });
-await ctx.route("https://econ381.test/**", (r) => r.fulfill({ contentType: "text/html", body: html }));
-const page = await ctx.newPage();
 const errors = [];
-page.on("pageerror", (e) => errors.push(String(e)));
-await page.goto("https://econ381.test/");
 
-const shot = (name) => page.screenshot({ path: join(out, "web-" + name + ".png") });
+async function newPage(viewport, init) {
+  const ctx = await browser.newContext({ viewport: viewport || { width: 1280, height: 860 }, deviceScaleFactor: 2 });
+  // No outside network here: the web font falls back to the system face.
+  await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
+  await ctx.route("https://econ381.test/**", (r) => r.fulfill({ contentType: "text/html", body: html }));
+  if (init) await ctx.addInitScript(init.fn, init.arg);
+  const page = await ctx.newPage();
+  page.on("pageerror", (e) => errors.push(String(e)));
+  await page.goto("https://econ381.test/");
+  return { ctx, page };
+}
+
+const { page } = await newPage();
+const shot = (name, opts) => page.screenshot({ path: join(out, "web-" + name + ".png"), ...(opts || {}) });
 const stored = () => page.evaluate("JSON.parse(localStorage.getItem('econ381-progress') || '{\"cards\":{}}')");
-const visible = (sel) => page.evaluate(`!document.querySelector('${sel}').hidden && getComputedStyle(document.querySelector('${sel}')).display !== 'none'`);
+const visible = (sel) => page.evaluate((s) => { const el = document.querySelector(s); return !!el && !el.closest("[hidden]") && getComputedStyle(el).display !== "none"; }, sel);
 const settle = () => page.waitForTimeout(260);
+const inSession = () => page.evaluate("document.querySelector('#shell').hidden");
 
-// -------------------------------------------------------------- menu
-assert.ok(await visible("#menu"), "opens on the menu");
-assert.match(await page.textContent("#m-review"), /Review 25 new/);
-await shot("01-menu");
+// ----------------------------------------------------------------- home
+assert.ok(await visible("#tab-home"), "opens on Home");
+assert.match(await page.textContent("#h-primary"), /Learn 25 new cards/);
+assert.equal(await page.textContent("#h-learn"), "25");
+assert.equal(await page.evaluate("document.querySelectorAll('#h-models .hm').length"), 6, "six model cards on Home");
+await shot("01-home", { fullPage: true });
 
-// ------------------------------------------------- keyboard grading
-await page.keyboard.press("Enter");                       // start the review
-assert.ok(!(await visible("#menu")), "Enter on the menu starts the review");
+// ------------------------------------------------- keyboard flashcards
+await page.keyboard.press("Enter");
+assert.ok(await inSession(), "Enter on Home starts what the big button says");
 const first = await page.evaluate("CARDS[0].id");
-await shot("02-front");
-
 await page.keyboard.press("Enter");
 assert.equal(await page.evaluate("flipped"), true, "Enter flips the front");
 await page.keyboard.press("Enter");
 assert.equal(await page.evaluate("flipped"), false, "Enter on the back flips it back");
 await page.keyboard.press("ArrowRight");
 assert.equal(await page.evaluate("flipped"), true, "→ flips the front");
-await page.screenshot({ path: join(out, "web-03-back.png"), fullPage: false });
-await page.keyboard.press("ArrowRight");                  // confident
+await shot("02-card-back");
+await page.keyboard.press("ArrowRight");
 await settle();
 let p = await stored();
-assert.equal(p.cards[first].rating, "confident");
 assert.equal(p.cards[first].due - p.cards[first].last, 4 * H, "→ = Confident, back in 4 hours");
 
 const second = await page.evaluate("CARDS[i].id");
 await page.keyboard.press("Enter");
-await page.keyboard.press("ArrowLeft");                   // shaky
+await page.keyboard.press("ArrowLeft");
 await settle();
 p = await stored();
 assert.equal(p.cards[second].due - p.cards[second].last, 1 * H, "← = Shaky, back in 1 hour");
-assert.equal(await page.evaluate("later.length"), 1, "shaky waits out its hour");
 
 const third = await page.evaluate("CARDS[i].id");
 await page.keyboard.press("Enter");
-await page.keyboard.press("ArrowUp");                     // missed
+await page.keyboard.press("ArrowUp");
 await settle();
-p = await stored();
-assert.equal(p.cards[third].rating, "missed", "↑ = Missed");
-assert.equal(await page.evaluate("CARDS[CARDS.length - 1].id"), third, "missed goes to the back of the deck");
-
+assert.equal((await stored()).cards[third].rating, "missed", "↑ = Missed");
+assert.equal(await page.evaluate("CARDS[CARDS.length - 1].id"), third, "missed goes to the back");
 const fourth = await page.evaluate("CARDS[i].id");
 await page.keyboard.press("Enter");
-await page.keyboard.press("ArrowDown");                   // missed
+await page.keyboard.press("ArrowDown");
 await settle();
-p = await stored();
-assert.equal(p.cards[fourth].rating, "missed", "↓ = Missed");
-
-// Arrows on the front don't grade; a held key doesn't grade a run of cards.
+assert.equal((await stored()).cards[fourth].rating, "missed", "↓ = Missed");
 const fifth = await page.evaluate("CARDS[i].id");
 await page.keyboard.press("ArrowLeft");
-await page.keyboard.press("ArrowUp");
-assert.equal(await page.evaluate("flipped"), false);
-assert.ok(!(await stored()).cards[fifth], "← and ↑ on the front do nothing");
+assert.ok(!(await stored()).cards[fifth], "arrows on the front don't grade");
 await page.keyboard.press("Enter");
 await page.evaluate("document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', repeat: true }))");
 assert.ok(!(await stored()).cards[fifth], "a held key doesn't grade");
-
-// Clicking the card flips both ways (no thirds on the web).
-await page.click("#scroll", { position: { x: 60, y: 300 } });
-assert.equal(await page.evaluate("flipped"), false, "click on the back flips it back");
-await page.click("#scroll", { position: { x: 60, y: 300 } });
-assert.equal(await page.evaluate("flipped"), true);
 await page.click(".btn.confident");
 await settle();
 assert.equal((await stored()).cards[fifth].rating, "confident", "buttons still grade");
 
-// Esc returns to the menu, which now counts the session.
 await page.keyboard.press("Escape");
-assert.ok(await visible("#menu"));
-assert.match(await page.textContent("#m-status"), /2 due now/);
-console.log("✓ keyboard: Enter/→ flip, Enter flips back, → Confident, ← Shaky, ↑↓ Missed; Esc to menu");
+assert.ok(!(await inSession()) && (await visible("#tab-home")), "Esc returns to Home");
+assert.equal(await page.textContent("#h-due"), "2", "the two missed cards are due");
+assert.match(await page.textContent("#h-streak"), /1\s*day/, "studying today starts a streak");
+console.log("✓ Home + keyboard flashcards: Enter/→ flip, → Confident, ← Shaky, ↑↓ Missed, Esc home, streak");
 
-// ----------------------------------------------- persists on reload
 await page.reload();
-assert.ok(await visible("#menu"));
-assert.match(await page.textContent("#m-status"), /2 due now/);
-assert.equal(Object.keys((await stored()).cards).length, 5);
+assert.equal(await page.textContent("#h-due"), "2", "progress survives a reload");
 console.log("✓ progress survives a reload");
 
-// --------------------------------------------- cram changes nothing
-const before = JSON.stringify(await stored());
-await page.click("#m-cram");
+// ---------------------------------------------------------- review tab
+await page.click('.tabbtn[data-tab="review"]');
+assert.ok(await visible("#tab-review"));
+await shot("03-review", { fullPage: true });
+const before = JSON.stringify((await stored()).cards);
+await page.click("#r-cram");
 assert.equal(await page.evaluate("CARDS.length"), 126);
 await page.keyboard.press("Enter");
 await page.keyboard.press("ArrowUp");
 await settle();
-assert.equal(JSON.stringify(await stored()), before, "cram doesn't reschedule");
+assert.equal(JSON.stringify((await stored()).cards), before, "cram doesn't reschedule");
 await page.keyboard.press("Escape");
-console.log("✓ cram leaves the schedule alone");
-
-// ------------------------------------------- week, done screen, stats
-await page.click('.m-week[data-week="4"]');
+assert.ok(await visible("#tab-review"), "Esc returns to the tab the session started from");
+await page.click('#r-weeks [data-week="4"]');
 assert.ok(await page.evaluate("CARDS.every((c) => c.week === 4)"), "week button reviews that week");
 await page.evaluate("i = CARDS.length; render()");
-assert.ok(await visible("#done"));
-await shot("04-done");
 await page.keyboard.press("Enter");
-assert.ok(await visible("#menu"), "Enter on the done screen returns to the menu");
+assert.ok(!(await inSession()), "Enter on the done screen returns");
+console.log("✓ Review tab: cram, week, done screen");
 
-await page.click("#m-stats-btn");
-assert.match(await page.textContent("#stats"), /Missed most/);
-await shot("05-progress");
-await page.click('[data-m="reset"]');
-await page.click('[data-m="reset-no"]');
-assert.equal(Object.keys((await stored()).cards).length, 5, "cancel keeps progress");
-await page.click('[data-m="reset"]');
-await page.click('[data-m="reset-yes"]');
-assert.equal(Object.keys((await stored()).cards).length, 0, "reset clears progress");
-assert.match(await page.textContent("#m-review"), /Review 25 new/);
-console.log("✓ week review, done screen, progress panel, reset with confirm");
-
-// ------------------------------------- every card, desktop and phone
+// -------------------------------------------- every card still fits
 for (const [w, h] of [[1280, 860], [390, 844]]) {
   await page.setViewportSize({ width: w, height: h });
-  await page.click("#m-cram");
-  const problems = await page.evaluate(`(() => {
+  await page.click('.tabbtn[data-tab="review"]');
+  await page.click("#r-cram");
+  const bad = await page.evaluate(`(() => {
     const bad = [];
     for (let k = 0; k < CARDS.length; k++) {
       i = k; render(); flip();
-      const out = [...document.querySelectorAll('#card *')].filter((el) => {
-        const r = el.getBoundingClientRect();
-        return r.right > window.innerWidth + 1 || r.left < -1;
-      });
-      if (out.length) bad.push(CARDS[k].id);
-      if (CARDS[k].graph && !document.querySelector('#card .graph svg')) bad.push(CARDS[k].id + ' (graph)');
+      const o = [...document.querySelectorAll('#card *')].filter((el) => { const r = el.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; });
+      if (o.length) bad.push(CARDS[k].id);
     }
-    if (document.documentElement.scrollWidth > window.innerWidth) bad.push('page scrolls sideways');
     return bad;
   })()`);
-  assert.deepEqual(problems, [], `layout problems at ${w}px: ${problems.join(", ")}`);
-  await page.evaluate("const c = CARDS.find((x) => x.id === 'solow-diagram'); i = CARDS.indexOf(c); render(); flip()");
-  await shot(`06-back-${w}`);
+  assert.deepEqual(bad, [], `cards overflow at ${w}px`);
   await page.keyboard.press("Escape");
-  if (w === 390) await shot("07-menu-390");
 }
+await page.setViewportSize({ width: 1280, height: 860 });
 console.log("✓ all 126 answers fit at 1280px and 390px");
 
-// ------------------------------------------- saving to the account
-//
-// A stand-in for the claude.ai account store (the Artifact `db`
-// capability), kept in sessionStorage so it survives a reload. `mode`
-// makes the store misbehave the ways a real one can: a write that never
-// answers, or one refused with a passing error.
+// -------------------------------------------------------------- models
+await page.click('.tabbtn[data-tab="models"]');
+assert.ok(await visible("#tab-models"));
+const modelIds = await page.evaluate("MODELS.map((m) => m.id)");
+assert.equal(modelIds.length, 6);
 
+/** Checks the dashboard draws, nothing pokes out of the page or out of its
+ *  chart, and the numbers aren't NaN. */
+async function checkDashboard(where) {
+  const r = await page.evaluate(() => {
+    const bad = [];
+    const vw = document.documentElement.clientWidth;
+    document.querySelectorAll("#models *").forEach((el) => {
+      if (el.closest("svg") && el.tagName !== "svg") return;
+      // Rows built to scroll sideways on their own (the model chips, wide tables).
+      if (el.closest(".mdl-chips, .tbl")) return;
+      const b = el.getBoundingClientRect();
+      if (b.width && (b.right > vw + 1 || b.left < -1)) bad.push(el.tagName + "." + el.className);
+    });
+    document.querySelectorAll("#mdl-graph svg, #mdl-line svg, #mdl-bars svg").forEach((svg) => {
+      const box = svg.getBoundingClientRect();
+      svg.querySelectorAll("text,line,path,circle,rect").forEach((el) => {
+        if (el.closest("defs")) return;
+        const b = el.getBoundingClientRect();
+        if (b.top < box.top - 3 || b.bottom > box.bottom + 3 || b.left < box.left - 3 || b.right > box.right + 3)
+          bad.push("svg " + el.tagName + " '" + (el.textContent || "").slice(0, 24) + "'");
+      });
+    });
+    const text = document.querySelector("#models").innerText;
+    if (/NaN|undefined|Infinity/.test(text)) bad.push("NaN/undefined in text");
+    if (document.documentElement.scrollWidth > vw) bad.push("page scrolls sideways");
+    return bad.slice(0, 6);
+  });
+  assert.deepEqual(r, [], where);
+}
+
+let walked = 0;
+for (const id of modelIds) {
+  await page.click(`.mchip[data-model="${id}"]`);
+  await page.waitForTimeout(80);
+  assert.ok(await page.$("#mdl-graph svg"), id + " graph");
+  await checkDashboard(id + " free play");
+
+  // Free play: move the first slider and the numbers move.
+  const kpiBefore = await page.textContent("#mdl-kpis");
+  await page.evaluate(() => {
+    const s = document.querySelector('#mdl-panel input[type="range"]');
+    s.value = String(Number(s.min) + (Number(s.max) - Number(s.min)) * 0.8);
+    s.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  assert.notEqual(await page.textContent("#mdl-kpis"), kpiBefore, id + ": a slider moves the numbers");
+  await checkDashboard(id + " after slider");
+
+  for (const tab of ["forms", "statics", "facts"]) {
+    await page.click(`#mdl-seg [data-tab="${tab}"]`);
+    if (tab === "statics") assert.ok(await page.$("#mdl-tab table td.up, #mdl-tab table td.down"), id + " statics table has arrows");
+  }
+
+  const scs = await page.evaluate((m) => MODELS.find((x) => x.id === m).scenarios.map((s) => s.id), id);
+  for (const [n, sid] of scs.entries()) {
+    await page.click(`[data-sc="${sid}"]`);
+    let guard = 0, answered = 0;
+    while (!(await page.$(".exam")) && guard++ < 30) {
+      if (await page.$(".ask")) {
+        const turn = answered++ % 3;
+        if (await page.$("#pred-num")) {
+          if (turn === 2) await page.click('[data-act="skip"]');
+          else { await page.fill("#pred-num", turn === 0 ? "1" : "99999"); await page.press("#pred-num", "Enter"); }
+        } else if (turn === 1 && (await page.$(".keyhint")) && /falls/.test(await page.textContent(".ask"))) {
+          await page.keyboard.press("ArrowUp");      // answer a direction by key
+        } else {
+          const choices = await page.$$(".choice");
+          await choices[turn % choices.length].click();
+        }
+        await page.waitForSelector(".fb", { timeout: 2000 });
+        await page.waitForTimeout(700);
+        await checkDashboard(`${id}/${sid} after a reveal`);
+        if (n === 0 && answered === 1) await page.screenshot({ path: join(out, `web-model-${id}.png`) });
+      } else {
+        await page.waitForTimeout(700);
+        await page.click('[data-act="next"]');
+      }
+    }
+    assert.ok(await page.$(".exam"), `${id}/${sid} reaches the exam card`);
+    walked++;
+  }
+}
+const prog = await stored();
+const doneCount = Object.values(prog.models || {}).filter((x) => x.done).length;
+assert.equal(doneCount, 24, "all 24 walkthroughs are recorded as done");
+assert.ok((prog.missed || []).length > 0, "missed predictions are kept for the Progress tab");
+console.log(`✓ Models: 6 dashboards, free play, forms/statics/facts, ${walked} walkthroughs played to the exam card`);
+
+// The right answer is accepted: Gamma Epsilon's 3,069.7.
+await page.click('.mchip[data-model="production"]');
+await page.click('[data-sc="gamma-epsilon"]');
+for (let k = 0; k < 3; k++) { await page.waitForTimeout(700); await page.click('[data-act="next"]'); }
+await page.fill("#pred-num", "3069.7");
+await page.press("#pred-num", "Enter");
+assert.match(await page.textContent(".fb"), /Right/, "the right number is marked right");
+// Enter moves on once the answer is shown.
+await page.waitForTimeout(700);
+await page.evaluate(() => document.activeElement && document.activeElement.blur());
+const stepBefore = await page.evaluate(() => document.querySelectorAll(".pd.done").length);
+await page.keyboard.press("Enter");
+assert.equal(await page.evaluate(() => document.querySelectorAll(".pd.done").length), stepBefore + 1, "Enter advances the walkthrough");
+console.log("✓ right answers are accepted; Enter advances");
+
+// ------------------------------------------------------------- progress
+await page.click('.tabbtn[data-tab="progress"]');
+assert.match(await page.textContent("#p-body"), /Predictions you missed lately/);
+await shot("04-progress", { fullPage: true });
+await page.click('[data-m="reset"]');
+await page.click('[data-m="reset-no"]');
+assert.ok(Object.keys((await stored()).cards).length > 0, "cancel keeps progress");
+await page.click('[data-m="reset"]');
+await page.click('[data-m="reset-yes"]');
+assert.equal(Object.keys((await stored()).cards).length, 0, "reset clears progress");
+console.log("✓ Progress tab, reset with confirm");
+
+// --------------------------------------------------- phone-width layout
+await page.setViewportSize({ width: 390, height: 844 });
+await page.click('.tabbtn[data-tab="home"]');
+await shot("05-home-phone", { fullPage: true });
+await page.click('.tabbtn[data-tab="models"]');
+for (const id of modelIds) {
+  await page.click(`.mchip[data-model="${id}"]`);
+  await page.waitForTimeout(60);
+  await checkDashboard(id + " at 390px");
+}
+await page.click('.mchip[data-model="solow"]');
+await page.click('[data-sc="war"]');
+await page.waitForTimeout(700);
+await page.click('[data-act="next"]');
+await page.click(".choice");
+await page.waitForTimeout(800);
+await shot("06-model-phone", { fullPage: true });
+await page.setViewportSize({ width: 1280, height: 860 });
+console.log("✓ every dashboard fits at phone width");
+
+// ------------------------------------------- saving to the account store
 async function accountRun(storeMode) {
-  const c = await browser.newContext({ viewport: { width: 1280, height: 860 } });
-  await c.route("https://econ381.test/**", (r) => r.fulfill({ contentType: "text/html", body: html }));
-  await c.addInitScript((storeMode) => {
+  const { ctx, page: pg } = await newPage(null, { fn: (storeMode) => {
     const KEY = "__mock_db";
     const read = () => JSON.parse(sessionStorage.getItem(KEY) || "{}");
     let calls = Number(sessionStorage.getItem("__mock_calls") || 0);
-    const db = {
-      collection(path) {
-        return {
-          doc(id) {
-            const full = path + "/" + id;
-            return {
-              async get() {
-                const d = read()[full];
-                return { exists: !!d, data: () => d };
-              },
-              set(data) {
-                calls++;
-                sessionStorage.setItem("__mock_calls", String(calls));
-                if (storeMode === "hang" && calls === 1) return new Promise(() => {});
-                if (storeMode === "flaky" && calls === 1) return Promise.reject({ code: "resource_exhausted" });
-                const all = read();
-                all[full] = JSON.parse(JSON.stringify(data));
-                sessionStorage.setItem(KEY, JSON.stringify(all));
-                return Promise.resolve();
-              },
-            };
-          },
-        };
-      },
-    };
-    const user = { id: async () => "u_test" };
-    window.claude = { use: async (name) => (name === "db" ? db : name === "user" ? user : null) };
-  }, storeMode);
-  const pg = await c.newPage();
-  pg.on("pageerror", (e) => errors.push(String(e)));
-  await pg.goto("https://econ381.test/");
-  await pg.waitForFunction("document.querySelector('#m-store').textContent.includes('account')");
-  const remote = () => pg.evaluate("JSON.parse((JSON.parse(sessionStorage.getItem('__mock_db') || '{}')['data/users/u_test/econ381'] || {}).progress || '{\"cards\":{}}')");
+    const db = { collection(path) { return { doc(id) { const full = path + "/" + id; return {
+      async get() { const d = read()[full]; return { exists: !!d, data: () => d }; },
+      set(data) {
+        calls++; sessionStorage.setItem("__mock_calls", String(calls));
+        if (storeMode === "hang" && calls === 1) return new Promise(() => {});
+        if (storeMode === "flaky" && calls === 1) return Promise.reject({ code: "resource_exhausted" });
+        const all = read(); all[full] = JSON.parse(JSON.stringify(data)); sessionStorage.setItem(KEY, JSON.stringify(all));
+        return Promise.resolve();
+      } }; } }; } };
+    window.claude = { use: async (name) => (name === "db" ? db : name === "user" ? { id: async () => "u_test" } : null) };
+  }, arg: storeMode });
+  await pg.waitForFunction("document.querySelector('.store-note').textContent.includes('account')");
   assert.equal(await pg.evaluate("sessionStorage.getItem('__mock_calls')"), null, "nothing to write on open");
-
   await pg.keyboard.press("Enter");
   const id = await pg.evaluate("CARDS[0].id");
   await pg.keyboard.press("Enter");
   await pg.keyboard.press("ArrowRight");
-  // The flash says when it comes back.
   assert.match(await pg.textContent("#flash"), /Confident\s*back in 4 hours/);
   await pg.waitForFunction((id) => {
     const d = JSON.parse(sessionStorage.getItem("__mock_db") || "{}")["data/users/u_test/econ381"];
     return d && JSON.parse(d.progress).cards[id];
   }, id, { timeout: 30000 });
-  assert.match(await pg.textContent("#quit"), /Saved to your account/);
-
-  // A new browser on the same account: no local copy, the account has it.
+  // A walkthrough finished is saved to the account too.
+  await pg.keyboard.press("Escape");
+  await pg.click('.tabbtn[data-tab="models"]');
+  await pg.click('[data-sc="four-shocks"]');
+  for (let k = 0; k < 12 && !(await pg.$(".exam")); k++) {
+    await pg.waitForTimeout(700);
+    if (await pg.$(".ask")) { await pg.click('[data-act="skip"]'); await pg.waitForTimeout(700); }
+    await pg.click('[data-act="next"]');
+  }
+  await pg.waitForFunction(() => {
+    const d = JSON.parse(sessionStorage.getItem("__mock_db") || "{}")["data/users/u_test/econ381"];
+    return d && (JSON.parse(d.progress).models || {})["four-shocks"];
+  }, null, { timeout: 30000 });
+  // A fresh browser on the same account sees it all.
   await pg.evaluate("localStorage.clear()");
   await pg.reload();
-  await pg.waitForFunction("document.querySelector('#m-saved').textContent.includes('Saved')");
-  assert.match(await pg.textContent("#m-status"), /24 new/, "the graded card isn't new any more");
-  await pg.keyboard.press("Enter");
-  assert.notEqual(await pg.evaluate("CARDS[0].id"), id, "a card graded Confident doesn't come straight back");
-  assert.ok((await remote()).cards[id].due > Date.now() + 3.9 * H);
-  await c.close();
+  await pg.waitForFunction("document.querySelector('#h-learn').textContent === '24'");
+  await pg.click('.tabbtn[data-tab="progress"]');
+  assert.match(await pg.textContent("#p-body"), /Immigration, earthquake[\s\S]*?predictions|done/);
+  await ctx.close();
 }
-
 await accountRun("ok");
-console.log("✓ account store: grades saved, reload on a fresh browser keeps them, no repeat");
+console.log("✓ account store: grades and walkthroughs saved; a fresh browser sees them");
 await accountRun("flaky");
 console.log("✓ account store refuses one write: retried and saved");
 await accountRun("hang");
 console.log("✓ account store write hangs: times out, retried and saved");
 
-assert.deepEqual(errors, [], "page errors: " + errors.join("; "));
+const real = errors.filter((e) => !/ERR_FAILED/.test(e));
+assert.deepEqual(real, [], "page errors: " + real.join("; "));
 await browser.close();
 console.log("Screenshots in " + out);

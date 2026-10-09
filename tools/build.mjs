@@ -127,12 +127,21 @@ webBody = split(webBody, "__QUIT__", "");
 webBody = split(webBody, "__DONE_ACTIONS__", '<button class="btn menu" id="toMenu" type="button">Back to menu <kbd>Enter</kbd></button>');
 const host = split(read("tools/web/host.js"), "/*__DECK__*/ null", JSON.stringify(deck).replace(/</g, "\\u003c"));
 
+// The Models tab: the engine, chart helpers, the six model definitions and
+// the dashboard, in that order (each uses the ones before it).
+const modelFiles = ["engine.js", "charts.js", "defs/production.js", "defs/funds.js", "defs/money.js",
+  "defs/flows.js", "defs/solow.js", "defs/golden.js", "ui.js"];
+const modelsJs = "var MODELS = [];\n" + modelFiles.map((f) => read("tools/models/" + f)).join("\n");
+
 const web =
   "<title>ECON 381 Flashcards</title>\n" +
-  "<style>\n" + page.css + "\n" + read("tools/web/web.css") + "</style>\n" +
+  '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
+  '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">\n' +
+  "<style>\n" + page.css + "\n" + read("tools/web/web.css") + "\n" + read("tools/models/models.css") + "</style>\n" +
   read("tools/web/web.html") + "\n" + webBody + "\n" +
   "<script>\n" + safe(graphSrc) + "\n</script>\n" +
   "<script>\n" + safe(webJs) + "</script>\n" +
+  "<script>\n" + safe(modelsJs) + "\n</script>\n" +
   "<script>\n" + safe(read("tools/schedule.js")) + "\n" + safe(host) + "</script>\n";
 mkdirSync(join(root, "web"), { recursive: true });
 writeFileSync(join(root, "web/econ381.html"), web);

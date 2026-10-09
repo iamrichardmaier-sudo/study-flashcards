@@ -98,3 +98,23 @@ cards and graphs, same three grades and schedule, plus a start menu and keys:
 Progress is saved to your claude.ai account (private to you), with a copy in
 the browser. It's separate from the phone's progress, which lives in iCloud.
 `node tools/preview-web.mjs` tests it end to end.
+
+### Models tab (website only)
+
+Six models from the Midterm 1 study guide, each with a live dashboard:
+production & factor markets, loanable funds, money/inflation/Fisher,
+unemployment flows, Solow growth, and the golden rule. Each has a graph that
+redraws as inputs change (the old state stays faint behind it), number tiles,
+a line chart of the path and a bar chart of the proportions, every form of
+the model, a comparative-statics table computed from the model itself, and
+the guide's "know cold" and traps.
+
+The right-hand rail holds four guided walkthroughs per model, taken from the
+practice exam and problem sets (Gamma Epsilon IV, Beta Xi VII, the Supers,
+1860s Massachusetts, Sokovia, …). At each step you predict first (direction,
+number, or choice), then the inputs move, the graph animates and the working
+appears. Each ends with an "On the exam" card. Free play gives a slider for
+every input.
+
+`tools/models/engine.js` solves every model; `node --test tools/models.test.mjs`
+checks it against the guide's worked answers and plays every walkthrough.

@@ -1,4 +1,6 @@
 <title>ECON 381 Flashcards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
   :root { --ink:#2B2118; --cream:#FDF8F2; --wk:#1F4E8C; --wk-soft:rgba(31,78,140,.10); }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -137,13 +139,123 @@
   #done .tally div { padding:10px 14px; border-radius:14px; color:#fff; font-weight:700; font-size:20px; min-width:74px; }
   #done .tally small { display:block; font-size:10.5px; font-weight:600; opacity:.85; }
 
-/* Website additions on top of the shared review page (tools/page/page.css).
-   One light look, the same as the phone: cream paper, ink, and each week's
-   own colour. */
-:root { color-scheme: light; }
-html, body { background: var(--cream); }
+/* The website shell: tabs, Home, Review, Progress. Laid out like the Wazn
+   Arabic app (header with a streak pill, one big next-step button, stat
+   tiles, uppercase section labels, a tab bar) in this course's colours.
+   One light look throughout, the same as the phone. */
+:root {
+  color-scheme: light;
+  --bg: #FBF8F3;          /* warm paper */
+  --card: #FFFDF9;
+  --tile: #F5EFE6;
+  --line: rgba(43,33,24,.12);
+  --muted: #85796E;
+  --primary: #1F4E8C;     /* ECON blue, where Wazn has its orange */
+  --primary-ink: #FFFFFF;
+}
+html, body { background: var(--bg); }
+body { font-family: Inter, -apple-system, system-ui, sans-serif; }
+#shell { min-height: 100%; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+#shell[hidden] { display: none !important; }
 
-/* Desktop: keep the card, the bar and the buttons in one readable column. */
+/* tab bar: across the top on a computer, along the bottom on a phone */
+.tabs { position: sticky; top: 0; z-index: 20; background: rgba(251,248,243,.94); backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
+.tabs-in { max-width: 1240px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 20px; }
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 800; letter-spacing: .06em; color: var(--primary); font-size: 14px; }
+.brand svg { width: 22px; height: 22px; }
+.tablist { display: flex; gap: 4px; }
+.tabbtn { display: flex; align-items: center; gap: 7px; border: 0; background: transparent; color: var(--muted); font: inherit; font-weight: 600;
+          font-size: 14px; padding: 9px 14px; border-radius: 14px; cursor: pointer; transition: background .15s, color .15s, transform .1s; }
+.tabbtn svg { width: 18px; height: 18px; }
+.tabbtn:hover { background: rgba(43,33,24,.06); color: var(--ink); }
+.tabbtn[aria-current="page"] { background: var(--primary); color: var(--primary-ink); box-shadow: 0 4px 12px -6px rgba(31,78,140,.6); }
+.tabbtn:active { transform: scale(.94); }
+
+.views { padding-bottom: 40px; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 22px 20px 0; display: flex; flex-direction: column; gap: 18px; }
+.wrap.wide { max-width: 1240px; }
+
+/* home */
+.h-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.h-top h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -.01em; }
+.h-top p { margin: 3px 0 0; color: var(--muted); font-size: 14px; }
+.streak { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--card); border-radius: 16px; padding: 8px 12px; flex: none; }
+.streak .ic { width: 17px; height: 17px; color: rgba(43,33,24,.3); }
+.streak .ic.lit { color: #D9952B; }
+.streak b { font-variant-numeric: tabular-nums; }
+.streak span { font-size: 12px; color: var(--muted); }
+
+.ic { width: 20px; height: 20px; flex: none; }
+.primary { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 0; border-radius: 18px;
+           background: var(--primary); color: var(--primary-ink); padding: 16px 18px; font: inherit; text-align: left; cursor: pointer;
+           transition: transform .1s, filter .15s; }
+.primary:hover { filter: brightness(1.07); }
+.primary:active { transform: scale(.985); }
+.primary:disabled { background: var(--tile); color: var(--ink); cursor: default; filter: none; transform: none; }
+.primary .pl { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.primary b { display: block; font-size: 17px; font-weight: 700; }
+.primary small { display: block; font-size: 12.5px; opacity: .82; margin-top: 2px; }
+.primary .pr { display: flex; align-items: center; gap: 8px; opacity: .85; }
+.primary kbd { border-color: rgba(255,255,255,.55); }
+
+.sect-h { display: flex; flex-direction: column; gap: 10px; }
+.sect-h h2 { margin: 0; padding: 0 2px; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tile { background: var(--tile); border: 1px solid var(--line); border-radius: 18px; padding: 14px; text-align: center; }
+.tile p { margin: 0; }
+.tv { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.tl { font-size: 12px; color: var(--muted); }
+.tw { font-size: 11.5px; color: var(--muted); margin-top: 3px !important; }
+.meter { display: flex; flex-direction: column; gap: 5px; }
+.m-bar { height: 8px; border-radius: 4px; background: rgba(43,33,24,.09); overflow: hidden; display: flex; }
+.m-bar span { height: 100%; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.second { border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 12px 14px; font: inherit; font-weight: 600;
+          font-size: 14px; color: var(--ink); text-align: left; cursor: pointer; transition: transform .1s, border-color .15s; }
+.second:hover { border-color: var(--primary); }
+.second:active { transform: scale(.98); }
+.second small { display: block; font-weight: 400; font-size: 12px; color: var(--muted); margin-top: 2px; }
+.second.star, #h-tested { color: #B4561B; }
+
+.grid3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.hm { display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--card);
+      font: inherit; color: var(--ink); text-align: left; cursor: pointer; min-width: 0; transition: border-color .15s, transform .1s; }
+.hm:hover { border-color: var(--c); }
+.hm:active { transform: scale(.98); }
+.hm .wk { font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--c); }
+.hm .nm { font-size: 14.5px; font-weight: 600; line-height: 1.3; }
+.hm .ct { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.hm .mini { height: 4px; border-radius: 2px; background: rgba(43,33,24,.08); overflow: hidden; }
+.hm .mini span { display: block; height: 100%; background: var(--c); }
+
+.dim { color: var(--muted); }
+.small { font-size: 12.5px; margin: 0; }
+.save-state:empty { display: none; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; }
+.pad { padding: 16px; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.sec { margin: 0 0 8px; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.sec.gap { margin-top: 14px; }
+.card .row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.card .row:first-of-type { border-top: 0; }
+.card .row .val { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+ul.plain { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.55; }
+.pms { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.pm-h { margin: 0 0 6px; font-weight: 700; font-size: 14px; }
+.pm ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; font-size: 13.5px; }
+.pm li { display: flex; align-items: center; gap: 8px; }
+.pm li .ic { width: 16px; height: 16px; color: #2E7D52; }
+.pm li span:nth-child(2) { flex: 1; min-width: 0; }
+.dot0 { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid rgba(43,33,24,.2); flex: none; }
+.keys { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; font-size: 13.5px; align-items: baseline; }
+.m-confirm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13.5px; }
+.m-confirm button, .m-small { padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); font: inherit;
+         font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink); }
+.m-confirm .yes { background: #C0392B; color: #fff; border-color: #C0392B; }
+.danger { color: #C0392B; }
+
+/* the flashcard session (shared page) on a big screen */
 header, #quitline, #tip, footer { width: 100%; max-width: 680px; margin-inline: auto; }
 #scroll { padding-inline: max(20px, calc((100% - 640px) / 2)); }
 footer { padding-bottom: 22px; }
@@ -152,124 +264,250 @@ footer { padding-bottom: 22px; }
 .link { cursor: pointer; }
 .link:hover { border-color: var(--wk); }
 #logo { cursor: pointer; }
-kbd { font: 600 10.5px/1 ui-monospace, "SF Mono", Menlo, monospace; padding: 2px 5px;
-      border-radius: 5px; border: 1px solid currentColor; opacity: .85; margin-left: 4px;
-      vertical-align: 1px; }
+kbd { font: 600 10.5px/1 ui-monospace, "SF Mono", Menlo, monospace; padding: 2px 5px; border-radius: 5px; border: 1px solid currentColor;
+      opacity: .85; margin-left: 4px; vertical-align: 1px; }
 .btn kbd { border-color: rgba(255,255,255,.7); }
-
-/* ------------------------------------------------------------- menu */
-#menu { position: fixed; inset: 0; overflow-y: auto; background: var(--cream); z-index: 10;
-        padding-block: calc(28px + env(safe-area-inset-top, 0px)) 40px; padding-inline: 20px; }
-.m-wrap { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
-.m-head { display: flex; flex-direction: column; gap: 6px; }
-.m-eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #1F4E8C;
-             display: flex; align-items: center; gap: 8px; }
-.m-eyebrow svg { width: 18px; height: 18px; }
-.m-title { font-family: ui-serif, "New York", Georgia, serif; font-size: clamp(30px, 5vw, 42px);
-           font-weight: 700; line-height: 1.1; margin: 0; text-wrap: balance; }
-.m-sub { font-size: 14px; opacity: .6; margin: 0; }
-.m-saved { font-size: 12.5px; opacity: .5; min-height: 1.2em; }
-.m-meter { display: flex; flex-direction: column; gap: 6px; }
-.m-bar { height: 8px; border-radius: 4px; background: rgba(43,33,24,.09); overflow: hidden; display: flex; }
-.m-bar span { height: 100%; }
-.m-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; opacity: .7; font-variant-numeric: tabular-nums; }
-.m-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: 0; }
-
-.m-primary { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%;
-             padding: 20px 22px; border: 0; border-radius: 18px; background: #1F4E8C; color: #fff;
-             font: inherit; text-align: left; cursor: pointer; }
-.m-primary:hover { filter: brightness(1.08); }
-.m-primary:disabled { background: rgba(43,33,24,.08); color: var(--ink); cursor: default; filter: none; }
-.m-primary b { display: block; font-size: 21px; }
-.m-primary small { display: block; font-size: 13px; opacity: .8; margin-top: 3px; }
-.m-primary .go { font-size: 13px; font-weight: 700; white-space: nowrap; opacity: .9; }
-
-.m-h { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .45; margin: 0 0 8px; }
-.m-weeks { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
-.m-week { display: flex; flex-direction: column; gap: 6px; padding: 14px 14px 12px; border-radius: 14px;
-          border: 1px solid rgba(43,33,24,.1); background: #fff; font: inherit; color: var(--ink);
-          text-align: left; cursor: pointer; min-width: 0; }
-.m-week:hover { border-color: var(--c); }
-.m-week .wk { font-size: 10.5px; font-weight: 800; letter-spacing: .1em; color: var(--c); }
-.m-week .nm { font-size: 14px; font-weight: 600; line-height: 1.3; }
-.m-week .ct { font-size: 12px; opacity: .6; font-variant-numeric: tabular-nums; }
-.m-week .mini { height: 4px; border-radius: 2px; background: rgba(43,33,24,.08); overflow: hidden; }
-.m-week .mini span { display: block; height: 100%; background: var(--c); }
-
-.m-row { display: flex; gap: 10px; flex-wrap: wrap; }
-.m-btn { flex: 1 1 200px; padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(43,33,24,.12);
-         background: #fff; color: var(--ink); font: inherit; font-size: 14.5px; font-weight: 600;
-         text-align: left; cursor: pointer; }
-.m-btn small { display: block; font-weight: 400; font-size: 12px; opacity: .6; margin-top: 2px; }
-.m-btn:hover { border-color: #1F4E8C; }
-.m-btn.star { color: #B4561B; }
-
-.m-keys { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 13px; align-items: baseline;
-          padding: 14px 16px; border-radius: 14px; background: rgba(31,78,140,.06); }
-.m-keys kbd { margin: 0 4px 0 0; }
-.m-note { font-size: 12px; opacity: .55; margin: 0; }
-
-#stats { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 14px;
-         background: #fff; border: 1px solid rgba(43,33,24,.1); }
-#stats .row .val { color: var(--ink); font-size: 14px; }
-#stats ul { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.5; }
-.danger { color: #C0392B; }
-.m-confirm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13.5px; }
-.m-confirm button, .m-small { padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(43,33,24,.15);
-         background: #fff; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink); }
-.m-confirm .yes { background: #C0392B; color: #fff; border-color: #C0392B; }
-
-#done .btn.menu { background: #1F4E8C; padding: 14px 34px; flex: none; border: 0; font: inherit; font-weight: 700; color: #fff; }
+.keys kbd { margin: 0 4px 0 0; }
+#done .btn.menu { background: var(--primary); padding: 14px 34px; flex: none; border: 0; font: inherit; font-weight: 700; color: #fff; }
 button:focus-visible, .btn:focus-visible { outline: 3px solid #E8A25E; outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* phones: the tab bar moves to the bottom, Wazn-style */
+@media (max-width: 760px) {
+  .tabs { position: fixed; top: auto; bottom: 0; left: 0; right: 0; border-bottom: 0; border-top: 1px solid var(--line);
+          padding-top: 0; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .tabs-in { padding: 6px 8px; }
+  .brand { display: none; }
+  .tablist { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .tabbtn { flex-direction: column; gap: 3px; font-size: 11px; padding: 7px 4px; }
+  .tabbtn svg { width: 20px; height: 20px; }
+  .views { padding-bottom: 96px; }
+  .mdl-top { top: 0; }
+  .mdl-rail { top: 0; }
+}
+@media (max-width: 420px) {
+  .pair { grid-template-columns: 1fr; }
+}
+
+/* Models tab. Colours come from the page tokens; --wk is the model's week. */
+#models { --line: rgba(43,33,24,.12); }
+.mdl-top { position: sticky; top: 57px; z-index: 3; background: var(--bg, var(--cream)); padding-block: 4px 10px; }
+.mdl-chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.mdl-chips::-webkit-scrollbar { display: none; }
+.mchip { flex: none; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 9px 14px; border-radius: 14px;
+         border: 1px solid var(--line); background: var(--card, #fff); color: var(--ink); font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+.mchip span { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--c); }
+.mchip.on { border-color: var(--c); box-shadow: inset 0 0 0 1px var(--c); }
+
+.mdl-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
+.mdl-main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.mdl-head { display: flex; flex-direction: column; gap: 4px; }
+.mdl-head h2 { margin: 2px 0 0; font-family: ui-serif, "New York", Georgia, serif; font-size: clamp(24px, 3vw, 32px); line-height: 1.15; text-wrap: balance; }
+.mdl-head p { margin: 0; opacity: .62; font-size: 14px; }
+.mdl-head .chip { align-self: flex-start; }
+.mdl-card { background: var(--card, #fff); border: 1px solid var(--line); border-radius: 18px; padding: 14px 14px 10px; min-width: 0; }
+.mdl-card h3 { margin: 0 0 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; opacity: .5; }
+.mdl-card svg { width: 100%; height: auto; display: block; overflow: visible; }
+.mdl-graph .cap { font-size: 12.5px; opacity: .6; margin: 4px 4px 2px; line-height: 1.4; }
+.mdl-two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.kpi { background: var(--card, #fff); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.kpi .kl { font-size: 11.5px; opacity: .6; line-height: 1.3; }
+.kpi .kv { font-size: 21px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--wk); }
+.kpi.hid .kv { color: var(--ink); opacity: .35; }
+.kpi .dl { font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.kpi .dl.up { color: #2E7D52; } .kpi .dl.down { color: #C0392B; }
+
+.seg { display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: rgba(43,33,24,.06); margin-bottom: 12px; flex-wrap: wrap; }
+.seg button { flex: 1 1 auto; border: 0; background: transparent; padding: 8px 10px; border-radius: 9px; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); opacity: .65; cursor: pointer; }
+.seg button.on { background: var(--card, #fff); opacity: 1; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.form { padding: 10px 2px; border-top: 1px solid var(--line); }
+.form:first-child { border-top: 0; padding-top: 2px; }
+.fn { margin: 0 0 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; opacity: .5; }
+.form .fx { margin: 0; display: block; font-size: 17px; text-align: left; }
+.fnote { margin: 6px 0 0; font-size: 13px; opacity: .68; line-height: 1.45; }
+.tbl { overflow-x: auto; }
+.tbl table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+.tbl th, .tbl td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: center; }
+.tbl tbody th { text-align: left; font-weight: 600; }
+.tbl thead th { font-size: 12px; opacity: .65; }
+.tbl td { font-size: 18px; font-weight: 700; }
+.tbl td.up { color: #2E7D52; } .tbl td.down { color: #C0392B; } .tbl td.same { opacity: .35; }
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.facts ul { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.5; }
+.facts li + li { margin-top: 5px; }
+.traps { background: rgba(192,57,43,.06); border-radius: 12px; padding: 10px 12px; }
+.muted { font-size: 13px; opacity: .6; margin: 0 0 10px; line-height: 1.45; }
+
+/* The rail */
+.mdl-rail { position: sticky; top: 128px; }
+.rail-in { display: flex; flex-direction: column; gap: 8px; }
+.rail-h { margin: 0; font-size: 10.5px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; opacity: .5; }
+.sc { display: flex; gap: 10px; align-items: center; width: 100%; text-align: left; padding: 10px 12px; border-radius: 14px;
+      border: 1px solid var(--line); background: var(--card, #fff); font: inherit; color: var(--ink); cursor: pointer; }
+.sc:hover { border-color: var(--wk); }
+.sc.on { border-color: var(--wk); box-shadow: inset 0 0 0 1px var(--wk); }
+.sc-n { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 12.5px; font-weight: 800;
+        background: var(--wk-soft); color: var(--wk); }
+.sc-b { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.sc-b b { font-size: 13.5px; line-height: 1.25; }
+.sc-b small { font-size: 11.5px; opacity: .55; }
+.sc.free .sc-n { background: rgba(43,33,24,.07); color: var(--ink); }
+.panel { margin-top: 6px; background: var(--card, #fff); border: 1px solid var(--line); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.player { border-color: var(--wk); box-shadow: 0 6px 22px -10px rgba(0,0,0,.18); }
+.ph { display: flex; flex-direction: column; gap: 2px; }
+.ph .rail-h { opacity: 1; color: var(--wk); font-size: 12px; }
+.src { font-size: 11.5px; opacity: .55; }
+.dots { display: flex; gap: 4px; }
+.pd { flex: 1; height: 4px; border-radius: 2px; background: rgba(43,33,24,.1); }
+.pd.done { background: var(--wk); opacity: .45; } .pd.on { background: var(--wk); }
+.blurb { margin: 0; font-size: 12.5px; padding: 8px 10px; border-radius: 10px; background: var(--wk-soft); line-height: 1.45; }
+.say { font-size: 14.5px; line-height: 1.5; }
+.ask { display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 12px; background: rgba(217,149,43,.10); }
+.q { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.4; }
+.tag-predict { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; color: #fff;
+               background: #D9952B; border-radius: 6px; padding: 2px 6px; margin-right: 6px; vertical-align: 1px; }
+.choices { display: flex; flex-direction: column; gap: 6px; }
+.choice { text-align: left; padding: 10px 12px; border-radius: 11px; border: 1px solid var(--line); background: var(--card, #fff); font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; }
+.choice:hover { border-color: var(--wk); }
+.numf { display: flex; gap: 6px; }
+.num-in { flex: 1; min-width: 0; padding: 10px 12px; border-radius: 11px; border: 1px solid var(--line); font: inherit; font-size: 15px; background: #fff; color: var(--ink); }
+.num-in:focus { outline: 2px solid var(--wk); outline-offset: 1px; }
+.go { padding: 10px 16px; border-radius: 11px; border: 0; background: var(--wk); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.ghost-btn { padding: 10px 12px; border-radius: 11px; border: 1px solid var(--line); background: transparent; font: inherit; font-weight: 600; color: var(--ink); cursor: pointer; }
+.ghost-btn:disabled { opacity: .35; cursor: default; }
+.ghost-btn.wide { width: 100%; }
+.row2 { display: flex; gap: 8px; justify-content: space-between; }
+.row2 > * { flex: 1; }
+.fb { font-size: 13.5px; padding: 8px 10px; border-radius: 10px; line-height: 1.4; }
+.fb.ok { background: rgba(46,125,82,.12); color: #1f5c3b; }
+.fb.no { background: rgba(192,57,43,.10); color: #8e2a1f; }
+.fb.skip { background: rgba(43,33,24,.06); }
+.math { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: 12px; background: var(--wk-soft);
+        font-family: ui-serif, "New York", Georgia, serif; font-size: 15px; line-height: 1.5; }
+.why { margin: 0; font-size: 13px; line-height: 1.5; opacity: .75; border-left: 3px solid var(--wk); padding-left: 10px; }
+.keyhint { margin: 0; font-size: 11.5px; opacity: .45; text-align: center; }
+.exam { padding: 12px; border-radius: 12px; background: rgba(232,162,94,.14); border: 1px solid rgba(232,162,94,.5); }
+.exam ol { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.5; }
+.exam li + li { margin-top: 4px; }
+.score { margin: 0; font-weight: 700; text-align: center; color: var(--wk); }
+.sl { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.sl span { display: flex; justify-content: space-between; gap: 8px; }
+.sl output { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--wk); }
+.sl input { width: 100%; accent-color: var(--wk); }
+
+svg text.big { font-size: 22px; font-weight: 800; }
+svg .arrowhead { fill: var(--ink); opacity: .7; }
+
+@media (max-width: 980px) {
+  .mdl-grid { grid-template-columns: minmax(0, 1fr); }
+  .mdl-rail { position: static; }
+}
+@media (max-width: 640px) {
+  .mdl-two, .facts { grid-template-columns: minmax(0, 1fr); }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 </style>
-<div id="menu" hidden>
-  <div class="m-wrap">
-    <div class="m-head">
-      <div class="m-eyebrow">
-        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+<div id="shell">
+  <nav class="tabs" aria-label="Sections">
+    <div class="tabs-in">
+      <span class="brand">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M6 5v29h29" stroke-width="2.6"/><path d="M10 29c6-1 9-5 12-11s6-9 11-10" stroke-width="2.6"/>
           <path d="M10 12l23 17" stroke-width="2" opacity=".55"/>
-        </svg>ECON 381 · Midterm 1
-      </div>
-      <h1 class="m-title">Term &amp; definition cards</h1>
-      <p class="m-sub" id="m-status">Loading your progress…</p>
-      <p class="m-sub m-saved" id="m-saved"></p>
-    </div>
-
-    <div class="m-meter">
-      <div class="m-bar" id="m-bar"></div>
-      <div class="m-legend" id="m-legend"></div>
-    </div>
-
-    <button class="m-primary" id="m-review" type="button"></button>
-
-    <div>
-      <p class="m-h">By week</p>
-      <div class="m-weeks" id="m-weeks"></div>
-    </div>
-
-    <div class="m-row">
-      <button class="m-btn star" id="m-tested" type="button"></button>
-      <button class="m-btn" id="m-cram" type="button">Cram all 126<small>Shuffled · nothing is rescheduled</small></button>
-      <button class="m-btn" id="m-stats-btn" type="button">Progress<small>Per week, and the cards you miss most</small></button>
-    </div>
-
-    <div id="stats" hidden></div>
-
-    <div>
-      <p class="m-h">Keys</p>
-      <div class="m-keys">
-        <span><kbd>Enter</kbd><kbd>→</kbd></span><span>Flip the card</span>
-        <span><kbd>→</kbd></span><span>Confident · back in 4 hours, then 8, then daily</span>
-        <span><kbd>←</kbd></span><span>Shaky · back in 1 hour</span>
-        <span><kbd>↑</kbd><kbd>↓</kbd></span><span>Missed · back of the deck, right now</span>
-        <span><kbd>Enter</kbd></span><span>On the answer: flip back to the term</span>
-        <span><kbd>Esc</kbd></span><span>Back to this menu (your grades are already saved)</span>
+        </svg>ECON 381
+      </span>
+      <div class="tablist">
+        <button type="button" class="tabbtn" data-tab="home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+          <span>Home</span></button>
+        <button type="button" class="tabbtn" data-tab="review">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.8 2.2a2 2 0 0 0-1.6 0L2.6 6.1a1 1 0 0 0 0 1.8l8.6 3.9a2 2 0 0 0 1.6 0l8.6-3.9a1 1 0 0 0 0-1.8z"/><path d="m2 12.6 9.2 4.2a2 2 0 0 0 1.6 0L22 12.6"/><path d="m2 17.6 9.2 4.2a2 2 0 0 0 1.6 0L22 17.6"/></svg>
+          <span>Review</span></button>
+        <button type="button" class="tabbtn" data-tab="models">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          <span>Models</span></button>
+        <button type="button" class="tabbtn" data-tab="progress">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+          <span>Progress</span></button>
       </div>
     </div>
+  </nav>
 
-    <p class="m-note" id="m-store"></p>
+  <div class="views">
+    <section class="view" id="tab-home">
+      <div class="wrap">
+        <div class="h-top">
+          <div>
+            <h1>ECON 381</h1>
+            <p>Midterm 1 · the terms and the models behind them.</p>
+          </div>
+          <div class="streak" id="h-streak" title="Days in a row with something studied"></div>
+        </div>
+
+        <button type="button" class="primary" id="h-primary"></button>
+        <p class="save-state dim small"></p>
+
+        <section class="sect-h">
+          <h2>Flashcards</h2>
+          <div class="tiles">
+            <div class="tile"><p class="tv" id="h-learn">0</p><p class="tl">new today</p></div>
+            <div class="tile"><p class="tv" id="h-due">0</p><p class="tl">to review</p><p class="tw" id="h-wave"></p></div>
+          </div>
+          <div class="meter"><div class="m-bar" id="h-bar"></div><p class="dim small" id="h-solid"></p></div>
+          <div class="pair">
+            <button type="button" class="second" id="h-learn-btn">Review now</button>
+            <button type="button" class="second" id="h-tested">★ Tested cards only</button>
+          </div>
+        </section>
+
+        <section class="sect-h">
+          <h2>Models</h2>
+          <div class="grid3" id="h-models"></div>
+        </section>
+
+        <p class="store-note dim small"></p>
+      </div>
+    </section>
+
+    <section class="view" id="tab-review" hidden>
+      <div class="wrap">
+        <div class="h-top"><div><h1>Review</h1><p>Flip with Enter or →. Then → Confident, ← Shaky, ↑↓ Missed.</p></div></div>
+        <button type="button" class="primary" id="r-review"></button>
+        <p class="save-state dim small"></p>
+        <section class="sect-h">
+          <h2>By week</h2>
+          <div class="grid3" id="r-weeks"></div>
+        </section>
+        <div class="pair">
+          <button type="button" class="second star" id="r-tested"></button>
+          <button type="button" class="second" id="r-cram">Cram all 126<small>Shuffled · nothing is rescheduled</small></button>
+        </div>
+        <section class="sect-h">
+          <h2>Keys</h2>
+          <div class="keys card pad">
+            <span><kbd>Enter</kbd><kbd>→</kbd></span><span>Flip the card</span>
+            <span><kbd>→</kbd></span><span>Confident · back in 4 hours, then 8, then daily</span>
+            <span><kbd>←</kbd></span><span>Shaky · back in 1 hour</span>
+            <span><kbd>↑</kbd><kbd>↓</kbd></span><span>Missed · back of the deck, right now</span>
+            <span><kbd>Enter</kbd></span><span>On the answer: flip back to the term</span>
+            <span><kbd>Esc</kbd></span><span>Back to the menu (your grades are already saved)</span>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="view" id="tab-models" hidden>
+      <div class="wrap wide" id="models"></div>
+    </section>
+
+    <section class="view" id="tab-progress" hidden>
+      <div class="wrap">
+        <div class="h-top"><div><h1>Progress</h1><p>Cards, walkthroughs, and what to look at again.</p></div></div>
+        <div id="p-body" class="stack"></div>
+      </div>
+    </section>
   </div>
 </div>
 
@@ -1215,6 +1453,2274 @@ scroll.addEventListener('click', function (e) {
 if (CARDS.length) startSession(CARDS, PRACTICE);
 </script>
 <script>
+var MODELS = [];
+// The six models, as pure functions.
+//
+// Every number a walkthrough shows comes from here, and
+// tools/models.test.mjs checks these against the worked answers in the
+// Midterm 1 Master Study Guide, so a walkthrough can't state a number the
+// model doesn't produce. No DOM; build.mjs inlines this into the page and
+// the tests load it under Node.
+
+var ENGINE = (function () {
+  "use strict";
+
+  // ------------------------------------------------- 1. production & factors
+  //
+  // Y = A K^α L^(1−α). Competitive firms: MPL = W/P, MPK = R/P.
+  // If `wReal` is given, L is what firms hire at that real wage (labor
+  // demand); otherwise L is the fixed labor supply and the wage is MPL.
+
+  function production(p) {
+    var A = p.A, a = p.alpha, K = p.K, P = p.P == null ? 1 : p.P;
+    var L = p.wReal != null
+      ? Math.pow((1 - a) * A * Math.pow(K, a) / p.wReal, 1 / a)
+      : p.L;
+    var Y = A * Math.pow(K, a) * Math.pow(L, 1 - a);
+    var MPL = (1 - a) * Y / L, MPK = a * Y / K;
+    return {
+      L: L, Y: Y, MPL: MPL, MPK: MPK,
+      wReal: MPL, rReal: MPK,                 // real wage, real rental rate
+      W: P * MPL, R: P * MPK,                 // nominal
+      laborShare: MPL * L / Y, capShare: MPK * K / Y,
+      laborIncome: MPL * L, capIncome: MPK * K,
+      yPerL: Y / L, P: P,
+    };
+  }
+
+  /** Back out α, K and A from observed Y, L, MPL and MPK (PE Q3b). */
+  function backOut(o) {
+    var alpha = 1 - o.MPL * o.L / o.Y;          // labor share = 1 − α
+    var K = alpha * o.Y / o.MPK;                // capital share = MPK·K/Y = α
+    var A = o.Y / (Math.pow(K, alpha) * Math.pow(o.L, 1 - alpha));
+    return { alpha: alpha, K: K, A: A };
+  }
+
+  /** Points on the MPL (labor demand) curve, for the graph. */
+  function mplCurve(p, Lmin, Lmax, n) {
+    var pts = [];
+    for (var k = 0; k <= n; k++) {
+      var L = Lmin + (Lmax - Lmin) * k / n;
+      pts.push([L, (1 - p.alpha) * p.A * Math.pow(p.K, p.alpha) * Math.pow(L, -p.alpha)]);
+    }
+    return pts;
+  }
+
+  // ------------------------------------------------------- 2. loanable funds
+  //
+  // C = c0 + mpc (Y − T), I = i0 − b r. Saving S = Y − C − G does not depend
+  // on r, so the supply of loanable funds is vertical and r clears the market.
+  // Y is either given or comes from Y = A K^α L^(1−α).
+
+  function funds(p) {
+    var Y = p.Y != null ? p.Y : p.A * Math.pow(p.K, p.alpha) * Math.pow(p.L, 1 - p.alpha);
+    var C = p.c0 + p.mpc * (Y - p.T);
+    var Spriv = Y - p.T - C, Spub = p.T - p.G, S = Spriv + Spub;
+    var r = (p.i0 - S) / p.b;
+    var I = p.i0 - p.b * r;
+    return { Y: Y, C: C, Spriv: Spriv, Spub: Spub, S: S, r: r, I: I, G: p.G, T: p.T, YD: Y - p.T };
+  }
+
+  // ------------------------------------------------ 3. money, inflation, Fisher
+  //
+  // Real side: r from S = I(r) as in model 2 (S = Y − C − G, I = a − b r),
+  // unless the problem hands you the nominal rate (then r = i − π).
+  // Nominal side: %ΔM + %ΔV = π + %ΔY, so with constant V, π = gM − gY.
+  // Fisher: i = r + π. Levels: P = M V / Y, with V either constant or
+  // V = vk·√i from a money demand (M/P)^d = Y / (vk √i).
+
+  function money(p) {
+    var gV = p.gV || 0;
+    var pi = p.gM + gV - p.gY;
+    var S = p.Ys - p.C - p.G;
+    var r = p.iGiven != null ? p.iGiven - pi : (p.a - S) / p.b;
+    var I = p.iGiven != null ? null : p.a - p.b * r;
+    var i = p.iGiven != null ? p.iGiven : r + pi;
+    var V = p.vk != null ? p.vk * Math.sqrt(i) : p.V;
+    var P = p.M != null && V != null ? p.M * V / p.Yl : null;
+    return { pi: pi, S: p.iGiven != null ? null : S, r: r, I: I, i: i, V: V, P: P,
+             nomGDPgrowth: p.gM + gV, k: V ? 1 / V : null };
+  }
+
+  // ------------------------------------------------- 4. unemployment flows
+  //
+  // U(t+1) = (1 − f) U(t) + s E(t);  E(t+1) = (1 − s) E(t) + f U(t).
+  // Optional entry and exit (Violet's model): NL(t+1) = (1 − j) NL + q E,
+  // E(t+1) = (1 − s − q) E + f U + j NL. Steady state: u = s / (s + f).
+
+  function flows(p) {
+    var u = p.s / (p.s + p.f);
+    return { uStar: u, inflow: p.s * p.E0, outflow: p.f * p.U0, u0: p.U0 / (p.U0 + p.E0) };
+  }
+
+  /** The month-by-month path. `shock` = {t, dE, dU} adds people at month t
+   *  (the Supers: the labor force and employment both rise 1 million). */
+  function flowsPath(p, T) {
+    var U = p.U0, E = p.E0, NL = p.NL0 || 0;
+    var j = p.j || 0, q = p.q || 0;
+    var out = [];
+    for (var t = 0; t <= T; t++) {
+      if (p.shock && p.shock.t === t) { E += p.shock.dE || 0; U += p.shock.dU || 0; }
+      out.push({ t: t, U: U, E: E, NL: NL, L: U + E, u: U / (U + E) });
+      var U1 = (1 - p.f) * U + p.s * E;
+      var E1 = (1 - p.s - q) * E + p.f * U + j * NL;
+      var NL1 = (1 - j) * NL + q * E;
+      U = U1; E = E1; NL = NL1;
+    }
+    return out;
+  }
+
+  // ------------------------------------------------------ 5 & 6. Solow model
+  //
+  // y = A k^α, i = s y, c = (1 − s) y, Δk = s y − (δ + n) k.
+
+  function solow(p) {
+    var A = p.A || 1, a = p.alpha, s = p.s, d = p.delta, n = p.n || 0;
+    var kStar = Math.pow(s * A / (d + n), 1 / (1 - a));
+    var yStar = A * Math.pow(kStar, a);
+    var kGold = Math.pow(a * A / (d + n), 1 / (1 - a));
+    var yGold = A * Math.pow(kGold, a);
+    return {
+      kStar: kStar, yStar: yStar, cStar: (1 - s) * yStar, iStar: s * yStar,
+      depStar: (d + n) * kStar,
+      kGold: kGold, yGold: yGold, cGold: yGold - (d + n) * kGold,
+      sGold: (d + n) * kGold / yGold,
+      mpkStar: a * A * Math.pow(kStar, a - 1),
+    };
+  }
+
+  /** Year-by-year path from k0. `sAfter` switches the saving rate at t = 0
+   *  (Sokovia) and `k0` can sit anywhere (a war that shrinks L moves k0 up). */
+  function solowPath(p, T) {
+    var A = p.A || 1, a = p.alpha, d = p.delta, n = p.n || 0;
+    var s = p.sAfter != null ? p.sAfter : p.s;
+    var k = p.k0, out = [];
+    for (var t = 0; t <= T; t++) {
+      var y = A * Math.pow(k, a);
+      out.push({ t: t, k: k, y: y, c: (1 - s) * y, i: s * y, dep: (d + n) * k, dk: s * y - (d + n) * k });
+      k = k + s * y - (d + n) * k;
+    }
+    return out;
+  }
+
+  /** Steady-state consumption at each saving rate: the golden-rule hump. */
+  function cStarBySaving(p, n) {
+    var pts = [];
+    for (var k = 1; k < n; k++) {
+      var s = k / n;
+      pts.push([s, solow(Object.assign({}, p, { s: s })).cStar]);
+    }
+    return pts;
+  }
+
+  // ------------------------------------------------- comparative statics
+  //
+  // Nudge one input, re-solve, and read the direction each output moves.
+  // The dashboard's table is built from this, so it always agrees with the
+  // model rather than with a hand-typed table.
+
+  function direction(solveFn, params, input, outputs, step) {
+    var base = solveFn(params);
+    var bumped = Object.assign({}, params);
+    var h = step != null ? step : Math.max(Math.abs(params[input]) * 0.01, 1e-4);
+    bumped[input] = params[input] + h;
+    var next = solveFn(bumped);
+    var res = {};
+    outputs.forEach(function (o) {
+      var a = base[o], b = next[o];
+      if (a == null || b == null) { res[o] = "na"; return; }
+      var tol = 1e-9 * Math.max(1, Math.abs(a));
+      res[o] = b > a + tol ? "up" : b < a - tol ? "down" : "same";
+    });
+    return res;
+  }
+
+  return {
+    production: production, backOut: backOut, mplCurve: mplCurve,
+    funds: funds, money: money,
+    flows: flows, flowsPath: flowsPath,
+    solow: solow, solowPath: solowPath, cStarBySaving: cStarBySaving,
+    direction: direction,
+  };
+})();
+
+if (typeof module !== "undefined") module.exports = ENGINE;
+
+// Drawing helpers for the model dashboards: axes with real tick marks, curves
+// from data, guides, arrows, and a ghost of the previous state. Every chart
+// is plain SVG text, styled by the page's svg classes (c1, c2, dash, faint,
+// …), so the model's colour comes from the --wk variable on its container.
+
+var CH = (function () {
+  "use strict";
+
+  function r(v) { return Math.round(v * 10) / 10; }
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+
+  function fmt(v, d) {
+    if (v == null || !isFinite(v)) return "—";
+    if (d == null) {
+      var a = Math.abs(v);
+      d = a >= 1000 ? 0 : a >= 100 ? 1 : a >= 10 ? 2 : a >= 1 ? 3 : 3;
+    }
+    var s = v.toFixed(d);
+    if (Math.abs(v) >= 1000) s = Number(s).toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: d });
+    return s.replace(/^-/, "−");
+  }
+
+  /** Round-number ticks between lo and hi. */
+  function ticks(lo, hi, n) {
+    var span = hi - lo;
+    if (!(span > 0)) return [lo];
+    var step = Math.pow(10, Math.floor(Math.log10(span / n)));
+    var err = (n * step) / span;
+    if (err <= 0.15) step *= 10; else if (err <= 0.35) step *= 5; else if (err <= 0.75) step *= 2;
+    var out = [];
+    for (var v = Math.ceil(lo / step) * step; v <= hi + step * 1e-9; v += step) out.push(+v.toFixed(10));
+    return out;
+  }
+
+  function tickLabel(v) {
+    var a = Math.abs(v);
+    if (a >= 10000) return (v / 1000).toFixed(0) + "k";
+    if (a >= 1000) return v.toLocaleString("en-US");
+    if (a === 0) return "0";
+    if (a < 0.01) return v.toExponential(0);
+    return String(+v.toFixed(a < 1 ? 3 : 2));
+  }
+
+  /**
+   * A plot frame. Returns scales and the axis markup.
+   * o = {w, h, x:[lo,hi], y:[lo,hi], xLabel, yLabel, pad:{l,r,t,b}, log}
+   */
+  function frame(o) {
+    var w = o.w || 560, h = o.h || 300;
+    var pad = Object.assign({ l: 52, r: 18, t: 16, b: 38 }, o.pad || {});
+    var X0 = pad.l, X1 = w - pad.r, Y0 = h - pad.b, Y1 = pad.t;
+    var ylo = o.y[0], yhi = o.y[1];
+    var lg = o.logY;
+    var tY = lg ? function (v) { return Math.log10(v); } : function (v) { return v; };
+    var sx = function (v) { return X0 + (v - o.x[0]) * (X1 - X0) / (o.x[1] - o.x[0]); };
+    var sy = function (v) { return Y0 - (tY(v) - tY(ylo)) * (Y0 - Y1) / (tY(yhi) - tY(ylo)); };
+    var s = "";
+    var xt = o.xTicks || ticks(o.x[0], o.x[1], 6);
+    var yt = o.yTicks || (lg ? logTicks(ylo, yhi) : ticks(ylo, yhi, 5));
+    yt.forEach(function (v) {
+      s += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + r(sy(v)) + '" y2="' + r(sy(v)) + '" class="grid"/>';
+      s += '<text x="' + (X0 - 6) + '" y="' + r(sy(v) + 3.5) + '" class="lb" text-anchor="end">' + (o.yFmt ? o.yFmt(v) : tickLabel(v)) + "</text>";
+    });
+    xt.forEach(function (v) {
+      s += '<line x1="' + r(sx(v)) + '" x2="' + r(sx(v)) + '" y1="' + Y0 + '" y2="' + (Y0 + 4) + '" class="ax"/>';
+      s += '<text x="' + r(sx(v)) + '" y="' + (Y0 + 16) + '" class="lb" text-anchor="middle">' + (o.xFmt ? o.xFmt(v) : tickLabel(v)) + "</text>";
+    });
+    s += '<line x1="' + X0 + '" y1="' + Y1 + '" x2="' + X0 + '" y2="' + Y0 + '" class="ax"/>';
+    s += '<line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X1 + '" y2="' + Y0 + '" class="ax"/>';
+    if (o.xLabel) s += '<text x="' + X1 + '" y="' + (Y0 + 32) + '" class="it" text-anchor="end">' + o.xLabel + "</text>";
+    if (o.yLabel) s += '<text x="' + (X0 + 6) + '" y="' + (Y1 + 2) + '" class="it">' + o.yLabel + "</text>";
+    return { w: w, h: h, sx: sx, sy: sy, X0: X0, X1: X1, Y0: Y0, Y1: Y1, axes: s,
+             clip: function (y) { return Math.max(Y1, Math.min(Y0, y)); } };
+  }
+
+  function logTicks(lo, hi) {
+    var out = [];
+    for (var p = Math.ceil(Math.log10(lo)); p <= Math.floor(Math.log10(hi)); p++) out.push(Math.pow(10, p));
+    if (out.length > 7) out = out.filter(function (_, k) { return k % Math.ceil(out.length / 6) === 0; });
+    return out;
+  }
+
+  function svg(f, inner, label) {
+    return '<svg viewBox="0 0 ' + f.w + " " + f.h + '" role="img"' + (label ? ' aria-label="' + esc(label) + '"' : "") + ">" +
+      '<defs><marker id="mah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+      '<path d="M0 0L10 5L0 10z" class="arrowhead"/></marker></defs>' + f.axes + inner + "</svg>";
+  }
+
+  /** Data points → a path, clipped to the plot box vertically. */
+  function line(f, pts, cls, extra) {
+    var d = "", pen = false;
+    pts.forEach(function (p) {
+      var x = f.sx(p[0]), y = f.sy(p[1]);
+      if (!isFinite(y) || y < f.Y1 - 0.5 || y > f.Y0 + 0.5) { pen = false; return; }
+      d += (pen ? "L" : "M") + r(x) + " " + r(y);
+      pen = true;
+    });
+    return d ? '<path d="' + d + '" class="' + cls + '"' + (extra || "") + "/>" : "";
+  }
+
+  function fn(f, g, lo, hi, cls, n) {
+    var pts = [];
+    n = n || 90;
+    for (var k = 0; k <= n; k++) { var x = lo + (hi - lo) * k / n; pts.push([x, g(x)]); }
+    return line(f, pts, cls);
+  }
+
+  function vline(f, x, cls, y) {
+    return '<line x1="' + r(f.sx(x)) + '" x2="' + r(f.sx(x)) + '" y1="' + r(y == null ? f.Y1 : f.clip(f.sy(y))) + '" y2="' + f.Y0 + '" class="' + cls + '"/>';
+  }
+  function hline(f, y, cls, x) {
+    return '<line x1="' + f.X0 + '" x2="' + r(x == null ? f.X1 : f.sx(x)) + '" y1="' + r(f.sy(y)) + '" y2="' + r(f.sy(y)) + '" class="' + cls + '"/>';
+  }
+  function dot(f, x, y, cls) {
+    var X = f.sx(x), Y = f.sy(y);
+    if (!isFinite(Y) || Y < f.Y1 - 1 || Y > f.Y0 + 1 || X < f.X0 - 1 || X > f.X1 + 1) return "";
+    return '<circle cx="' + r(X) + '" cy="' + r(Y) + '" r="4.5" class="' + (cls || "dot") + '"/>';
+  }
+  /** A label in plot units, nudged inside the box so it never hangs off. */
+  function text(f, x, y, s, cls, anchor, dx, dy) {
+    var X = f.sx(x) + (dx || 0), Y = f.sy(y) + (dy || 0);
+    var room = s.replace(/<[^>]+>/g, "").length * 6.2;
+    if (!anchor || anchor === "start") X = Math.min(X, f.w - 4 - room);
+    if (anchor === "end") X = Math.max(X, room + 4);
+    Y = Math.max(f.Y1 + 10, Math.min(f.h - 4, Y));
+    return '<text x="' + r(X) + '" y="' + r(Y) + '" class="' + (cls || "") + '"' + (anchor ? ' text-anchor="' + anchor + '"' : "") + ">" + s + "</text>";
+  }
+  function arrow(x1, y1, x2, y2, cls) {
+    return '<line x1="' + r(x1) + '" y1="' + r(y1) + '" x2="' + r(x2) + '" y2="' + r(y2) + '" class="' + (cls || "c4") + '" marker-end="url(#mah)"/>';
+  }
+
+  /**
+   * A line chart from series. spec = {title, x:[lo,hi]?, y:[lo,hi]?, xLabel, yLabel,
+   * series:[{name, pts, cls}], marks:[{x, y, label, cls}], hlines:[{y, label, cls}]}
+   */
+  function lineChart(spec) {
+    var xs = [], ys = [];
+    spec.series.forEach(function (s) { s.pts.forEach(function (p) { if (isFinite(p[1])) { xs.push(p[0]); ys.push(p[1]); } }); });
+    (spec.hlines || []).forEach(function (h) { ys.push(h.y); });
+    var xr = spec.x || [Math.min.apply(null, xs), Math.max.apply(null, xs)];
+    var lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys);
+    if (hi - lo < 1e-9) { lo -= 1; hi += 1; }
+    var padY = (hi - lo) * 0.12;
+    var yr = spec.y || [spec.zero ? Math.min(0, lo) : lo - padY, hi + padY];
+    var f = frame({ w: spec.w || 560, h: spec.h || 230, x: xr, y: yr, xLabel: spec.xLabel, yLabel: spec.yLabel, logY: spec.logY,
+                    yFmt: spec.yFmt, pad: { l: 56, r: 16, t: 26, b: 36 } });
+    var inner = "";
+    (spec.hlines || []).forEach(function (h) {
+      inner += hline(f, h.y, h.cls || "c4 dash faint");
+      if (h.label) inner += text(f, xr[1], h.y, h.label, h.lcls || "lb", "end", -2, -5);
+    });
+    spec.series.forEach(function (s) { inner += line(f, s.pts, s.cls || "c1"); });
+    (spec.marks || []).forEach(function (m) {
+      inner += dot(f, m.x, m.y, m.cls);
+      if (m.label) inner += text(f, m.x, m.y, m.label, m.lcls || "lb", m.anchor, m.dx != null ? m.dx : 7, m.dy != null ? m.dy : -8);
+    });
+    // Legend across the top.
+    var lx = f.X0 + 4;
+    spec.series.forEach(function (s) {
+      if (!s.name) return;
+      inner += '<line x1="' + lx + '" x2="' + (lx + 16) + '" y1="11" y2="11" class="' + (s.cls || "c1") + '"/>' +
+        '<text x="' + (lx + 21) + '" y="15" class="lb">' + s.name + "</text>";
+      lx += 34 + s.name.replace(/<[^>]+>/g, "").length * 6;
+    });
+    return svg(f, inner, spec.title);
+  }
+
+  /**
+   * Horizontal stacked bars showing proportions.
+   * spec = {rows:[{label, total?, parts:[{name, value, cls}]}], unit, fmt}
+   */
+  function barChart(spec) {
+    var w = spec.w || 560, rowH = 46, top = 8;
+    var h = top + spec.rows.length * rowH + 6;
+    var X0 = 120, X1 = w - 14;
+    var max = 0;
+    spec.rows.forEach(function (row) {
+      var sum = row.parts.reduce(function (a, p) { return a + Math.max(0, p.value); }, 0);
+      max = Math.max(max, spec.share ? 1 : sum);
+    });
+    if (!(max > 0)) max = 1;
+    var s = "";
+    spec.rows.forEach(function (row, k) {
+      var y = top + k * rowH;
+      var sum = row.parts.reduce(function (a, p) { return a + Math.max(0, p.value); }, 0);
+      s += '<text x="' + (X0 - 10) + '" y="' + (y + 19) + '" class="b" text-anchor="end">' + row.label + "</text>";
+      if (row.sub) s += '<text x="' + (X0 - 10) + '" y="' + (y + 32) + '" class="lb" text-anchor="end">' + row.sub + "</text>";
+      var x = X0;
+      row.parts.forEach(function (p) {
+        var v = Math.max(0, p.value);
+        var bw = (X1 - X0) * (spec.share ? (sum ? v / sum : 0) : v / max);
+        if (bw <= 0) return;
+        s += '<rect x="' + r(x) + '" y="' + (y + 4) + '" width="' + r(Math.max(bw, 0.5)) + '" height="26" rx="4" class="' + p.cls + '"/>';
+        var pct = sum ? Math.round(100 * v / sum) : 0;
+        var lab = p.name + " " + (spec.fmt ? spec.fmt(p.value) : fmt(p.value)) + (spec.pct === false ? "" : " · " + pct + "%");
+        if (bw > lab.length * 6.1 + 10) s += '<text x="' + r(x + 8) + '" y="' + (y + 21) + '" class="w">' + lab + "</text>";
+        else if (bw > p.name.length * 6.5 + 8) s += '<text x="' + r(x + 6) + '" y="' + (y + 21) + '" class="w">' + p.name + "</text>";
+        x += bw;
+      });
+      (row.neg || []).forEach(function (p) {
+        s += '<text x="' + r(Math.min(x + 6, X1 - 120)) + '" y="' + (y + 21) + '" class="' + (p.lcls || "lb") + '">' + p.name + " " + (spec.fmt ? spec.fmt(p.value) : fmt(p.value)) + "</text>";
+      });
+    });
+    return '<svg viewBox="0 0 ' + w + " " + h + '" role="img" aria-label="' + esc(spec.title || "proportions") + '">' + s + "</svg>";
+  }
+
+  /** A bare SVG with the arrow marker, for drawings that aren't plots. */
+  function raw(w, h, inner, label) {
+    return '<svg viewBox="0 0 ' + w + " " + h + '" role="img"' + (label ? ' aria-label="' + esc(label) + '"' : "") + ">" +
+      '<defs><marker id="mah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+      '<path d="M0 0L10 5L0 10z" class="arrowhead"/></marker></defs>' + inner + "</svg>";
+  }
+
+  return { raw: raw, fmt: fmt, ticks: ticks, frame: frame, svg: svg, line: line, fn: fn, vline: vline, hline: hline,
+           dot: dot, text: text, arrow: arrow, lineChart: lineChart, barChart: barChart, esc: esc };
+})();
+
+// Model 1 · Production & factor markets (Week 2)
+
+(function () {
+  var F = CH.fmt;
+  var P = ENGINE.production;
+
+  function view(states) {
+    var Lmax = 0, wmax = 0;
+    states.forEach(function (s) {
+      if (!s) return;
+      var o = P(s);
+      Lmax = Math.max(Lmax, o.L * 1.9);
+      wmax = Math.max(wmax, o.MPL * 2.2);
+    });
+    return { Lmax: Lmax, wmax: wmax };
+  }
+
+  function graph(p, ghost, target, hide) {
+    var o = P(p), v = view([p, ghost, target]);
+    var f = CH.frame({ w: 600, h: 320, x: [0, v.Lmax], y: [0, v.wmax], xLabel: "labor L", yLabel: "real wage W/P",
+                       pad: { l: 58, r: 20, t: 18, b: 40 } });
+    var curve = function (q) {
+      return function (L) { return (1 - q.alpha) * q.A * Math.pow(q.K, q.alpha) * Math.pow(L, -q.alpha); };
+    };
+    var s = "";
+    if (ghost) {
+      var go = P(ghost);
+      s += CH.fn(f, curve(ghost), v.Lmax * 0.03, v.Lmax, "c1 faint dash");
+      if (ghost.wReal == null) s += CH.vline(f, go.L, "c2 faint dash");
+      else s += CH.hline(f, ghost.wReal, "c2 faint dash");
+    }
+    s += CH.fn(f, curve(p), v.Lmax * 0.03, v.Lmax, "c1");
+    s += CH.text(f, v.Lmax, curve(p)(v.Lmax), "MPL = labor demand", "k1", "end", -4, -9);
+    if (p.wReal != null) {
+      s += CH.hline(f, p.wReal, "c2 dash");
+      s += CH.text(f, v.Lmax, p.wReal, "W/P = " + F(p.wReal, 2), "k2", "end", -4, -7);
+    } else {
+      s += CH.vline(f, o.L, "c2");
+      s += CH.text(f, o.L, v.wmax, "L̅ supply = " + F(o.L, 0), "k2", "start", 6, 14);
+    }
+    if (hide.indexOf("L") === -1 && hide.indexOf("wReal") === -1) {
+      s += CH.vline(f, o.L, "c4 dash faint", o.MPL) + CH.hline(f, o.MPL, "c4 dash faint", o.L);
+      if (ghost) {
+        var g = P(ghost);
+        if (Math.abs(g.L - o.L) / o.L > 0.01 || Math.abs(g.MPL - o.MPL) / o.MPL > 0.01) {
+          s += CH.dot(f, g.L, g.MPL, "solid4");
+          s += CH.arrow(f.sx(g.L), f.sy(g.MPL), f.sx(o.L), f.sy(o.MPL), "c4");
+        }
+      }
+      s += CH.dot(f, o.L, o.MPL);
+      s += CH.text(f, o.L, o.MPL, "L = " + F(o.L, 1) + ", W/P = " + F(o.MPL, 3), "b", "start", 9, -10);
+    } else {
+      s += CH.text(f, v.Lmax * 0.55, v.wmax * 0.55, "L = ?", "k1 big");
+    }
+    return { svg: CH.svg(f, s, "labor market"), cap: p.wReal != null
+      ? "Firms hire until the marginal product of labor falls to the real wage. The crossing is labor demand at that wage."
+      : "With labor supply fixed at L̅, the MPL at L̅ sets the real wage." };
+  }
+
+  function line(p, ghost, target, hide) {
+    var v = view([p, ghost, target]);
+    var o = P(p);
+    var Y = function (q) { return function (L) { return q.A * Math.pow(q.K, q.alpha) * Math.pow(L, 1 - q.alpha); }; };
+    var pts = [], gpts = [];
+    for (var k = 1; k <= 60; k++) {
+      var L = v.Lmax * k / 60;
+      pts.push([L, Y(p)(L)]);
+      if (ghost) gpts.push([L, Y(ghost)(L)]);
+    }
+    var series = [];
+    if (ghost) series.push({ name: "before", pts: gpts, cls: "c4 dash faint" });
+    series.push({ name: "Y = A K^α L^(1−α)", pts: pts, cls: "c1" });
+    return CH.lineChart({ title: "Output as labor rises", series: series, x: [0, v.Lmax], zero: true,
+      xLabel: "labor L", yLabel: "output Y",
+      marks: hide.indexOf("L") === -1 ? [{ x: o.L, y: o.Y, label: "Y = " + F(o.Y, 1), lcls: "b" }] : [] });
+  }
+
+  function bars(p, ghost, target, hide) {
+    var o = P(p);
+    var rows = [{ label: "Income now", sub: "Y = " + F(o.Y, 1), parts: [
+      { name: "Labor", value: o.laborIncome, cls: "solid1" },
+      { name: "Capital", value: o.capIncome, cls: "solid2" }] }];
+    if (ghost) {
+      var g = P(ghost);
+      rows.push({ label: "Before", sub: "Y = " + F(g.Y, 1), parts: [
+        { name: "Labor", value: g.laborIncome, cls: "solid4" },
+        { name: "Capital", value: g.capIncome, cls: "solid4" }] });
+    }
+    if (hide.indexOf("laborShare") !== -1) rows = rows.slice(0, 0);
+    return rows.length ? CH.barChart({ title: "Who gets the output", share: true, rows: rows, fmt: function (v) { return F(v, 1); } }) : "";
+  }
+
+  MODELS.push({
+    id: "production", week: 2, title: "Production & factor markets",
+    short: "Cobb-Douglas output, labor demand, and the split of income",
+    base: { A: 1, alpha: 1 / 3, K: 8000, L: 1000, P: 1 },
+    inputs: [
+      { key: "A", label: "Productivity A", min: 0.3, max: 6, step: 0.01, log: true },
+      { key: "K", label: "Capital K", min: 50, max: 20000, step: 1, log: true },
+      { key: "L", label: "Labor supply L", min: 20, max: 8000, step: 1, log: true },
+      { key: "alpha", label: "Capital share α", min: 0.1, max: 0.9, step: 0.01 },
+      { key: "P", label: "Price level P", min: 0.5, max: 4, step: 0.01 },
+    ],
+    solve: P,
+    kpis: [
+      { key: "Y", label: "Output Y", d: 1 },
+      { key: "L", label: "Labor L", d: 1 },
+      { key: "wReal", label: "Real wage W/P = MPL", d: 3 },
+      { key: "rReal", label: "Rental R/P = MPK", d: 4 },
+      { key: "laborShare", label: "Labor share", pct: true },
+      { key: "W", label: "Nominal wage W", d: 3 },
+    ],
+    graph: graph, line: line, bars: bars,
+    lineTitle: "Production function", barsTitle: "Income shares",
+    forms: [
+      { name: "General", html: "<i>Y</i> = <i>F</i>(<i>K</i>, <i>L</i>), with constant returns: <i>F</i>(<i>zK</i>, <i>zL</i>) = <i>z</i>·<i>F</i>(<i>K</i>, <i>L</i>)",
+        note: "In the long-run model K and L are fixed, so output is fixed by the supply side." },
+      { name: "Cobb-Douglas", html: "<i>Y</i> = <i>A K</i><sup>α</sup><i>L</i><sup>1−α</sup>",
+        note: "Exponents add to 1, so it has constant returns. α is capital's share of income; A is total factor productivity." },
+      { name: "Profit and the hiring rules", html: "Profit = <i>PY</i> − <i>WL</i> − <i>RK</i>  ⇒  MPL = <i>W</i>/<i>P</i>,  MPK = <i>R</i>/<i>P</i>",
+        note: "Differentiate profit by L and by K and set each to zero. Use the real wage W/P, not W." },
+      { name: "Marginal products", html: "MPL = (1 − α)<i>A K</i><sup>α</sup><i>L</i><sup>−α</sup> = (1 − α)<i>Y</i>/<i>L</i>,  MPK = α<i>Y</i>/<i>K</i>",
+        note: "Each marginal product is its exponent times the average product. Keep the exponent: 5 × 0.7 = 3.5." },
+      { name: "Labor demand, solved", html: "<i>L</i> = [ (1 − α)<i>A K</i><sup>α</sup> / (<i>W</i>/<i>P</i>) ]<sup>1/α</sup>",
+        note: "From MPL = W/P. A higher real wage means fewer workers." },
+      { name: "Shares", html: "<i>WL</i>/<i>PY</i> = MPL·<i>L</i>/<i>Y</i> = 1 − α,  <i>RK</i>/<i>PY</i> = α,  <i>Y</i> = MPL·<i>L</i> + MPK·<i>K</i>",
+        note: "Constant whatever happens to K or L. Factor payments use up all of output: zero economic profit." },
+      { name: "Backing out α and A", html: "1 − α = MPL·<i>L</i>/<i>Y</i>  →  <i>K</i> = α<i>Y</i>/MPK  →  <i>A</i> = <i>Y</i> / (<i>K</i><sup>α</sup><i>L</i><sup>1−α</sup>)",
+        note: "Start with the labor share (the exam's hint), then the production function." },
+    ],
+    statics: {
+      inputs: [{ key: "L", label: "More labor (immigration)" }, { key: "K", label: "More capital" },
+               { key: "A", label: "Better technology A" }, { key: "P", label: "Higher price level P" }],
+      outputs: [{ key: "Y", label: "Y" }, { key: "wReal", label: "W/P" }, { key: "rReal", label: "R/P" },
+                { key: "laborShare", label: "Labor share" }, { key: "W", label: "W" }],
+    },
+    facts: {
+      cold: [
+        "Firms hire labor until MPL = W/P and rent capital until MPK = R/P.",
+        "With Y = A K<sup>α</sup>L<sup>1−α</sup>: labor share = 1 − α, capital share = α, real wage = (1 − α)Y/L.",
+        "Whatever is scarcer earns more: more workers lower W/P and raise R/P; less capital does the same; better technology raises both.",
+        "Inflation that doubles all prices and wages changes nothing real.",
+      ],
+      traps: [
+        "Using the nominal wage W instead of W/P in the labor demand condition.",
+        "Dropping the exponent in MPL (the 0.7 in 3.5 = 5 × 0.7).",
+        "Saying the labor share changes when capital rises. Under Cobb-Douglas with competition it doesn't.",
+      ],
+    },
+    scenarios: [
+      {
+        id: "gamma-epsilon", title: "Gamma Epsilon IV hires workers", source: "Practice exam Part 2 Q3(a) · 6 pts",
+        blurb: "Y = 5K<sup>0.3</sup>L<sup>0.7</sup>, K = 1,000, W = 5, P = 2. How many workers do firms hire?",
+        base: { A: 5, alpha: 0.3, K: 1000, wReal: 2.5, P: 2 },
+        steps: [
+          { say: "An uncharted galaxy produces with <b>Y = 5K<sup>0.3</sup>L<sup>0.7</sup></b> and <b>K = 1,000</b>. The nominal wage is <b>W = 5</b> and the price level <b>P = 2</b>. Firms choose L.", hide: ["L", "Y"] },
+          { say: "Write the condition before any numbers. That line is where partial credit starts.",
+            math: ["Profit = PY − WL − RK", "∂Profit/∂L = 0 ⇒ <b>MPL = W/P</b> = 5 / 2 = <b>2.5</b>"] },
+          { say: "Now the marginal product. Bring the exponent down and keep it.",
+            math: ["MPL = 0.7 · 5 · K<sup>0.3</sup>L<sup>−0.3</sup> = <b>3.5(1,000)<sup>0.3</sup>L<sup>−0.3</sup></b>",
+                   "(1,000)<sup>0.3</sup> = 7.943"] },
+          { say: "Set them equal and solve for L.",
+            predict: { kind: "num", q: "How many workers do firms hire? (one decimal)", key: "L", tol: 0.003 }, hide: [],
+            math: ["3.5(7.943)L<sup>−0.3</sup> = 2.5", "L<sup>0.3</sup> = 3.5 × 7.943 / 2.5 = 11.121",
+                   function (o) { return "L = 11.121<sup>1/0.3</sup> = <b>" + F(o.L, 1) + " workers</b>"; }] },
+          { say: "The nominal wage rises to <b>W = 6</b>, prices unchanged, so the real wage is 3.",
+            predict: { kind: "dir", key: "L", q: "What happens to employment?" }, set: { wReal: 3 },
+            math: [function (o) { return "L = (3.5 × 7.943 / 3)<sup>1/0.3</sup> = <b>" + F(o.L, 1) + "</b>"; }],
+            why: "Down the labor demand curve: a higher real wage means MPL must be higher, which takes fewer workers." },
+          { say: "Back to the original, then <b>double both</b> W and P (W = 10, P = 4).",
+            predict: { kind: "dir", key: "L", q: "Compared with the original 3,069.7, employment is…", from: "base" }, set: { wReal: 2.5, P: 4 },
+            math: ["W/P = 10/4 = 2.5, the same real wage", function (o) { return "L = <b>" + F(o.L, 1) + "</b>, unchanged"; }],
+            why: "Only the real wage matters. Doubling every nominal price is a nominal change." },
+        ],
+        exam: { pts: "6 points", lines: [
+          "Condition first: MPL = W/P = 5/2 = 2.5.",
+          "MPL = 5(0.7)K<sup>0.3</sup>L<sup>−0.3</sup> = 3.5(1,000)<sup>0.3</sup>L<sup>−0.3</sup>.",
+          "Solve: L<sup>0.3</sup> = 11.121, so L = 11.121<sup>1/0.3</sup> ≈ 3,069.7 workers.",
+          "Keep exact values through the steps; round only the answer." ] },
+      },
+      {
+        id: "theta-alpha", title: "Theta Alpha III: back out α and A", source: "Practice exam Part 2 Q3(b) · 7 pts",
+        blurb: "Observed Y = 150, L = 200, MPL = MPK = 0.5. Find α, K and A.",
+        base: (function () { var b = ENGINE.backOut({ Y: 150, L: 200, MPL: 0.5, MPK: 0.5 }); return { A: b.A, alpha: b.alpha, K: b.K, L: 200, P: 1 }; })(),
+        steps: [
+          { say: "Theta Alpha III produces with Y = A K<sup>α</sup>L<sup>1−α</sup>. You observe <b>Y = 150</b>, <b>L = 200</b>, <b>MPL = 0.5</b> and <b>MPK = 0.5</b>. The hint: start with the labor share.",
+            hide: ["laborShare"] },
+          { say: "Labor share = MPL × L / Y, and under Cobb-Douglas that's 1 − α.",
+            predict: { kind: "num", q: "What is the labor share? (decimal)", key: "laborShare", tol: 0.004 }, hide: [],
+            math: ["1 − α = MPL·L / Y = 0.5(200) / 150 = <b>2/3</b>", "so <b>α = 1/3</b>"] },
+          { say: "Capital share = MPK × K / Y = α. Solve for K.",
+            predict: { kind: "num", q: "How much capital is there?", value: function (o, p) { return p.K; }, tol: 0.002 },
+            math: ["1/3 = 0.5 K / 150", "<b>K = 100</b>"] },
+          { say: "Now the production function gives A.",
+            predict: { kind: "num", q: "What is A? (three decimals)", value: function (o, p) { return p.A; }, tol: 0.002 },
+            math: ["150 = A(100)<sup>1/3</sup>(200)<sup>2/3</sup> = A(4.6416)(34.20)", "<b>A = 150 / 158.74 = 0.945</b>"] },
+          { say: "Suppose capital doubles to 200.",
+            predict: { kind: "dir", key: "laborShare", q: "What happens to the labor share?" }, set: { K: 200 },
+            math: [function (o) { return "Labor share = " + F(o.laborShare, 3) + ", still 1 − α"; },
+                   function (o) { return "but the real wage rises to " + F(o.wReal, 3); }],
+            why: "More capital raises MPL and the real wage, but the share stays 1 − α. That's Practice Q13(a)." },
+        ],
+        exam: { pts: "7 points", lines: [
+          "Labor share first: 1 − α = MPL·L/Y = 0.5(200)/150 = 2/3, so α = 1/3.",
+          "Capital share: α = MPK·K/Y ⇒ K = (1/3)(150)/0.5 = 100.",
+          "Production function: A = 150 / (100<sup>1/3</sup>·200<sup>2/3</sup>) = 0.945." ] },
+      },
+      {
+        id: "plague", title: "A plague halves the workforce", source: "Chapter 3 #2 (assigned)",
+        blurb: "Y = K<sup>0.5</sup>L<sup>0.5</sup> with 100 units of land and 100 workers. Half the workers die.",
+        base: { A: 1, alpha: 0.5, K: 100, L: 100, P: 1 },
+        steps: [
+          { say: "A medieval economy: <b>Y = K<sup>0.5</sup>L<sup>0.5</sup></b> with K = 100 land and L = 100 labor.",
+            math: [function (o) { return "Y = 10 × 10 = <b>" + F(o.Y, 0) + "</b>; MPL = 0.5(K/L)<sup>0.5</sup> = <b>" + F(o.wReal, 2) + "</b>; MPK = <b>" + F(o.rReal, 2) + "</b>"; }] },
+          { say: "A plague kills half the workers. Land is untouched.",
+            predict: { kind: "num", q: "What is output now? (one decimal)", key: "Y", tol: 0.003 }, set: { L: 50 },
+            math: [function (o) { return "Y = 10 × 50<sup>0.5</sup> = 10 × 7.07 = <b>" + F(o.Y, 1) + "</b>"; }] },
+          { say: "Each surviving worker now has twice as much land.",
+            predict: { kind: "dir", key: "wReal", q: "The real wage…" },
+            math: [function (o) { return "MPL = 0.5(100/50)<sup>0.5</sup> = <b>" + F(o.wReal, 3) + "</b>"; }] },
+          { say: "And the landowners?",
+            predict: { kind: "dir", key: "rReal", q: "The real rental price of land…", from: "base" },
+            math: [function (o) { return "MPK = 0.5(50/100)<sup>0.5</sup> = <b>" + F(o.rReal, 3) + "</b>"; }],
+            why: "Workers became scarce and land plentiful, so wages rose and rents fell: what happened in Europe after the Black Death." },
+          { say: "Last: the labor share.",
+            predict: { kind: "dir", key: "laborShare", q: "Compared with before the plague, labor's share of income is…", from: "base" },
+            math: ["Labor share = 1 − α = <b>0.5</b> before and after"] },
+        ],
+        exam: { pts: "Problem set", lines: [
+          "Output: 100 → 70.7. Real wage: 0.5 → 0.707. Real rent: 0.5 → 0.354.",
+          "Labor share stays 0.5 = 1 − α: the wage rises but total output falls by just enough." ] },
+      },
+      {
+        id: "four-shocks", title: "Immigration, earthquake, technology, inflation", source: "Chapter 3 #1 · Practice Q13",
+        blurb: "Four shocks to one economy. Predict the real wage and rental rate each time.",
+        base: { A: 1, alpha: 1 / 3, K: 8000, L: 1000, P: 1 },
+        steps: [
+          { say: "Start at Y = K<sup>1/3</sup>L<sup>2/3</sup> with K = 8,000 and L = 1,000: Y = 2,000, W/P = 1.333, R/P = 0.083." },
+          { say: "<b>Immigration</b> raises the labor force 25%.", set: { L: 1250 },
+            predict: { kind: "dir", key: "wReal", q: "The real wage…" },
+            math: [function (o) { return "W/P = " + F(o.wReal, 3) + ", R/P = " + F(o.rReal, 4); }],
+            why: "More workers per machine: MPL falls, MPK rises." },
+          { say: "Back to 1,000 workers. An <b>earthquake</b> destroys a third of the capital.", set: { L: 1000, K: 5333 },
+            predict: { kind: "dir", key: "rReal", q: "Compared with the start, the real rental rate…", from: "base" },
+            math: [function (o) { return "W/P = " + F(o.wReal, 3) + ", R/P = " + F(o.rReal, 4); }],
+            why: "Capital became scarce, so it earns more; workers have less to work with, so they earn less." },
+          { say: "Capital restored. A <b>technology</b> improvement raises A by 20%.", set: { K: 8000, A: 1.2 },
+            predict: { kind: "dir", key: "rReal", q: "Compared with the start, the real rental rate…", from: "base" },
+            math: [function (o) { return "W/P = " + F(o.wReal, 3) + " and R/P = " + F(o.rReal, 4) + ": both up 20%"; }] },
+          { say: "Technology back to normal. <b>Inflation doubles</b> every price and every nominal income.", set: { A: 1, P: 2 },
+            predict: { kind: "dir", key: "wReal", q: "Compared with the start, the real wage…", from: "base" },
+            math: [function (o) { return "W = " + F(o.W, 3) + " doubled, but W/P = " + F(o.wReal, 3) + " is unchanged"; }],
+            why: "A nominal change. The classical dichotomy: nominal variables don't move real ones." },
+        ],
+        exam: { pts: "Short answer", lines: [
+          "Immigration: W/P falls, R/P rises.  Earthquake: W/P falls, R/P rises.",
+          "Technology: both rise.  Inflation: neither changes.",
+          "Labor share is 1 − α throughout." ] },
+      },
+    ],
+  });
+})();
+
+// Model 2 · Loanable funds (Week 2)
+
+(function () {
+  var F = CH.fmt;
+  var S = ENGINE.funds;
+
+  function view(states) {
+    var qmax = 0, qmin = 0, rmax = 0, rmin = 0;
+    states.forEach(function (p) {
+      if (!p) return;
+      var o = S(p);
+      qmax = Math.max(qmax, p.i0 * 1.08, o.S * 1.25);
+      qmin = Math.min(qmin, o.S * 1.25);
+      rmax = Math.max(rmax, p.i0 / p.b * 1.1, o.r * 1.25);
+      rmin = Math.min(rmin, o.r * 1.3);
+    });
+    return { qmax: qmax, qmin: qmin, rmax: rmax, rmin: rmin };
+  }
+
+  function graph(p, ghost, target, hide) {
+    var o = S(p), v = view([p, ghost, target]);
+    var f = CH.frame({ w: 600, h: 320, x: [v.qmin, v.qmax], y: [v.rmin, v.rmax], xLabel: "loanable funds (S, I)", yLabel: "real interest rate r",
+                       pad: { l: 52, r: 20, t: 18, b: 40 } });
+    var inv = function (q) { return function (r) { return q.i0 - q.b * r; }; };
+    var s = "";
+    var invLine = function (q, cls) {
+      var pts = [];
+      for (var k = 0; k <= 40; k++) { var r = v.rmin + (v.rmax - v.rmin) * k / 40; pts.push([inv(q)(r), r]); }
+      return CH.line(f, pts.filter(function (pt) { return pt[0] >= v.qmin && pt[0] <= v.qmax; }), cls);
+    };
+    if (ghost) {
+      var g = S(ghost);
+      if (ghost.i0 !== p.i0 || ghost.b !== p.b) s += invLine(ghost, "c1 faint dash");
+      s += CH.vline(f, g.S, "c2 faint dash");
+      s += CH.text(f, g.S, v.rmax, "S₁", "k2", "middle", 0, 12);
+    }
+    s += invLine(p, "c1");
+    s += CH.text(f, Math.max(v.qmin, Math.min(v.qmax * 0.97, inv(p)(v.rmin + (v.rmax - v.rmin) * 0.12))), v.rmin + (v.rmax - v.rmin) * 0.12, "I(r)", "k1", "end", -4, -6);
+    s += CH.vline(f, o.S, "c2");
+    s += CH.text(f, o.S, v.rmax, (ghost ? "S₂" : "S") + " = " + F(o.S, 1), "k2", "start", 6, 12);
+    if (ghost) {
+      var g2 = S(ghost);
+      if (Math.abs(g2.S - o.S) > 1e-9) s += CH.arrow(f.sx(g2.S), f.sy(v.rmax * 0.82), f.sx(o.S) + (o.S > g2.S ? -6 : 6), f.sy(v.rmax * 0.82));
+    }
+    if (hide.indexOf("r") === -1) {
+      s += CH.hline(f, o.r, "c4 dash faint", o.I) + CH.dot(f, o.I, o.r);
+      if (ghost) { var g3 = S(ghost); if (Math.abs(g3.r - o.r) > 1e-9) s += CH.dot(f, g3.I, g3.r, "solid4"); }
+      s += CH.text(f, o.I, o.r, "r = " + F(o.r, 2) + "%, I = " + F(o.I, 1), "b", "start", 9, -10);
+    } else {
+      s += CH.text(f, v.qmax * 0.5, v.rmax * 0.55, "r = ?", "k1 big");
+    }
+    return { svg: CH.svg(f, s, "loanable funds"), cap: "Saving doesn't depend on r here, so supply is vertical. The real interest rate moves until investment demand equals national saving." };
+  }
+
+  function line(p, ghost, target, hide) {
+    var Gmax = Math.max(p.G * 2, p.G + 1);
+    var pts = [];
+    for (var k = 0; k <= 40; k++) { var G = Gmax * k / 40; pts.push([G, S(Object.assign({}, p, { G: G })).r]); }
+    var o = S(p);
+    var marks = hide.indexOf("r") === -1 ? [{ x: p.G, y: o.r, label: "now: G = " + F(p.G, 0) + ", r = " + F(o.r, 2) + "%", lcls: "b" }] : [];
+    if (ghost && ghost.G !== p.G) marks.push({ x: ghost.G, y: S(ghost).r, cls: "solid4" });
+    return CH.lineChart({ title: "r as G changes", series: [{ name: "r for each level of G", pts: pts, cls: "c2" }],
+      xLabel: "government purchases G", yLabel: "r (%)", marks: marks });
+  }
+
+  function bars(p, ghost, target, hide) {
+    var o = S(p);
+    var rows = [{ label: "Output Y", sub: F(o.Y, 1), parts: [
+      { name: "C", value: o.C, cls: "solid1" }, { name: "I", value: o.I, cls: "solid3" }, { name: "G", value: o.G, cls: "solid2" }] }];
+    var sp = [{ name: "Private", value: o.Spriv, cls: "solid1" }];
+    var neg = [];
+    if (o.Spub >= 0) sp.push({ name: "Public", value: o.Spub, cls: "solid2" });
+    else neg.push({ name: "Public (deficit)", value: o.Spub, lcls: "k2" });
+    rows.push({ label: "Saving S", sub: F(o.S, 1), parts: sp, neg: neg });
+    if (hide.indexOf("r") !== -1) rows = rows.slice(1);
+    return CH.barChart({ title: "Where output and saving go", share: false, rows: rows, fmt: function (v) { return F(v, 1); }, pct: false });
+  }
+
+  MODELS.push({
+    id: "funds", week: 2, title: "Loanable funds",
+    short: "Saving meets investment; the real interest rate clears the market",
+    base: { Y: 8000, c0: 1000, mpc: 2 / 3, T: 2000, G: 2500, i0: 1200, b: 100 },
+    inputs: [
+      { key: "G", label: "Government purchases G", min: 0, max: 4000, step: 10 },
+      { key: "T", label: "Taxes T", min: 0, max: 4000, step: 10 },
+      { key: "mpc", label: "MPC", min: 0.05, max: 0.95, step: 0.01 },
+      { key: "c0", label: "Autonomous consumption", min: 0, max: 2500, step: 10 },
+      { key: "i0", label: "Investment demand (intercept)", min: 600, max: 2400, step: 10 },
+      { key: "Y", label: "Output Y̅", min: 6000, max: 10000, step: 10 },
+    ],
+    solve: S,
+    kpis: [
+      { key: "Y", label: "Output Y", d: 1 },
+      { key: "r", label: "Real rate r", d: 2, unit: "%" },
+      { key: "I", label: "Investment I", d: 1 },
+      { key: "S", label: "National saving S", d: 1 },
+      { key: "Spriv", label: "Private Y − T − C", d: 1 },
+      { key: "Spub", label: "Public T − G", d: 1 },
+      { key: "C", label: "Consumption C", d: 1 },
+    ],
+    graph: graph, line: line, bars: bars,
+    lineTitle: "Crowding out, traced", barsTitle: "Output and saving",
+    forms: [
+      { name: "Goods market", html: "<i>Y̅</i> = <i>C</i>(<i>Y̅</i> − <i>T</i>) + <i>I</i>(<i>r</i>) + <i>G</i>",
+        note: "Y is fixed by factors (Model 1), so r is the only thing that can adjust." },
+      { name: "Linear version used in problems", html: "<i>C</i> = <i>c</i><sub>0</sub> + MPC(<i>Y</i> − <i>T</i>),  <i>I</i> = <i>i</i><sub>0</sub> − <i>b r</i>",
+        note: "MPC = ∂C/∂(Y − T), between 0 and 1 (Practice Q18: give the sentence and the derivative)." },
+      { name: "National saving", html: "<i>S</i> = <i>Y</i> − <i>C</i> − <i>G</i> = (<i>Y</i> − <i>T</i> − <i>C</i>) + (<i>T</i> − <i>G</i>)",
+        note: "Private saving plus public saving. Add and subtract T to split it." },
+      { name: "Equilibrium", html: "<i>S</i> = <i>I</i>(<i>r</i>)  ⇒  <i>r</i> = (<i>i</i><sub>0</sub> − <i>S</i>) / <i>b</i>",
+        note: "The same answer as solving the goods-market equation for r." },
+      { name: "Fiscal changes", html: "Δ<i>G</i> = <i>x</i>: Δ<i>S</i> = −<i>x</i>  Δ<i>T</i> = <i>x</i>: Δ<i>S</i> = (1 − MPC)<i>x</i>  both: Δ<i>S</i> = −(1 − MPC)<i>x</i>",
+        note: "A tax rise cuts consumption by MPC·x, so private saving falls by only (1 − MPC)x." },
+    ],
+    statics: {
+      inputs: [{ key: "G", label: "G up" }, { key: "T", label: "T up" }, { key: "c0", label: "Consumer confidence up" },
+               { key: "i0", label: "Investment demand up" }, { key: "Y", label: "Output Y̅ up" }],
+      outputs: [{ key: "r", label: "r" }, { key: "I", label: "I" }, { key: "S", label: "S" }, { key: "C", label: "C" }],
+    },
+    facts: {
+      cold: [
+        "National saving S = Y − C − G = private + public saving. Equilibrium: S = I(r).",
+        "Graph: r on the vertical axis, saving a vertical line, investment demand sloping down.",
+        "Higher G lowers saving, raises r and cuts investment one-for-one: crowding out (Textbook Figure 3-9).",
+        "Higher consumer confidence (C up at every income) also lowers saving: r up, I down.",
+      ],
+      traps: [
+        "Shifting the wrong curve: G moves saving, not investment demand.",
+        "Using Y instead of Y − T inside the consumption function.",
+        "Forgetting that a tax rise lowers private saving by MPC·ΔT.",
+      ],
+    },
+    scenarios: [
+      {
+        id: "beta-xi", title: "Beta Xi VII: the equilibrium rate", source: "Practice exam Part 2 Q3(c) · 7 pts",
+        blurb: "Y = K<sup>0.5</sup>L<sup>0.5</sup> with K = 169, L = 225; C = 10 + 0.5(Y − T); I = 100 − 2r; G = T = 10.",
+        base: { A: 1, alpha: 0.5, K: 169, L: 225, c0: 10, mpc: 0.5, T: 10, G: 10, i0: 100, b: 2 },
+        steps: [
+          { say: "Beta Xi VII: <b>Y = K<sup>0.5</sup>L<sup>0.5</sup></b>, K = 169, L = 225, <b>C = 10 + 0.5(Y − T)</b>, <b>I = 100 − 2r</b>, G = T = 10.", hide: ["r", "I", "Y"] },
+          { say: "Output comes from the factors first.",
+            predict: { kind: "num", q: "What is Y?", key: "Y", tol: 0.001 }, hide: ["r", "I"],
+            math: ["Y = 169<sup>0.5</sup> × 225<sup>0.5</sup> = 13 × 15 = <b>195</b>"] },
+          { say: "Write the goods-market equation, then solve for r.",
+            predict: { kind: "num", q: "What is the real interest rate r?", key: "r", tol: 0.002 }, hide: ["I"],
+            math: ["Y = C + I + G", "195 = 10 + 0.5(195 − 10) + 100 − 2r + 10 = 212.5 − 2r", "2r = 17.5 ⇒ <b>r = 8.75</b>"] },
+          { say: "Investment at that rate.",
+            predict: { kind: "num", q: "What is investment I?", key: "I", tol: 0.002 }, hide: [],
+            math: ["I = 100 − 2(8.75) = <b>82.5</b>", "Check: S = 195 − 102.5 − 10 = 82.5 = I ✓"] },
+          { say: "Suppose the government raises G to 20 with taxes unchanged.",
+            predict: { kind: "dir", key: "r", q: "The real interest rate…" }, set: { G: 20 },
+            math: [function (o) { return "S = 195 − 102.5 − 20 = " + F(o.S, 1) + "; r = (100 − " + F(o.S, 1) + ")/2 = <b>" + F(o.r, 2) + "</b>"; }],
+            why: "Saving shifts left by 10; investment falls by the same 10. Crowding out." },
+        ],
+        exam: { pts: "7 points", lines: [
+          "Y = 169<sup>0.5</sup>225<sup>0.5</sup> = 195.",
+          "195 = 10 + 0.5(185) + 100 − 2r + 10 ⇒ r = 8.75.",
+          "I = 100 − 2(8.75) = 82.5." ] },
+      },
+      {
+        id: "ch4-3", title: "Cutting G from 2,500 to 2,000", source: "Chapter 4 #3 (assigned)",
+        blurb: "Y = 8,000, G = 2,500, T = 2,000, C = 1,000 + (2/3)(Y − T), I = 1,200 − 100r.",
+        base: { Y: 8000, c0: 1000, mpc: 2 / 3, T: 2000, G: 2500, i0: 1200, b: 100 },
+        steps: [
+          { say: "Y = 8,000, G = 2,500, T = 2,000, <b>C = 1,000 + (2/3)(Y − T)</b>, <b>I = 1,200 − 100r</b>.", hide: ["r", "I", "S", "Spriv", "Spub"] },
+          { say: "Saving, piece by piece.",
+            predict: { kind: "num", q: "National saving S?", key: "S", tol: 0.001 }, hide: ["r", "I"],
+            math: ["C = 1,000 + (2/3)(6,000) = 5,000", "Private = 8,000 − 2,000 − 5,000 = 1,000", "Public = 2,000 − 2,500 = −500", "<b>S = 500</b>"] },
+          { say: "Set S = I(r).",
+            predict: { kind: "num", q: "Equilibrium r (percent)?", key: "r", tol: 0.001 }, hide: [],
+            math: ["1,200 − 100r = 500 ⇒ <b>r = 7%</b>, I = 500"] },
+          { say: "The government cuts G by 500 to 2,000.",
+            predict: { kind: "dir", key: "r", q: "The real interest rate…" }, set: { G: 2000 },
+            math: ["Public saving = 2,000 − 2,000 = 0; S = 1,000", "1,200 − 100r = 1,000 ⇒ <b>r = 2%</b>, I = 1,000"],
+            why: "Less government borrowing frees saving for private investment: crowding out in reverse." },
+        ],
+        exam: { pts: "Problem set", lines: [
+          "(a) Private 1,000, public −500, national 500.  (b) r = 7%, I = 500.",
+          "(c) G = 2,000: national saving 1,000.  (d) r = 2%, I = 1,000.",
+          "Graph: label r on the vertical axis, both saving lines, both equilibria and the direction of the shift." ] },
+      },
+      {
+        id: "balanced-budget", title: "A balanced-budget increase", source: "Chapter 4 #4 (assigned)",
+        blurb: "Raise G and T by the same 100. Does a balanced budget leave the interest rate alone?",
+        base: { Y: 8000, c0: 1000, mpc: 2 / 3, T: 2000, G: 2500, i0: 1200, b: 100 },
+        steps: [
+          { say: "The Chapter 4 #3 economy at r = 7%. Now raise <b>G and T both by 100</b>." },
+          { say: "Start with the government's own saving.",
+            predict: { kind: "dir", key: "Spub", q: "Public saving T − G…" }, set: { G: 2600, T: 2100 },
+            math: ["T − G = 2,100 − 2,600 = −500, unchanged"] },
+          { say: "Households pay 100 more in tax.",
+            predict: { kind: "num", q: "By how much does private saving fall? (positive number)", value: function (o) { return 1000 - o.Spriv; }, tol: 0.002 },
+            math: ["C falls by MPC × 100 = 66.7", "Private saving falls by (1 − MPC) × 100 = <b>33.3</b>"] },
+          { say: "So national saving fell.",
+            predict: { kind: "dir", key: "r", q: "The real interest rate…", from: "base" },
+            math: [function (o) { return "S = " + F(o.S, 1) + "; r = (1,200 − " + F(o.S, 1) + ")/100 = <b>" + F(o.r, 2) + "%</b>"; }],
+            why: "The government spends all 100; households only cut spending by 66.7. The other 33.3 comes out of investment. If MPC = 1 nothing changes; if MPC = 0, investment falls by the full 100." },
+        ],
+        exam: { pts: "Problem set", lines: [
+          "Public saving unchanged. Private saving falls (1 − MPC)x.",
+          "National saving and investment fall by (1 − MPC)x; r rises." ] },
+      },
+      {
+        id: "tax-hike", title: "A $100 billion tax increase", source: "Chapter 4 · real-world",
+        blurb: "Congress raises taxes $100B to cut the deficit. MPC = 0.6. What happens to saving, r and investment?",
+        base: { Y: 5000, c0: 200, mpc: 0.6, T: 1000, G: 1000, i0: 1800, b: 100 },
+        steps: [
+          { say: "An economy in $ billions: Y = 5,000, G = T = 1,000, MPC = 0.6, I = 1,800 − 100r. Right now r = 4%." },
+          { say: "Taxes rise by <b>$100B</b>.", set: { T: 1100 },
+            predict: { kind: "num", q: "Change in public saving ($B)?", value: function (o) { return o.Spub - 0; }, tol: 0.002 },
+            math: ["T − G rises from 0 to <b>+100</b>"] },
+          { say: "Households pay that 100 out of disposable income.",
+            predict: { kind: "num", q: "Change in national saving ($B)?", value: function (o) { return o.S - 1400; }, tol: 0.002 },
+            math: ["Consumption falls 0.6 × 100 = 60, so private saving falls 40", "ΔS = +100 − 40 = <b>+60</b> = (1 − MPC)ΔT"] },
+          { say: "More saving in the loanable funds market.",
+            predict: { kind: "dir", key: "I", q: "Investment…", from: "base" },
+            math: [function (o) { return "r = " + F(o.r, 2) + "% (from 4%), I = " + F(o.I, 0) + " (+60)"; }],
+            why: "Deficit reduction crowds investment back in. The size depends on how much of the tax comes out of consumption." },
+        ],
+        exam: { pts: "Short answer", lines: [
+          "Public saving +100, private saving −40, national saving +60.",
+          "r falls; investment rises by 60." ] },
+      },
+    ],
+  });
+})();
+
+// Model 3 · Money, inflation & Fisher (Week 3)
+
+(function () {
+  var F = CH.fmt;
+  var Mn = ENGINE.money;
+
+  function graph(p, ghost, target, hide) {
+    var o = Mn(p);
+    var hid = function (k) { return hide.indexOf(k) !== -1; };
+    if (p.vk != null) return velocity(p, o, ghost, target, hid);
+    if (p.iGiven != null) return fisher(p, o, ghost, target, hid);
+    return realSide(p, o, ghost, target, hid);
+  }
+
+  // The real side: r from S = I(r). Money growth never touches this picture.
+  function realSide(p, o, ghost, target, hid) {
+    var states = [p, ghost, target].filter(Boolean).map(function (q) { return { q: q, o: Mn(q) }; });
+    var rs = states.map(function (x) { return x.o.r; });
+    var rlo = Math.min(0, Math.min.apply(null, rs)) - 2, rhi = Math.max.apply(null, rs) + 8;
+    var xlo = Math.min.apply(null, states.map(function (x) { return Math.min(x.q.a - x.q.b * rhi, x.o.S); }));
+    var xhi = Math.max.apply(null, states.map(function (x) { return Math.max(x.q.a - x.q.b * rlo, x.o.S); }));
+    var pad = (xhi - xlo) * 0.06;
+    var f = CH.frame({ w: 600, h: 320, x: [xlo - pad, xhi + pad], y: [rlo, rhi], xLabel: "loanable funds", yLabel: "real rate r (%)" });
+    var s = "";
+    var I = function (q) { return function (S) { return (q.a - S) / q.b; }; };
+    if (ghost) { var g = Mn(ghost); s += CH.vline(f, g.S, "c2 faint dash"); }
+    s += CH.fn(f, I(p), xlo - pad, xhi + pad, "c1");
+    s += CH.text(f, xhi, I(p)(xhi), "I(r) = " + F(p.a, 0) + (p.b === 1 ? " \u2212 r" : " \u2212 " + F(p.b, 0) + "r"), "k1", "end", -4, -8);
+    s += CH.vline(f, o.S, "c2") + CH.text(f, o.S, rhi, "S = " + F(o.S, 0), "k2", "start", 6, 12);
+    if (!hid("r")) {
+      s += CH.dot(f, o.S, o.r) + CH.text(f, o.S, o.r, "r = " + F(o.r, 1) + "%", "b", "start", 9, -8);
+      if (ghost) { var g2 = Mn(ghost); if (g2.r !== o.r) s += CH.dot(f, g2.S, g2.r, "solid4"); }
+    }
+    return { svg: CH.svg(f, s, "real side"), cap: "The real side sets r from S = I(r). Money growth then sets inflation, and Fisher adds the two: i = r + \u03c0." };
+  }
+
+  // Fisher: i = r + π, a 45° line through r.
+  function fisher(p, o, ghost, target, hid) {
+    var pmax = Math.max(12, o.pi * 1.6, ghost ? Mn(ghost).pi * 1.6 : 0);
+    var imax = pmax + Math.max(6, o.r * 1.6);
+    var f = CH.frame({ w: 600, h: 320, x: [0, pmax], y: [0, imax], xLabel: "inflation π (%)", yLabel: "nominal rate i (%)" });
+    var s = "";
+    if (ghost) { var g = Mn(ghost); s += CH.fn(f, function (x) { return g.r + x; }, 0, pmax, "c4 faint dash"); }
+    s += CH.fn(f, function (x) { return o.r + x; }, 0, pmax, "c1");
+    s += CH.text(f, pmax * 0.97, o.r + pmax * 0.97, "i = r + π", "k1", "end", -6, 14);
+    if (!hid("pi") && !hid("r")) {
+      s += CH.dot(f, o.pi, o.i) + CH.vline(f, o.pi, "c4 dash faint", o.i) + CH.hline(f, o.i, "c4 dash faint", o.pi);
+      s += CH.text(f, o.pi, o.i, "π = " + F(o.pi, 1) + ", i = " + F(o.i, 1) + ", r = " + F(o.r, 1), "b", "start", 9, -8);
+      if (ghost) { var g2 = Mn(ghost); if (g2.pi !== o.pi || g2.i !== o.i) s += CH.dot(f, g2.pi, g2.i, "solid4"); }
+    } else s += CH.text(f, pmax * 0.4, imax * 0.6, "π = ?, r = ?", "k1 big");
+    return { svg: CH.svg(f, s, "Fisher"), cap: "Fisher effect: one more point of expected inflation means one more point on the nominal rate, with the real rate unchanged." };
+  }
+
+  // Velocity rises with the nominal rate when money demand falls with i.
+  function velocity(p, o, ghost, target, hid) {
+    var imax = Math.max(16, (ghost ? Mn(ghost).i : 0) * 1.4, o.i * 1.4, target ? Mn(target).i * 1.4 : 0);
+    var vmax = p.vk * Math.sqrt(imax) * 1.15;
+    var f = CH.frame({ w: 600, h: 320, x: [0, imax], y: [0, vmax], xLabel: "nominal rate i (%)", yLabel: "velocity V" });
+    var s = CH.fn(f, function (i) { return p.vk * Math.sqrt(i); }, 0.05, imax, "c1", 120);
+    s += CH.text(f, imax * 0.97, p.vk * Math.sqrt(imax * 0.97), "V = " + F(p.vk, p.vk % 1 ? 1 : 0) + "√i", "k1", "end", -4, 16);
+    if (ghost) { var g = Mn(ghost); if (g.i !== o.i) s += CH.dot(f, g.i, g.V, "solid4") + CH.arrow(f.sx(g.i), f.sy(g.V), f.sx(o.i) - 5, f.sy(o.V) + 3); }
+    if (!hid("V")) s += CH.dot(f, o.i, o.V) + CH.text(f, o.i, o.V, "i = " + F(o.i, 1) + ", V = " + F(o.V, 2), "b", "start", 9, 14);
+    else s += CH.text(f, imax * 0.4, vmax * 0.55, "V = ?", "k1 big");
+    return { svg: CH.svg(f, s, "velocity"), cap: "Money pays no interest, so a higher nominal rate means people hold less of it and spend it faster: velocity rises." };
+  }
+
+  function line(p, ghost, target, hide, sc) {
+    if (sc && sc.id === "hyper") return germany();
+    var o = Mn(p);
+    var path = function (pi, P0) { var pts = []; for (var t = 0; t <= 10; t++) pts.push([t, P0 * Math.pow(1 + pi / 100, t)]); return pts; };
+    var P0 = o.P != null && hide.indexOf("P") === -1 ? o.P : 100;
+    var series = [];
+    if (ghost) series.push({ name: "before (π = " + F(Mn(ghost).pi, 1) + "%)", pts: path(Mn(ghost).pi, P0), cls: "c4 dash faint" });
+    series.push({ name: hide.indexOf("pi") === -1 ? "price level at π = " + F(o.pi, 1) + "%" : "price level", pts: hide.indexOf("pi") === -1 ? path(o.pi, P0) : [], cls: "c2" });
+    if (!series[series.length - 1].pts.length) series[series.length - 1].pts = [[0, P0], [10, P0]];
+    return CH.lineChart({ title: "Price level over ten years", series: series, xLabel: "years", yLabel: o.P != null ? "P" : "P (start = 100)", x: [0, 10] });
+  }
+
+  function germany() {
+    var d = [[0, 4.2], [1, 65], [2, 493], [3, 17972], [4, 353412], [5, 9.89e7], [6, 4.2e12]];
+    var lab = ["1914", "Jan 1920", "Jul 1922", "Jan 1923", "Jul 1923", "Sep 1923", "Nov 1923"];
+    return CH.lineChart({ title: "German marks per US dollar", series: [{ name: "marks per $ (log scale)", pts: d, cls: "c2" }],
+      x: [0, 6], y: [1, 1e13], logY: true, xLabel: "", yLabel: "marks per $",
+      xTicks: [0, 1, 2, 3, 4, 5, 6], xFmt: function (v) { return lab[v] || ""; },
+      yFmt: function (v) { var e = Math.round(Math.log10(v)); return e === 0 ? "1" : "10^" + e; },
+      marks: [{ x: 6, y: 4.2e12, label: "4.2 trillion", lcls: "k2", anchor: "end", dx: -8, dy: 4 }, { x: 0, y: 4.2, label: "4.2", lcls: "b" }] });
+  }
+
+  function bars(p, ghost, target, hide) {
+    var o = Mn(p);
+    var hid = function (k) { return hide.indexOf(k) !== -1; };
+    if (hid("pi")) return "";
+    var rows = [];
+    rows.push({ label: "%ΔM + %ΔV", sub: F(p.gM + (p.gV || 0), 1) + "%", parts: [
+      { name: "π", value: o.pi, cls: "solid2" }, { name: "%ΔY", value: p.gY, cls: "solid1" }] });
+    if (!hid("r")) {
+      var parts = [], neg = [];
+      if (o.r >= 0) parts.push({ name: "r", value: o.r, cls: "solid3" }); else neg.push({ name: "r", value: o.r, lcls: "k3" });
+      parts.push({ name: "π", value: o.pi, cls: "solid2" });
+      rows.push({ label: "Nominal i", sub: F(o.i, 1) + "%", parts: parts, neg: neg });
+    }
+    return CH.barChart({ title: "Growth and Fisher decompositions", rows: rows, fmt: function (v) { return F(v, 1) + "%"; }, pct: false });
+  }
+
+  MODELS.push({
+    id: "money", week: 3, title: "Money, inflation & Fisher",
+    short: "Quantity theory, velocity, and nominal versus real interest rates",
+    base: { Ys: 500, C: 350, G: 60, a: 95, b: 1, gM: 2, gY: 0, gV: 0, M: 1000, V: 2, Yl: 500 },
+    inputs: [
+      { key: "gM", label: "Money growth %ΔM", min: 0, max: 30, step: 0.5 },
+      { key: "gY", label: "Real growth %ΔY", min: 0, max: 8, step: 0.1 },
+      { key: "G", label: "Government purchases G", min: 40, max: 80, step: 1 },
+      { key: "M", label: "Money supply M", min: 200, max: 3000, step: 10 },
+      { key: "V", label: "Velocity V (constant)", min: 0.5, max: 6, step: 0.1 },
+    ],
+    solve: Mn,
+    kpis: [
+      { key: "pi", label: "Inflation π", d: 2, unit: "%" },
+      { key: "r", label: "Real rate r", d: 2, unit: "%" },
+      { key: "i", label: "Nominal rate i", d: 2, unit: "%" },
+      { key: "V", label: "Velocity V", d: 2 },
+      { key: "P", label: "Price level P", d: 2 },
+      { key: "I", label: "Investment I", d: 1 },
+    ],
+    graph: graph, line: line, bars: bars,
+    lineTitle: "The price level over time", barsTitle: "Where the percentages come from",
+    forms: [
+      { name: "Quantity equation", html: "<i>M</i> × <i>V</i> = <i>P</i> × <i>Y</i>",
+        note: "An identity until you assume V is constant. Then, with Y fixed by factors, P moves one-for-one with M." },
+      { name: "In growth rates", html: "%Δ<i>M</i> + %Δ<i>V</i> = π + %Δ<i>Y</i>  ⇒  π = %Δ<i>M</i> − %Δ<i>Y</i> (constant V)",
+        note: "Nominal GDP grows at money growth plus velocity growth." },
+      { name: "Money demand", html: "(<i>M</i>/<i>P</i>)<sup><i>d</i></sup> = <i>kY</i> ⇒ <i>V</i> = 1/<i>k</i>;   (<i>M</i>/<i>P</i>)<sup><i>d</i></sup> = 0.2<i>Y</i>/√<i>i</i> ⇒ <i>V</i> = 5√<i>i</i>",
+        note: "If money demand falls with the nominal rate, velocity rises with it. Match the units of i the problem uses." },
+      { name: "Fisher equation", html: "<i>i</i> = <i>r</i> + π<sup><i>e</i></sup>;   <i>r</i><sup>ex ante</sup> = <i>i</i> − <i>E</i>[π],  <i>r</i><sup>ex post</sup> = <i>i</i> − π",
+        note: "Fisher effect: πᵉ up one point, i up one point, r unchanged." },
+      { name: "Combined classical model", html: "<i>S</i> = <i>I</i>(<i>r</i>) → <i>r</i>;  %Δ<i>M</i> − %Δ<i>Y</i> → π;  <i>i</i> = <i>r</i> + π",
+        note: "G moves r and I, not inflation. Money growth moves inflation and i, not r. The classical dichotomy." },
+      { name: "Target money growth", html: "%Δ<i>M</i> = π* + <i>g</i>",
+        note: "With constant velocity, money must grow at the inflation target plus real growth." },
+    ],
+    statics: {
+      inputs: [{ key: "G", label: "G up" }, { key: "gM", label: "Money growth up" }, { key: "gY", label: "Real growth up" },
+               { key: "M", label: "Money supply M up" }, { key: "V", label: "Velocity V up" }],
+      outputs: [{ key: "r", label: "r" }, { key: "I", label: "I" }, { key: "pi", label: "π" }, { key: "i", label: "i" }, { key: "P", label: "P" }],
+    },
+    facts: {
+      cold: [
+        "MV = PY. With V constant and Y fixed, prices move one-for-one with money.",
+        "π = money growth − real growth (constant V).",
+        "i = r + expected π. The real rate doesn't change when inflation changes.",
+        "Classical dichotomy: nominal variables do not affect real variables (the reverse statement is false, Practice Q20).",
+        "Seigniorage is an inflation tax on people who hold money (Q15).",
+      ],
+      traps: [
+        "Saying G changes inflation. G changes r and I; money growth changes inflation.",
+        "Forgetting to add inflation to r to get i.",
+        "Entering i as 0.04 when the formula uses i in percent.",
+        "Confusing the monetary base (currency + reserves) with M1.",
+      ],
+    },
+    scenarios: [
+      {
+        id: "ps3", title: "PS3 combined model", source: "Problem Set 3 · likely long problem",
+        blurb: "Y = 500, C = 350, G = 60, I(r) = 95 − r, MV = PY with constant V. Money grows 2%.",
+        base: { Ys: 500, C: 350, G: 60, a: 95, b: 1, gM: 2, gY: 0, M: 1000, V: 2, Yl: 500 },
+        steps: [
+          { say: "Y = 500, C = 350, G = 60, <b>I(r) = 95 − r</b>, constant V, Y fixed. The Fed grows money <b>2%</b> a year.", hide: ["pi", "r", "i", "I"] },
+          { say: "Inflation comes from the money side alone.",
+            predict: { kind: "num", q: "Inflation π (%)?", key: "pi", tol: 0.001 }, hide: ["r", "i", "I"],
+            math: ["V and Y constant ⇒ π = %ΔM = <b>2%</b>"] },
+          { say: "The real rate comes from the real side alone.",
+            predict: { kind: "num", q: "Real interest rate r (%)?", key: "r", tol: 0.001 }, hide: ["i"],
+            math: ["S = 500 − 350 − 60 = 90", "95 − r = 90 ⇒ <b>r = 5%</b>, I = 90"] },
+          { say: "Fisher puts them together.",
+            predict: { kind: "num", q: "Nominal rate i (%)?", key: "i", tol: 0.001 }, hide: [],
+            math: ["i = r + π = 5 + 2 = <b>7%</b>"] },
+          { say: "Government spending rises to <b>G = 65</b>.", set: { G: 65 },
+            predict: { kind: "dir", key: "pi", q: "Inflation…" },
+            math: ["S = 500 − 350 − 65 = 85 ⇒ r = 10%, I = 85", "π = 2% (money growth didn't change)", "<b>i = 10 + 2 = 12%</b>"],
+            why: "Spending crowds out investment and raises r, but inflation stays at 2%. The classical dichotomy in action." },
+        ],
+        exam: { pts: "Likely long problem", lines: [
+          "(a) π = %ΔM = 2%.  (b) S = 90 ⇒ r = 5%, I = 90.  (c) i = 5 + 2 = 7%.",
+          "(d) G = 65: S = 85, r = 10%, I = 85, i = 12%; π still 2%.",
+          "Say why: r from the real side, π from money growth, i by Fisher." ] },
+      },
+      {
+        id: "wiknam", title: "Wiknam", source: "Chapter 6 #1 (assigned)",
+        blurb: "Velocity is constant, real GDP grows 3%, money grows 8%, and the nominal rate is 9%.",
+        base: { gM: 8, gY: 3, iGiven: 9, Ys: 0, C: 0, G: 0, a: 0, b: 1 },
+        steps: [
+          { say: "In Wiknam velocity is constant, real GDP grows <b>3%</b>, money grows <b>8%</b>, and the nominal interest rate is <b>9%</b>.", hide: ["pi", "r"] },
+          { say: "Nominal GDP growth = %ΔM + %ΔV.",
+            predict: { kind: "num", q: "Nominal GDP growth (%)?", key: "nomGDPgrowth", tol: 0.001 },
+            math: ["%Δ(PY) = 8 + 0 = <b>8%</b>"] },
+          { say: "Split that 8% into inflation and real growth.",
+            predict: { kind: "num", q: "Inflation π (%)?", key: "pi", tol: 0.001 }, hide: ["r"],
+            math: ["π = 8 − 3 = <b>5%</b>"] },
+          { say: "Fisher, solved for r.",
+            predict: { kind: "num", q: "Real interest rate r (%)?", key: "r", tol: 0.001 }, hide: [],
+            math: ["r = i − π = 9 − 5 = <b>4%</b>"] },
+          { say: "The central bank speeds money growth to <b>10%</b>, and people expect it, so the nominal rate goes to 11%.", set: { gM: 10, iGiven: 11 },
+            predict: { kind: "dir", key: "r", q: "The real rate…" },
+            math: ["π = 10 − 3 = 7", "r = 11 − 7 = <b>4%</b>, unchanged"],
+            why: "The Fisher effect: two more points of inflation, two more points on i, the same r." },
+        ],
+        exam: { pts: "Problem set", lines: ["(a) 8%.  (b) π = 8 − 3 = 5%.  (c) r = 9 − 5 = 4%."] },
+      },
+      {
+        id: "velocity", title: "Velocity rises with i", source: "Chapter 6 #3 · Practice Q11",
+        blurb: "(M/P)<sup>d</sup> = 0.2Y/√i, so V = 5√i. Y = 1,000, M = 1,200.",
+        base: { vk: 5, iGiven: 4, M: 1200, Yl: 1000, gM: 0, gY: 0, Ys: 0, C: 0, G: 0, a: 0, b: 1 },
+        steps: [
+          { say: "Money demand is <b>(M/P)<sup>d</sup> = 0.2Y/√i</b>. Velocity is V = PY/M = Y/(M/P).", hide: ["V", "P"],
+            math: ["V = PY / M = Y / (0.2Y/√i) = <b>5√i</b>"] },
+          { say: "The nominal rate is 4 (percent).",
+            predict: { kind: "num", q: "Velocity V?", key: "V", tol: 0.001 }, hide: ["P"],
+            math: ["V = 5√4 = <b>10</b>"] },
+          { say: "Y = 1,000 and M = 1,200.",
+            predict: { kind: "num", q: "Price level P?", key: "P", tol: 0.001 }, hide: [],
+            math: ["P = MV / Y = 1,200 × 10 / 1,000 = <b>12</b>"] },
+          { say: "Expected inflation rises 5 points, so i goes to 9 (Fisher). M and Y don't change.", set: { iGiven: 9 },
+            predict: { kind: "num", q: "New price level P?", key: "P", tol: 0.001 },
+            math: ["V = 5√9 = 15", "P = 1,200 × 15 / 1,000 = <b>18</b> (+50%)"],
+            why: "A higher nominal rate makes people economize on money: they spend balances, velocity rises, and so do prices." },
+          { say: "The Fed wants to keep P at 12 with i = 9.", set: { M: 800 },
+            predict: { kind: "num", q: "What money supply M does that take?", value: function (o, p) { return p.M; }, tol: 0.001 },
+            math: ["M = PY / V = 12 × 1,000 / 15 = <b>800</b>"] },
+        ],
+        exam: { pts: "Problem set + Q11", lines: [
+          "V = 5√i: i = 4 gives V = 10, P = 12; i = 9 gives V = 15, P = 18.",
+          "Holding P at 12 takes M = 800.",
+          "Practice Q11: (M/P)<sup>d</sup> = 2Y/√i, i = 4 ⇒ V = √4/2 = 1. Y doesn't matter." ] },
+      },
+      {
+        id: "hyper", title: "German hyperinflation, 1922–23", source: "Lecture 5 · real-world",
+        blurb: "A government that can't tax or borrow prints money. Watch inflation, the nominal rate and velocity.",
+        base: { Ys: 500, C: 350, G: 60, a: 95, b: 1, gM: 5, gY: 3, M: 1000, vk: 0.5, Yl: 500, iGiven: null },
+        steps: [
+          { say: "Before the war: money grows <b>5%</b>, real output <b>3%</b>.",
+            math: [function (o) { return "π = 5 − 3 = " + F(o.pi, 0) + "%, i = r + π = " + F(o.i, 0) + "%"; }] },
+          { say: "Reparations and war debts: the government covers its deficit by printing. Money growth jumps to <b>50%</b>.", set: { gM: 50 },
+            predict: { kind: "num", q: "Inflation π (%)?", key: "pi", tol: 0.001 },
+            math: [function (o) { return "π = 50 − 3 = <b>" + F(o.pi, 0) + "%</b>; i = 5 + 47 = " + F(o.i, 0) + "%"; }],
+            why: "Seigniorage: the government's revenue is an inflation tax on everyone holding marks." },
+          { say: "Printing accelerates to <b>500%</b>. Holding cash now costs a fortune.", set: { gM: 500 },
+            predict: { kind: "dir", key: "V", q: "Velocity, how fast marks change hands…" },
+            math: [function (o) { return "i = " + F(o.i, 0) + "%, V = 0.5√i = " + F(o.V, 1); }],
+            why: "Workers were paid twice a day and spent the money at lunch. Real money balances fell to about a tenth of their 1922 level." },
+          { say: "November 1923: the Rentenmark and a balanced budget. Printing stops; money growth back to <b>3%</b>.", set: { gM: 3 },
+            predict: { kind: "num", q: "Inflation π (%)?", key: "pi", tol: 0.001 },
+            math: ["π = 3 − 3 = <b>0%</b>"],
+            why: "Hyperinflations end with fiscal reform that removes the need for seigniorage. A new currency alone isn't enough." },
+        ],
+        exam: { pts: "Short answer", lines: [
+          "Starts: governments finance large deficits by printing money (seigniorage = inflation tax).",
+          "Ends: fiscal reform that removes the need to print.",
+          "Money and prices rose together by many orders of magnitude (log scale)." ] },
+      },
+    ],
+  });
+})();
+
+// Model 4 · Unemployment flows (Week 4)
+
+(function () {
+  var F = CH.fmt;
+  var pc = function (v, d) { return F(v * 100, d == null ? 2 : d) + "%"; };
+
+  function solve(p) {
+    var o = ENGINE.flows(p);
+    var path = ENGINE.flowsPath(p, 2);
+    o.u1 = path[1].u; o.u2 = path[2].u; o.U2 = path[2].U; o.E2 = path[2].E; o.L1 = path[1].L;
+    o.L = p.U0 + p.E0;
+    return o;
+  }
+
+  function graph(p, ghost, target, hide) {
+    var o = solve(p);
+    var hid = function (k) { return hide.indexOf(k) !== -1; };
+    var s = "";
+    var hasNL = (p.NL0 || 0) > 0;
+    var yE = hasNL ? 110 : 130, yU = yE;
+    s += '<rect x="40" y="' + (yE - 44) + '" width="170" height="88" rx="16" class="box3"/>';
+    s += '<text x="125" y="' + (yE - 8) + '" class="k3" text-anchor="middle">Employed E</text>';
+    s += '<text x="125" y="' + (yE + 18) + '" class="big" text-anchor="middle">' + F(p.E0, 2) + "M</text>";
+    s += '<rect x="390" y="' + (yU - 44) + '" width="170" height="88" rx="16" class="box2"/>';
+    s += '<text x="475" y="' + (yU - 8) + '" class="k2" text-anchor="middle">Unemployed U</text>';
+    s += '<text x="475" y="' + (yU + 18) + '" class="big" text-anchor="middle">' + F(p.U0, 2) + "M</text>";
+    s += '<path d="M210 ' + (yE - 26) + ' Q300 ' + (yE - 86) + ' 388 ' + (yU - 26) + '" class="c2" marker-end="url(#mah)"/>';
+    s += '<text x="300" y="' + (yE - 66) + '" class="k2" text-anchor="middle">job losses s·E = ' + F(p.s, 3) + " × " + F(p.E0, 2) + " = " + F(p.s * p.E0, 3) + "M</text>";
+    s += '<path d="M390 ' + (yU + 26) + ' Q300 ' + (yE + 86) + ' 212 ' + (yE + 26) + '" class="c3" marker-end="url(#mah)"/>';
+    s += '<text x="300" y="' + (yE + 80) + '" class="k3" text-anchor="middle">job finding f·U = ' + F(p.f, 3) + " × " + F(p.U0, 2) + " = " + F(p.f * p.U0, 3) + "M</text>";
+    if (hasNL) {
+      s += '<rect x="215" y="222" width="170" height="56" rx="14" class="box"/>';
+      s += '<text x="300" y="246" class="b" text-anchor="middle">Not in labor force</text>';
+      s += '<text x="300" y="266" class="lb" text-anchor="middle">NL = ' + F(p.NL0, 2) + "M</text>";
+      s += '<path d="M110 ' + (yE + 46) + ' Q120 240 213 246" class="c4" marker-end="url(#mah)"/>';
+      s += '<text x="98" y="228" class="lb">exit q·E</text>';
+      s += '<path d="M216 262 Q90 270 90 ' + (yE + 48) + '" class="c4 dash" marker-end="url(#mah)"/>';
+      s += '<text x="40" y="290" class="lb">entry j·NL (straight into jobs)</text>';
+    }
+    var line1 = hid("uStar") ? "steady state: s·E = f·U ⇒ u* = s/(s + f) = ?"
+      : "steady state: s·E = f·U ⇒ u* = s/(s + f) = " + F(p.s, 3) + "/" + F(p.s + p.f, 3) + " = " + pc(o.uStar);
+    s += '<text x="300" y="' + (hasNL ? 26 : 28) + '" class="b" text-anchor="middle">' + line1 + "</text>";
+    return { svg: CH.raw(600, 300, s, "worker flows"), cap: "Each month a share s of the employed lose jobs and a share f of the unemployed find one. When the two flows match, unemployment stops changing." };
+  }
+
+  function line(p, ghost, target, hide) {
+    var T = 36;
+    var path = ENGINE.flowsPath(p, T), o = solve(p);
+    var series = [];
+    if (ghost) series.push({ name: "before", pts: ENGINE.flowsPath(ghost, T).map(function (x) { return [x.t, x.u * 100]; }), cls: "c4 dash faint" });
+    var hid = function (k) { return hide.indexOf(k) !== -1; };
+    var shown = path.filter(function (x) { return !(hid("u1") && x.t >= 1) && !(hid("u2") && x.t >= 2); });
+    series.push({ name: "unemployment rate u", pts: shown.map(function (x) { return [x.t, x.u * 100]; }), cls: "c1" });
+    var marks = [];
+    if (!hid("u1") && path.length > 1) marks.push({ x: 1, y: path[1].u * 100, label: "t=1: " + pc(path[1].u, 3), lcls: "b" });
+    if (!hid("u2") && path.length > 2) marks.push({ x: 2, y: path[2].u * 100, label: "t=2: " + pc(path[2].u, 3), lcls: "b", dy: 16 });
+    return CH.lineChart({ title: "Unemployment month by month", series: series, x: [0, T], xLabel: "month", yLabel: "u (%)",
+      hlines: hid("uStar") ? [] : [{ y: o.uStar * 100, label: "u* = " + pc(o.uStar), lcls: "k2", cls: "c2 dash" }], marks: marks });
+  }
+
+  function bars(p, ghost, target, hide) {
+    var o = solve(p);
+    var rows = [{ label: "Labor force now", sub: F(o.L, 2) + "M", parts: [
+      { name: "E", value: p.E0, cls: "solid3" }, { name: "U", value: p.U0, cls: "solid2" }] }];
+    if (hide.indexOf("u2") === -1) rows.push({ label: "Month 2", sub: F(o.U2 + o.E2, 2) + "M", parts: [
+      { name: "E", value: o.E2, cls: "solid3" }, { name: "U", value: o.U2, cls: "solid2" }] });
+    if (hide.indexOf("uStar") === -1) rows.push({ label: "Steady state", sub: "u* = " + pc(o.uStar), parts: [
+      { name: "E", value: 1 - o.uStar, cls: "solid3" }, { name: "U", value: o.uStar, cls: "solid2" }] });
+    return CH.barChart({ title: "Employed and unemployed", share: true, rows: rows, fmt: function (v) { return F(v, 2); } });
+  }
+
+  MODELS.push({
+    id: "flows", week: 4, title: "Unemployment flows",
+    short: "Separations, job finding, and the natural rate u* = s/(s + f)",
+    base: { s: 0.02, f: 0.28, U0: 1, E0: 14 },
+    inputs: [
+      { key: "s", label: "Separation rate s", min: 0.005, max: 0.1, step: 0.001 },
+      { key: "f", label: "Job finding rate f", min: 0.05, max: 0.6, step: 0.01 },
+      { key: "U0", label: "Unemployed now (M)", min: 0.2, max: 4, step: 0.01 },
+      { key: "E0", label: "Employed now (M)", min: 5, max: 30, step: 0.1 },
+    ],
+    solve: solve,
+    kpis: [
+      { key: "u0", label: "u now", pct: true, d: 3 },
+      { key: "u1", label: "u at t = 1", pct: true, d: 3 },
+      { key: "u2", label: "u at t = 2", pct: true, d: 3 },
+      { key: "uStar", label: "Steady state u*", pct: true, d: 2 },
+      { key: "inflow", label: "Into U: s·E (M)", d: 3 },
+      { key: "outflow", label: "Out of U: f·U (M)", d: 3 },
+    ],
+    graph: graph, line: line, bars: bars,
+    lineTitle: "The path to the steady state", barsTitle: "The labor force split",
+    forms: [
+      { name: "Flows", html: "<i>U</i>(<i>t</i>+1) = (1 − <i>f</i>)<i>U</i>(<i>t</i>) + <i>s E</i>(<i>t</i>),  <i>E</i>(<i>t</i>+1) = (1 − <i>s</i>)<i>E</i>(<i>t</i>) + <i>f U</i>(<i>t</i>)",
+        note: "U(t+1) uses employment from time t. Track people in millions, then divide by the labor force." },
+      { name: "Steady state", html: "<i>s E</i> = <i>f U</i>,  <i>E</i> = <i>L</i> − <i>U</i>  ⇒  <i>U</i>/<i>L</i> = <i>s</i> / (<i>s</i> + <i>f</i>)",
+        note: "s(L − U) = fU ⇒ sL = (s + f)U. Higher s or lower f raises the natural rate." },
+      { name: "How fast the gap closes", html: "<i>U</i>(<i>t</i>+1) − <i>U</i>* = (1 − <i>s</i> − <i>f</i>)(<i>U</i>(<i>t</i>) − <i>U</i>*)",
+        note: "With s + f = 0.30, 30% of the gap closes each month (fixed labor force)." },
+      { name: "Violet's model (entry and exit)", html: "<i>NL</i>' = (1 − <i>j</i>)<i>NL</i> + <i>qE</i>;  <i>E</i>' = (1 − <i>s</i> − <i>q</i>)<i>E</i> + <i>fU</i> + <i>jNL</i>",
+        note: "Steady state: jNL = qE, which cancels out of the E equation and leaves sE = fU. Same u*." },
+    ],
+    statics: {
+      inputs: [{ key: "s", label: "Separation rate s up" }, { key: "f", label: "Job finding rate f up" }],
+      outputs: [{ key: "uStar", label: "u*" }, { key: "u1", label: "u next month" }],
+    },
+    facts: {
+      cold: [
+        "Unemployment rate = U / labor force. Discouraged workers are not in the labor force.",
+        "Steady state: s·E = f·U, so U/L = s/(s + f).",
+        "Structural unemployment comes from wages above market-clearing (unions, minimum wages); frictional from time spent searching.",
+        "Unemployment insurance replaces about 30–50% of income, usually for up to 26 weeks.",
+      ],
+      traps: [
+        "Computing the rate with the old labor force. When the labor force grows, divide by the new L.",
+        "Forgetting that U(t+1) uses E from time t.",
+        "Calling a minimum wage or union wage frictional. They are structural.",
+      ],
+    },
+    scenarios: [
+      {
+        id: "supers", title: "The Supers join the labor force", source: "Practice exam Part 2 Q2(a) · 10 pts",
+        blurb: "s = 0.02, f = 0.28. u = 0.067 with L = 15 million. At t = 1, employment and the labor force each rise 1 million.",
+        base: { s: 0.02, f: 0.28, U0: 1, E0: 14 },
+        steps: [
+          { say: "s = 0.02, f = 0.28. At t = 0 the unemployment rate is about <b>0.067</b> and the labor force is <b>15 million</b>.", hide: ["u1", "u2"],
+            math: ["U = 0.067 × 15 ≈ <b>1 million</b>; E = <b>14 million</b>"] },
+          { say: "At t = 1 the Supers arrive: employment and the labor force each rise by 1 million; unemployment doesn't change.",
+            set: { shock: { t: 1, dE: 1 } }, predict: { kind: "num", q: "Unemployment rate at t = 1? (decimal)", key: "u1", tol: 0.0005 }, hide: ["u2"],
+            math: ["E = 15M, U = 1M, L = <b>16M</b>", "u₁ = 1/16 = <b>0.0625</b>"] },
+          { say: "Now run the flows one month.",
+            predict: { kind: "num", q: "Unemployed at t = 2 (millions)?", key: "U2", tol: 0.0005 },
+            math: ["U₂ = (1 − f)U₁ + sE₁ = 0.72(1) + 0.02(15) = <b>1.02M</b>", "E₂ = 0.98(15) + 0.28(1) = 14.98M (L still 16M)"] },
+          { say: "Divide by the <b>new</b> labor force.",
+            predict: { kind: "num", q: "Unemployment rate at t = 2? (decimal)", key: "u2", tol: 0.0005 }, hide: [],
+            math: ["u₂ = 1.02 / 16 = <b>0.06375</b>"] },
+          { say: "Where does it end up?",
+            predict: { kind: "num", q: "Long-run unemployment rate (%)?", value: function (o) { return o.uStar * 100; }, tol: 0.002 },
+            math: ["u* = s/(s + f) = 0.02/0.30 = <b>6.67%</b>: the rate drifts back up"],
+            why: "The shock only moved where the economy started. The steady state depends on s and f alone." },
+        ],
+        exam: { pts: "10 points", lines: [
+          "t = 0: U = 1M, E = 14M.  t = 1: L = 16M, u₁ = 1/16 = 0.0625.",
+          "U₂ = 0.72(1) + 0.02(15) = 1.02M; u₂ = 1.02/16 = 0.06375.",
+          "Trap: divide by the new labor force (16M), not 15M." ] },
+      },
+      {
+        id: "violet", title: "Violet's model: entry and exit", source: "Practice exam Part 2 Q2(b) · 10 pts",
+        blurb: "Add people outside the labor force who enter straight into jobs and leave from jobs. Does u* change?",
+        base: { s: 0.02, f: 0.28, U0: 1, E0: 14, NL0: 5, j: 0.05, q: 0.01 },
+        steps: [
+          { say: "Violet adds a pool outside the labor force (NL). People enter directly into jobs at rate j and leave jobs at rate q.",
+            math: ["NL(t+1) = (1 − j)NL(t) + qE(t)", "U(t+1) = (1 − f)U(t) + sE(t)", "E(t+1) = (1 − s − q)E(t) + fU(t) + jNL(t)"] },
+          { say: "Steady state of the NL equation first.",
+            math: ["NL = (1 − j)NL + qE ⇒ <b>jNL = qE</b>"] },
+          { say: "Substitute into the employment equation.",
+            predict: { kind: "choice", q: "Compared with the baseline s/(s + f), the steady-state unemployment rate is…",
+                       choices: [{ id: "same", label: "The same" }, { id: "higher", label: "Higher" }, { id: "lower", label: "Lower" }], answer: "same" },
+            math: ["E = (1 − s − q)E + fU + qE = (1 − s)E + fU", "⇒ <b>sE = fU</b>, the original condition", "U/L = <b>s/(s + f) = 6.67%</b>"],
+            why: "Entry and exit cancel out of the employment equation and never touch unemployment." },
+          { say: "Watch the simulated path: it still settles at 6.67%." },
+        ],
+        exam: { pts: "10 points", lines: [
+          "Set each equation to its steady state; jNL = qE from the NL equation.",
+          "Substitute into E: (1 − s)E + fU = E ⇒ sE = fU.",
+          "Use E = L − U: u = s/(s + f), identical to the baseline." ] },
+      },
+      {
+        id: "layoffs", title: "A wave of layoffs: s doubles", source: "Week 4 extra practice · 2008–09",
+        blurb: "In the Great Recession layoffs spiked. What if the separation rate doubles from 0.02 to 0.04?",
+        base: { s: 0.02, f: 0.28, U0: 1, E0: 14 },
+        steps: [
+          { say: "Start at the steady state: s = 0.02, f = 0.28, u* = 6.67%." },
+          { say: "Layoffs double: <b>s = 0.04</b>.", set: { s: 0.04 },
+            predict: { kind: "num", q: "New steady-state rate (%)?", value: function (o) { return o.uStar * 100; }, tol: 0.002 },
+            math: ["u* = 0.04 / (0.04 + 0.28) = 0.04/0.32 = <b>12.5%</b>"],
+            why: "Twice as many people flow in each month; it takes a bigger pool of unemployed for f·U to match." },
+          { say: "How quickly does it get there?",
+            predict: { kind: "dir", key: "u1", q: "Next month's unemployment rate, compared with today's 6.67%…", vs: "u0" },
+            math: [function (o) { return "u₁ = " + pc(o.u1, 3) + ", then " + pc(o.u2, 3) + ", closing 32% of the gap each month"; }] },
+        ],
+        exam: { pts: "Practice", lines: ["u* = 0.04/0.32 = 12.5%. A higher separation rate raises the natural rate."] },
+      },
+      {
+        id: "ui", title: "Longer searches: f halves", source: "Practice Q12 · unemployment insurance",
+        blurb: "Generous unemployment insurance lets people search longer. Suppose the job finding rate falls from 0.28 to 0.14.",
+        base: { s: 0.02, f: 0.28, U0: 1, E0: 14 },
+        steps: [
+          { say: "UI replaces about 30–50% of income for up to 26 weeks while a worker searches. Start at u* = 6.67%." },
+          { say: "Searches get longer: <b>f = 0.14</b>.", set: { f: 0.14 },
+            predict: { kind: "num", q: "New steady-state rate (%)?", value: function (o) { return o.uStar * 100; }, tol: 0.002 },
+            math: ["u* = 0.02 / (0.02 + 0.14) = 0.02/0.16 = <b>12.5%</b>"] },
+          { say: "Better job-matching services push f up to <b>0.38</b> instead.", set: { f: 0.38 },
+            predict: { kind: "dir", key: "uStar", q: "Compared with the original 6.67%, u*…", from: "base" },
+            math: ["u* = 0.02/0.40 = <b>5%</b>"],
+            why: "Anything that speeds matching lowers frictional unemployment. The trade-off: UI also supports consumption and allows better matches." },
+        ],
+        exam: { pts: "Short answer", lines: [
+          "UI: funded by taxes on employers (and employees); replaces about 30–50% of income, usually up to 26 weeks.",
+          "Lower f ⇒ higher u* = s/(s + f)." ] },
+      },
+    ],
+  });
+})();
+
+// Model 5 · Solow growth (Week 5)
+
+(function () {
+  var F = CH.fmt;
+  var So = ENGINE.solow;
+
+  function solve(p) {
+    var o = So(p);
+    var A = p.A || 1, k = p.k0;
+    o.k0 = k; o.y0 = A * Math.pow(k, p.alpha); o.i0 = p.s * o.y0; o.c0 = (1 - p.s) * o.y0;
+    o.dep0 = (p.delta + (p.n || 0)) * k; o.dk0 = o.i0 - o.dep0;
+    if (p.s2 != null) {
+      var q = Object.assign({}, p, { s: p.s2 }), o2 = So(q);
+      o.kStar2 = o2.kStar; o.cStar2 = o2.cStar;
+      var A2 = ENGINE.solowPath(p, 60), B2 = ENGINE.solowPath(q, 60);
+      o.overtake = B2.findIndex(function (x, t) { return x.c > A2[t].c; });
+      o.cA0 = A2[0].c; o.cB0 = B2[0].c;
+    }
+    return o;
+  }
+
+  function view(states) {
+    var kmax = 0;
+    states.forEach(function (p) { if (!p) return; var o = So(p); kmax = Math.max(kmax, o.kStar * 1.9, p.k0 * 1.3); if (p.s2 != null) kmax = Math.max(kmax, So(Object.assign({}, p, { s: p.s2 })).kStar * 1.6); });
+    return kmax;
+  }
+
+  function graph(p, ghost, target, hide) {
+    var o = solve(p), kmax = view([p, ghost, target]);
+    var A = p.A || 1, n = p.n || 0;
+    var sf = function (q, s) { return function (k) { return s * (q.A || 1) * Math.pow(k, q.alpha); }; };
+    var ymax = Math.max(sf(p, Math.max(p.s, p.s2 || 0))(kmax), (p.delta + n) * kmax * 0.75) * 1.15;
+    var f = CH.frame({ w: 600, h: 320, x: [0, kmax], y: [0, ymax], xLabel: "capital per worker k", yLabel: "per worker" });
+    var s = "";
+    if (ghost) {
+      s += CH.fn(f, sf(ghost, ghost.s), 0, kmax, "c1 faint dash", 120);
+      if (ghost.delta !== p.delta || (ghost.n || 0) !== n) s += CH.fn(f, function (k) { return (ghost.delta + (ghost.n || 0)) * k; }, 0, kmax, "c2 faint dash");
+    }
+    s += CH.fn(f, sf(p, p.s), 0, kmax, "c1", 140);
+    s += CH.text(f, kmax, sf(p, p.s)(kmax), p.s2 != null ? "A: s·f(k), s = " + F(p.s, 2) : "investment s·f(k)", "k1", "end", -4, p.s2 != null ? 16 : -8);
+    if (p.s2 != null) {
+      s += CH.fn(f, sf(p, p.s2), 0, kmax, "c3", 140);
+      s += CH.text(f, kmax, sf(p, p.s2)(kmax), "B: s·f(k), s = " + F(p.s2, 2), "k3", "end", -4, -8);
+    }
+    s += CH.fn(f, function (k) { return (p.delta + n) * k; }, 0, kmax, "c2");
+    var dlab = n ? "(δ + n)k" : "depreciation δk";
+    var kd = Math.min(kmax, ymax / (p.delta + n) * 0.96);
+    s += CH.text(f, kd, (p.delta + n) * kd, dlab, "k2", "end", -8, 4);
+    if (hide.indexOf("kStar") === -1) {
+      s += CH.vline(f, o.kStar, "c4 dash faint", o.iStar) + CH.dot(f, o.kStar, o.iStar);
+      s += CH.text(f, o.kStar, 0, "k* = " + F(o.kStar, 3), "k1", "middle", 0, 30);
+      if (p.s2 != null) { var o2 = So(Object.assign({}, p, { s: p.s2 })); s += CH.vline(f, o2.kStar, "c4 dash faint", o2.iStar) + CH.dot(f, o2.kStar, o2.iStar, "solid3"); }
+    }
+    // Where the economy is now, if it isn't at the steady state.
+    if (Math.abs(p.k0 - o.kStar) / o.kStar > 0.02) {
+      var X = f.sx(p.k0);
+      s += CH.vline(f, p.k0, "c2 dash faint") + CH.dot(f, p.k0, o.i0, "solid1") + CH.dot(f, p.k0, o.dep0, "solid2");
+      s += CH.text(f, p.k0, 0, "k₀ = " + F(p.k0, 2), "k2", "middle", 0, 30);
+      if (hide.indexOf("dk0") === -1) {
+        var toward = o.kStar > p.k0 ? 1 : -1;
+        var ym = f.sy(Math.min(o.i0, o.dep0) * 0.45);
+        s += CH.arrow(X, ym, X + toward * 46, ym, "c4");
+        s += CH.text(f, p.k0, Math.min(o.i0, o.dep0) * 0.45, toward > 0 ? "k rises" : "k falls", "lb", toward > 0 ? "start" : "end", toward * 52, 4);
+      }
+    }
+    return { svg: CH.svg(f, s, "Solow diagram"), cap: "Label the axis, both lines and the crossing. Left of k*, investment beats depreciation and k rises; right of it, k falls." };
+  }
+
+  function line(p, ghost, target, hide) {
+    var T = p.T || 40;
+    var path = ENGINE.solowPath(p, T), o = solve(p);
+    var series = [], marks = [], hlines = [];
+    if (p.s2 != null) {
+      var B = ENGINE.solowPath(Object.assign({}, p, { s: p.s2 }), T);
+      series.push({ name: "A: c (s = " + F(p.s, 2) + ")", pts: path.map(function (x) { return [x.t, x.c]; }), cls: "c1" });
+      series.push({ name: "B: c (s = " + F(p.s2, 2) + ")", pts: B.map(function (x) { return [x.t, x.c]; }), cls: "c3" });
+      if (hide.indexOf("overtake") === -1 && o.overtake > 0) marks.push({ x: o.overtake, y: B[o.overtake].c, label: "B overtakes in year " + o.overtake, lcls: "b" });
+      return CH.lineChart({ title: "Consumption per worker", series: series, xLabel: "year", yLabel: "c", x: [0, T], marks: marks });
+    }
+    if (ghost) series.push({ name: "y before", pts: ENGINE.solowPath(ghost, T).map(function (x) { return [x.t, x.y]; }), cls: "c4 dash faint" });
+    series.push({ name: "income y", pts: path.map(function (x) { return [x.t, x.y]; }), cls: "c1" });
+    series.push({ name: "consumption c", pts: path.map(function (x) { return [x.t, x.c]; }), cls: "c3" });
+    hlines.push({ y: o.yStar, label: "y* = " + F(o.yStar, 3), lcls: "k1", cls: "c4 dash faint" });
+    return CH.lineChart({ title: "Income and consumption per worker", series: series, xLabel: "year", yLabel: "per worker", x: [0, T], hlines: hlines,
+      marks: [{ x: 0, y: path[0].y, label: "y₀ = " + F(path[0].y, 3), lcls: "b" }] });
+  }
+
+  function bars(p, ghost, target, hide) {
+    var o = solve(p);
+    var rows = [{ label: "Now (k₀)", sub: "y = " + F(o.y0, 3), parts: [
+      { name: "c", value: o.c0, cls: "solid3" }, { name: "i", value: o.i0, cls: "solid1" }] }];
+    rows.push({ label: "Investment vs wear", sub: "Δk = " + F(o.dk0, 3), parts: [
+      { name: "i = s·y", value: o.i0, cls: "solid1" }, { name: "δk", value: o.dep0, cls: "solid2" }] });
+    if (hide.indexOf("kStar") === -1) rows.push({ label: "Steady state", sub: "y* = " + F(o.yStar, 3), parts: [
+      { name: "c*", value: o.cStar, cls: "solid3" }, { name: "i*", value: o.iStar, cls: "solid1" }] });
+    rows[1].share = false;
+    return CH.barChart({ title: "Output split", rows: rows, share: false, pct: false, fmt: function (v) { return F(v, 3); } });
+  }
+
+  MODELS.push({
+    id: "solow", week: 5, title: "Solow growth",
+    short: "Saving builds capital, depreciation wears it out, and the economy settles at k*",
+    base: { alpha: 0.3, s: 0.3, delta: 0.07, n: 0, A: 1, k0: 4 },
+    inputs: [
+      { key: "s", label: "Saving rate s", min: 0.05, max: 0.9, step: 0.01 },
+      { key: "delta", label: "Depreciation δ", min: 0.02, max: 0.2, step: 0.005 },
+      { key: "n", label: "Population growth n", min: 0, max: 0.05, step: 0.002 },
+      { key: "alpha", label: "Capital share α", min: 0.15, max: 0.7, step: 0.01 },
+      { key: "k0", label: "Starting capital k₀", min: 0.5, max: 40, step: 0.1 },
+    ],
+    solve: solve,
+    kpis: [
+      { key: "kStar", label: "Steady state k*", d: 3 },
+      { key: "yStar", label: "y*", d: 3 },
+      { key: "cStar", label: "c* = (1 − s)y*", d: 3 },
+      { key: "k0", label: "k now", d: 3 },
+      { key: "y0", label: "y now", d: 3 },
+      { key: "dk0", label: "Δk now", d: 3 },
+    ],
+    graph: graph, line: line, bars: bars,
+    lineTitle: "The transition", barsTitle: "Where output goes",
+    forms: [
+      { name: "Per worker", html: "<i>Y</i> = <i>K</i><sup>α</sup><i>L</i><sup>1−α</sup>  ⇒  <i>y</i> = <i>Y</i>/<i>L</i> = <i>k</i><sup>α</sup> = <i>f</i>(<i>k</i>),  <i>k</i> = <i>K</i>/<i>L</i>",
+        note: "Constant returns let you divide everything by L." },
+      { name: "Allocation", html: "<i>i</i> = <i>s y</i>,  <i>c</i> = (1 − <i>s</i>)<i>y</i>",
+        note: "Trap: s goes with investment, (1 − s) with consumption." },
+      { name: "Capital accumulation", html: "<i>K</i><sub><i>t</i>+1</sub> = (1 − δ)<i>K</i><sub><i>t</i></sub> + <i>I</i><sub><i>t</i></sub>  ⇒  Δ<i>k</i> = <i>s f</i>(<i>k</i>) − δ<i>k</i>",
+        note: "With population growth n the break-even line is (δ + n)k." },
+      { name: "Steady state", html: "<i>s f</i>(<i>k</i>*) = δ<i>k</i>*  ⇒  <i>k</i>* = (<i>s</i>/δ)<sup>1/(1−α)</sup>,  <i>y</i>* = (<i>s</i>/δ)<sup>α/(1−α)</sup>,  <i>c</i>* = (1 − <i>s</i>)<i>y</i>*",
+        note: "Raise both sides to 1/(1 − α). Don't skip the exponent step." },
+      { name: "With unemployment", html: "<i>y</i> = <i>k</i><sup>α</sup>(1 − <i>u</i>)<sup>1−α</sup>,  <i>y</i>* = (<i>s</i>/δ)<sup>α/(1−α)</sup>(1 − <i>u</i>)",
+        note: "A lower natural rate raises output now and by more in the long run (Ch 9 #6)." },
+    ],
+    statics: {
+      inputs: [{ key: "s", label: "Saving rate up" }, { key: "delta", label: "Depreciation up" },
+               { key: "n", label: "Population growth up", step: 0.005 }, { key: "A", label: "Productivity A up" }],
+      outputs: [{ key: "kStar", label: "k*" }, { key: "yStar", label: "y*" }, { key: "cStar", label: "c*" }, { key: "kGold", label: "k_gold" }],
+    },
+    facts: {
+      cold: [
+        "y = f(k); Δk = s f(k) − δk. Steady state where s f(k*) = δk*.",
+        "A higher saving rate raises the level of income per worker, not the long-run growth rate (Practice Q17).",
+        "A one-time fall in workers raises k, so y jumps up, then falls back to the same steady state.",
+        "Why income per worker (Q7): it correlates with many things we care about and is easy to compute consistently across countries.",
+      ],
+      traps: [
+        "Saying a higher saving rate raises long-run growth. It raises the level.",
+        "In a labor-force shock, shifting the curves. A change in L moves k = K/L along the axis.",
+        "Using s on consumption and (1 − s) on investment.",
+      ],
+    },
+    scenarios: [
+      {
+        id: "mass-ss", title: "1860s Massachusetts: the steady state", source: "Practice exam Part 2 Q1 · graph",
+        blurb: "y = k<sup>0.3</sup>, s = 0.3, δ = 0.07. Draw the diagram and find where k settles.",
+        base: { alpha: 0.3, s: 0.3, delta: 0.07, n: 0, A: 1, k0: 4 },
+        steps: [
+          { say: "1860s Massachusetts: <b>Y = K<sup>0.3</sup>L<sup>0.7</sup></b>, saving rate <b>s = 0.3</b>, depreciation <b>δ = 0.07</b>, no population growth or technology.",
+            hide: ["kStar", "yStar", "cStar", "dk0"], math: ["Per worker: <b>y = k<sup>0.3</sup></b>", "Δk = 0.3k<sup>0.3</sup> − 0.07k"] },
+          { say: "The economy starts at k = 4.",
+            predict: { kind: "choice", q: "At k = 4, capital per worker…", choices: [{ id: "up", label: "Rises" }, { id: "down", label: "Falls" }, { id: "same", label: "Stays put" }],
+                       answer: function (o) { return o.dk0 > 0 ? "up" : o.dk0 < 0 ? "down" : "same"; } }, hide: ["kStar", "yStar", "cStar"],
+            math: [function (o) { return "investment 0.3(4)<sup>0.3</sup> = " + F(o.i0, 3) + " > depreciation 0.07(4) = " + F(o.dep0, 3); }, function (o) { return "Δk = <b>+" + F(o.dk0, 3) + "</b>"; }] },
+          { say: "k stops changing where the two lines cross.",
+            predict: { kind: "num", q: "Steady-state k* (three decimals)?", key: "kStar", tol: 0.001 }, hide: [],
+            math: ["0.3k<sup>0.3</sup> = 0.07k ⇒ k<sup>0.7</sup> = 0.3/0.07 = 4.2857", function (o) { return "k* = 4.2857<sup>1/0.7</sup> = <b>" + F(o.kStar, 3) + "</b>"; }] },
+          { say: "Now start the economy at k = 12 instead.", set: { k0: 12 },
+            predict: { kind: "choice", q: "From k = 12, capital per worker…", choices: [{ id: "up", label: "Rises" }, { id: "down", label: "Falls" }, { id: "same", label: "Stays put" }],
+                       answer: function (o) { return o.dk0 > 0 ? "up" : "down"; } },
+            math: [function (o) { return "investment " + F(o.i0, 3) + " < depreciation " + F(o.dep0, 3) + ": Δk = <b>" + F(o.dk0, 3) + "</b>"; }],
+            why: "Right of k*, depreciation outruns investment. From either side the economy converges to k*." },
+        ],
+        exam: { pts: "Graph", lines: [
+          "x-axis “capital per worker, k”. Concave s f(k), straight δk from the origin.",
+          "Label the crossing k* (= 7.996 here) and draw arrows toward it from both sides.",
+          "The key: label the x-axis, every line and every intersection point." ] },
+      },
+      {
+        id: "war", title: "A war cuts the workforce", source: "Practice exam Part 2 Q1(b)(c) · 11 pts",
+        blurb: "Massachusetts sits at its steady state. A war permanently cuts the number of workers by a fifth; the capital survives.",
+        base: { alpha: 0.3, s: 0.3, delta: 0.07, n: 0, A: 1, k0: 7.9963 },
+        steps: [
+          { say: "The economy sits at k* ≈ 7.996, where investment equals depreciation." },
+          { say: "War: L falls by 20%; K is unchanged. So k = K/L jumps to about 10.", set: { k0: 9.995 },
+            predict: { kind: "dir", key: "y0", q: "Income per worker right after the war…" },
+            math: ["k′ = K/(0.8L) = 7.996/0.8 = <b>9.995</b>", function (o) { return "y = 9.995<sup>0.3</sup> = <b>" + F(o.y0, 3) + "</b> (was 1.866)"; }],
+            why: "Each surviving worker has more capital. (Total output Y still falls: there are fewer workers.)" },
+          { say: "At k′ compare the two lines.",
+            predict: { kind: "choice", q: "In the years after the war, income per worker…", choices: [{ id: "down", label: "Falls (negative growth)" }, { id: "up", label: "Keeps rising" }, { id: "same", label: "Stays at the new level" }],
+                       answer: "down" },
+            math: [function (o) { return "depreciation 0.07(9.995) = " + F(o.dep0, 3) + " > investment " + F(o.i0, 3); }, "Δk < 0: k and y fall"] },
+          { say: "Where does it end?",
+            predict: { kind: "choice", q: "In the long run, y returns to…", choices: [{ id: "same", label: "The same steady state" }, { id: "higher", label: "A higher level" }, { id: "lower", label: "A lower level" }], answer: "same" },
+            math: ["k* depends only on s, δ and α, not on L", "y → y* = <b>1.866</b> again; c = (1 − s)y follows the same path"],
+            why: "Part (c): consumption per worker jumps up with y, then declines back to its original level." },
+        ],
+        exam: { pts: "8 + 3 points", lines: [
+          "Graph: label k, s f(k), δk and k*; mark k′ to the right of k*; arrow back toward k*.",
+          "y jumps up immediately, then falls (negative growth) back to the same steady state.",
+          "c = (1 − s)y: jumps up, then declines back to the original level." ] },
+      },
+      {
+        id: "a-vs-b", title: "Country A vs country B", source: "Chapter 9 #1 (assigned)",
+        blurb: "Y = K<sup>1/3</sup>L<sup>2/3</sup>, δ = 0.2, both start at k = 1. A saves 10%, B saves 30%.",
+        base: { alpha: 1 / 3, s: 0.1, s2: 0.3, delta: 0.2, n: 0, A: 1, k0: 1, T: 25 },
+        steps: [
+          { say: "Two countries, same technology: y = k<sup>1/3</sup>, δ = 0.2, both at k = 1. <b>A saves 10%</b>, <b>B saves 30%</b>.", hide: ["overtake"] },
+          { say: "Year 0: both produce y = 1.",
+            predict: { kind: "choice", q: "Who consumes more at first?", choices: [{ id: "A", label: "Country A" }, { id: "B", label: "Country B" }, { id: "same", label: "The same" }], answer: "A" },
+            math: ["A: c = 0.9 × 1 = <b>0.9</b>", "B: c = 0.7 × 1 = <b>0.7</b>"] },
+          { say: "B's extra saving builds capital; A's capital shrinks toward its lower steady state.",
+            predict: { kind: "num", q: "In which year does B's consumption first exceed A's?", key: "overtake", tol: 0.001 }, hide: [],
+            math: ["k(t+1) = k(t) + s·y − 0.2k", "Year 5: B 0.784 vs A 0.775 → <b>year 5</b>"] },
+          { say: "And in the long run?",
+            predict: { kind: "num", q: "B's steady-state consumption c*? (three decimals)", key: "cStar2", tol: 0.002 },
+            math: ["A: k* = (0.1/0.2)<sup>1.5</sup> = 0.354, c* = 0.9(0.707) = 0.636", "B: k* = (0.3/0.2)<sup>1.5</sup> = 1.837, c* = 0.7(1.225) = <b>0.857</b>"],
+            why: "Saving more costs consumption first and pays off later, because both countries are below the golden rule." },
+        ],
+        exam: { pts: "Problem set", lines: ["A: c* = 0.636. B: c* = 0.857. B first exceeds A in year 5 (0.784 vs 0.775)."] },
+      },
+      {
+        id: "swan", title: "Swan Island", source: "Chapter 9 #2",
+        blurb: "y = 20k<sup>1/3</sup>, k₀ = 125, s = 0.18, δ = 0.1. Where does Swan Island start and where does it go?",
+        base: { alpha: 1 / 3, s: 0.18, delta: 0.1, n: 0, A: 20, k0: 125 },
+        steps: [
+          { say: "Swan Island: <b>y = 20k<sup>1/3</sup></b>, k = 125, saving 18%, depreciation 10%.", hide: ["kStar", "yStar", "cStar", "y0", "dk0"] },
+          { say: "Output per worker today.",
+            predict: { kind: "num", q: "y today?", key: "y0", tol: 0.001 }, hide: ["kStar", "yStar", "cStar", "dk0"],
+            math: ["y = 20 × 125<sup>1/3</sup> = 20 × 5 = <b>100</b>", "i = 18, c = 82, δk = 12.5"] },
+          { say: "How fast is capital growing?",
+            predict: { kind: "num", q: "Δk this year?", key: "dk0", tol: 0.001 }, hide: ["kStar", "yStar", "cStar"],
+            math: ["Δk = 18 − 12.5 = <b>5.5</b>"] },
+          { say: "Solve for the steady state.",
+            predict: { kind: "num", q: "Steady-state k*?", key: "kStar", tol: 0.001 }, hide: [],
+            math: ["0.18 × 20k<sup>1/3</sup> = 0.1k ⇒ k<sup>2/3</sup> = 36", "<b>k* = 216</b>, y* = 20 × 6 = <b>120</b>"] },
+        ],
+        exam: { pts: "Textbook", lines: ["y = 100, i = 18, c = 82, δk = 12.5, Δk = 5.5.", "k* = 216, y* = 120."] },
+      },
+    ],
+  });
+})();
+
+// Model 6 · The golden rule (Week 5)
+
+(function () {
+  var F = CH.fmt;
+  var So = ENGINE.solow;
+
+  function solve(p) {
+    var o = So(p);
+    o.atGold = Math.abs(o.kStar - o.kGold) / o.kGold < 0.005;
+    o.side = o.atGold ? "at" : o.kStar < o.kGold ? "below" : "above";
+    o.mpk = o.mpkStar;
+    if (p.sAfter != null) {
+      var path = ENGINE.solowPath(Object.assign({}, p, { k0: p.k0 != null ? p.k0 : o.kStar }), 200);
+      o.cNow = path[0].c; o.c1 = path[1].c; o.k1 = path[1].k;
+      var oNew = So(Object.assign({}, p, { s: p.sAfter }));
+      o.cLong = oNew.cStar;
+      o.cross = path.findIndex(function (x) { return x.c > o.cStar; });
+      o.everyDate = path.every(function (x) { return x.c > o.cStar; });
+    }
+    return o;
+  }
+
+  function graph(p, ghost, target, hide) {
+    var o = solve(p), A = p.A || 1, n = p.n || 0;
+    var hid = function (k) { return hide.indexOf(k) !== -1; };
+    var kmax = Math.max(o.kGold, o.kStar) * 2;
+    var fk = function (k) { return A * Math.pow(k, p.alpha); };
+    var ymax = fk(kmax) * 1.12;
+    // Left panel: f(k), δk, s f(k) and the consumption gap.
+    var f = CH.frame({ w: 330, h: 300, x: [0, kmax], y: [0, ymax], xLabel: "k", yLabel: "per worker", pad: { l: 44, r: 10, t: 16, b: 38 } });
+    var s = f.axes;
+    s += CH.fn(f, fk, 0, kmax, "c4", 120) + CH.text(f, kmax, fk(kmax), "f(k)", "lb", "end", -2, -6);
+    s += CH.fn(f, function (k) { return p.s * fk(k); }, 0, kmax, "c1", 120) + CH.text(f, kmax, p.s * fk(kmax), "s·f(k)", "k1", "end", -2, 14);
+    s += CH.fn(f, function (k) { return (p.delta + n) * k; }, 0, kmax, "c2") ;
+    var kd = Math.min(kmax, ymax / (p.delta + n) * 0.95);
+    s += CH.text(f, kd, (p.delta + n) * kd, "δk", "k2", "end", -6, 4);
+    s += '<line x1="' + f.sx(o.kStar) + '" x2="' + f.sx(o.kStar) + '" y1="' + f.sy(o.yStar) + '" y2="' + f.sy(o.depStar) + '" class="c3" stroke-width="5"/>';
+    s += CH.text(f, o.kStar, (o.yStar + o.depStar) / 2, "c*", "k3", "start", 6, 4);
+    s += CH.vline(f, o.kStar, "c4 dash faint") + CH.text(f, o.kStar, 0, "k*", "k1", "middle", 0, 30);
+    if (!hid("kGold")) {
+      var yg = fk(o.kGold), slope = p.delta + n, span = kmax * 0.18;
+      s += '<line x1="' + f.sx(o.kGold - span) + '" y1="' + f.sy(yg - slope * span) + '" x2="' + f.sx(o.kGold + span) + '" y2="' + f.sy(yg + slope * span) + '" class="c3 dash"/>';
+      if (!o.atGold) s += CH.vline(f, o.kGold, "c3 dash faint") + CH.text(f, o.kGold, 0, "k_gold", "k3", "middle", 0, 30);
+      else s += CH.text(f, o.kGold, 0, "= k_gold", "k3", "start", 10, 30);
+    }
+    // Right panel: steady-state c against the saving rate.
+    var hump = ENGINE.cStarBySaving(p, 100);
+    var cmax = Math.max.apply(null, hump.map(function (h) { return h[1]; })) * 1.18;
+    var g = CH.frame({ w: 290, h: 300, x: [0, 1], y: [0, cmax], xLabel: "saving rate s", yLabel: "c*", pad: { l: 40, r: 12, t: 16, b: 38 },
+                       xTicks: [0, 0.2, 0.4, 0.6, 0.8, 1], xFmt: function (v) { return Math.round(v * 100) + "%"; } });
+    var t = g.axes + CH.line(g, hump, "c1");
+    if (ghost && ghost.s !== p.s) t += CH.dot(g, ghost.s, So(ghost).cStar, "solid4");
+    t += CH.dot(g, p.s, o.cStar) + CH.text(g, p.s, o.cStar, "s = " + F(p.s * 100, 0) + "%", "b", p.s > 0.6 ? "end" : "start", p.s > 0.6 ? -8 : 8, 14);
+    if (!hid("sGold")) t += CH.vline(g, o.sGold, "c3 dash faint", o.cGold) + CH.dot(g, o.sGold, o.cGold, "solid3") + CH.text(g, o.sGold, o.cGold, "s_gold = α", "k3", "middle", 0, -10);
+    var out = CH.raw(630, 300, s + '<g transform="translate(340,0)">' + t + "</g>", "golden rule");
+    return { svg: out, cap: "Left: consumption is the gap between f(k) and δk, widest where the slope of f equals δ. Right: steady-state consumption peaks at s = α." };
+  }
+
+  function line(p, ghost, target, hide) {
+    var o = solve(p);
+    if (p.sAfter == null) {
+      var hump = ENGINE.cStarBySaving(p, 100);
+      return CH.lineChart({ title: "Steady-state consumption by saving rate", series: [{ name: "c* for each s", pts: hump.map(function (h) { return [h[0] * 100, h[1]]; }), cls: "c1" }],
+        xLabel: "saving rate s (%)", yLabel: "c*", x: [0, 100], zero: true,
+        marks: [{ x: p.s * 100, y: o.cStar, label: "now: c* = " + F(o.cStar, 3), lcls: "b" }].concat(hide.indexOf("sGold") === -1 ? [{ x: o.sGold * 100, y: o.cGold, label: "golden: " + F(o.cGold, 3), lcls: "k3", cls: "solid3", dy: 18 }] : []) });
+    }
+    var path = ENGINE.solowPath(Object.assign({}, p, { k0: p.k0 != null ? p.k0 : o.kStar }), 60);
+    var marks = [{ x: 0, y: path[0].c, label: "c₀ = " + F(path[0].c, 3), lcls: "k2" }];
+    if (hide.indexOf("cross") === -1 && o.cross > 0) marks.push({ x: o.cross, y: path[o.cross].c, label: "passes old c* in year " + o.cross, lcls: "b" });
+    return CH.lineChart({ title: "Consumption after the switch", series: [{ name: "c, after s changes to " + F(p.sAfter, 2), pts: path.map(function (x) { return [x.t, x.c]; }), cls: "c3" }],
+      xLabel: "year", yLabel: "c", x: [0, 60],
+      hlines: [{ y: o.cStar, label: "old c* = " + F(o.cStar, 3), cls: "c4 dash faint" }].concat(hide.indexOf("cLong") === -1 ? [{ y: o.cLong, label: "new c* = " + F(o.cLong, 3), lcls: "k3", cls: "c3 dash" }] : []),
+      marks: marks });
+  }
+
+  function bars(p, ghost, target, hide) {
+    var o = solve(p);
+    var rows = [{ label: "Steady state now", sub: "s = " + F(p.s * 100, 0) + "%", parts: [
+      { name: "c*", value: o.cStar, cls: "solid3" }, { name: "i* = δk*", value: o.iStar, cls: "solid1" }] }];
+    if (hide.indexOf("kGold") === -1) rows.push({ label: "Golden rule", sub: "s = " + F(o.sGold * 100, 0) + "%", parts: [
+      { name: "c_gold", value: o.cGold, cls: "solid3" }, { name: "δk_gold", value: o.yGold - o.cGold, cls: "solid1" }] });
+    return CH.barChart({ title: "Consumption vs investment", rows: rows, share: false, pct: false, fmt: function (v) { return F(v, 3); } });
+  }
+
+  MODELS.push({
+    id: "golden", week: 5, title: "The golden rule",
+    short: "The steady state with the most consumption: MPK = δ and s_gold = α",
+    base: { alpha: 0.3, s: 0.2, delta: 0.07, n: 0, A: 1 },
+    inputs: [
+      { key: "s", label: "Saving rate s", min: 0.05, max: 0.9, step: 0.01 },
+      { key: "alpha", label: "Capital share α", min: 0.15, max: 0.7, step: 0.01 },
+      { key: "delta", label: "Depreciation δ", min: 0.02, max: 0.2, step: 0.005 },
+    ],
+    solve: solve,
+    kpis: [
+      { key: "kStar", label: "k* at this s", d: 3 },
+      { key: "cStar", label: "c* at this s", d: 3 },
+      { key: "kGold", label: "k_gold", d: 3 },
+      { key: "cGold", label: "c_gold", d: 3 },
+      { key: "sGold", label: "s_gold", pct: true, d: 1 },
+      { key: "mpk", label: "MPK at k* (vs δ)", d: 4 },
+    ],
+    graph: graph, line: line, bars: bars,
+    lineTitle: "Consumption", barsTitle: "Now vs the golden rule",
+    forms: [
+      { name: "The objective", html: "<i>c</i>* = <i>f</i>(<i>k</i>*) − δ<i>k</i>*",
+        note: "In the steady state s f(k*) = δk*, so consumption is output minus what it takes to replace worn-out capital." },
+      { name: "The condition", html: "<i>f</i>′(<i>k</i><sub>gold</sub>) = δ  (MPK = δ; with population growth MPK = δ + <i>n</i>)",
+        note: "State the optimization condition before substituting numbers." },
+      { name: "Cobb-Douglas", html: "α<i>k</i><sup>α−1</sup> = δ  ⇒  <i>k</i><sub>gold</sub> = (α/δ)<sup>1/(1−α)</sup>",
+        note: "Raise both sides to 1/(1 − α)." },
+      { name: "The saving rate", html: "<i>s</i><sub>gold</sub> = δ<i>k</i><sub>gold</sub> / <i>f</i>(<i>k</i><sub>gold</sub>) = δ<i>k</i><sup>1−α</sup> = δ(α/δ) = <b>α</b>",
+        note: "Show this step on the exam: stating s_gold = α alone loses points." },
+      { name: "Below vs above", html: "<i>k</i>* < <i>k</i><sub>gold</sub>: save more (c falls now, rises later).  <i>k</i>* > <i>k</i><sub>gold</sub>: save less (c rises at every date).",
+        note: "MPK > δ means below the golden rule. Mankiw's US numbers: MPK ≈ 12% > δ ≈ 4%." },
+    ],
+    statics: {
+      inputs: [{ key: "s", label: "Saving rate up" }, { key: "alpha", label: "α up" }, { key: "delta", label: "δ up" }],
+      outputs: [{ key: "kStar", label: "k*" }, { key: "cStar", label: "c*" }, { key: "kGold", label: "k_gold" }, { key: "sGold", label: "s_gold" }],
+    },
+    facts: {
+      cold: [
+        "Golden rule: the k that maximizes steady-state consumption satisfies f′(k) = δ.",
+        "For y = k<sup>α</sup>: k_gold = (α/δ)<sup>1/(1−α)</sup> and s_gold = α.",
+        "Below k_gold, raising saving costs consumption now and pays later. Above it, cutting saving raises consumption at every date.",
+      ],
+      traps: [
+        "Forgetting the exponent step for k_gold: raise both sides to 1/(1 − α).",
+        "Skipping the derivation of s_gold = α.",
+        "PS5(c) writes c₀ = s_gold f(k₀); consumption is (1 − s)f(k), so c₀ = 0.952. The literal version gives investment.",
+      ],
+    },
+    scenarios: [
+      {
+        id: "mass-gold", title: "1860s Massachusetts: the golden rule", source: "Practice exam Part 2 Q1(a) · 9 pts",
+        blurb: "y = k<sup>0.3</sup>, s = 0.3, δ = 0.07. Find k_gold and s_gold.",
+        base: { alpha: 0.3, s: 0.3, delta: 0.07, n: 0, A: 1 },
+        steps: [
+          { say: "Y = K<sup>0.3</sup>L<sup>0.7</sup>, s = 0.3, δ = 0.07. Find the golden-rule capital and saving rate.", hide: ["kGold", "cGold", "sGold"],
+            math: ["Per worker: y = k<sup>0.3</sup>, c = (1 − s)f(k) = f(k) − s f(k)", "In steady state s f(k) = δk, so <b>c* = f(k) − δk</b>"] },
+          { say: "Maximize c*: set the derivative to zero.",
+            predict: { kind: "num", q: "k_gold (three decimals)?", key: "kGold", tol: 0.001 }, hide: ["sGold"],
+            math: ["f′(k) − δ = 0 ⇒ 0.3k<sup>−0.7</sup> = 0.07", "k<sup>0.7</sup> = 0.3/0.07 = 4.2857", "k_gold = 4.2857<sup>1/0.7</sup> = <b>7.996</b>"] },
+          { say: "Plug k_gold into s f(k) = δk.",
+            predict: { kind: "num", q: "s_gold (decimal)?", key: "sGold", tol: 0.001 }, hide: [],
+            math: ["s(7.996)<sup>0.3</sup> = 0.07(7.996)", "s = 0.07(7.996)<sup>0.7</sup> = 0.07 × 4.2857 = <b>0.3 = α</b>"] },
+          { say: "Massachusetts already saves 30%.",
+            predict: { kind: "choice", q: "Is it at the golden rule?", choices: [{ id: "at", label: "Yes, exactly" }, { id: "below", label: "No, below it" }, { id: "above", label: "No, above it" }], answer: function (o) { return o.side; } },
+            math: ["s = 0.3 = s_gold, so k* = k_gold = 7.996"] },
+        ],
+        exam: { pts: "9 points", lines: [
+          "c* = f(k) − δk. Condition: f′(k) = δ, i.e. 0.3k<sup>−0.7</sup> = 0.07.",
+          "k_gold = (0.3/0.07)<sup>1/0.7</sup> = 7.996.",
+          "s_gold = δk<sup>0.7</sup> = 0.07 × 4.2857 = 0.3 = α. Show this step." ] },
+      },
+      {
+        id: "sokovia-gold", title: "Sokovia's golden rule", source: "Problem Set 5 (a)(b)",
+        blurb: "y = k<sup>0.4</sup>, δ = 0.1, s = 0.2. Find the steady state and the golden rule.",
+        base: { alpha: 0.4, s: 0.2, delta: 0.1, n: 0, A: 1 },
+        steps: [
+          { say: "Sokovia: <b>y = k<sup>0.4</sup></b>, δ = 0.1, saving rate <b>s = 0.2</b>.", hide: ["kStar", "cStar", "kGold", "cGold", "sGold"] },
+          { say: "The steady state first.",
+            predict: { kind: "num", q: "k* (three decimals)?", key: "kStar", tol: 0.001 }, hide: ["cStar", "kGold", "cGold", "sGold"],
+            math: ["0.2k<sup>0.4</sup> = 0.1k ⇒ k<sup>0.6</sup> = 2", "k* = 2<sup>1/0.6</sup> = <b>3.175</b>, y* = 1.587, c* = 0.8 × 1.587 = <b>1.270</b>"] },
+          { say: "Now the golden rule.",
+            predict: { kind: "num", q: "k_gold (two decimals)?", key: "kGold", tol: 0.002 }, hide: ["cGold"],
+            math: ["0.4k<sup>−0.6</sup> = 0.1 ⇒ k<sup>0.6</sup> = 4", "k_gold = 4<sup>1/0.6</sup> = <b>10.08</b>, s_gold = α = 0.4"] },
+          { say: "How much more could Sokovians consume?",
+            predict: { kind: "num", q: "Golden-rule consumption c_gold (three decimals)?", key: "cGold", tol: 0.001 }, hide: [],
+            math: ["c_gold = (1 − 0.4)(10.08)<sup>0.4</sup> = 0.6 × 2.52 = <b>1.512</b>"],
+            why: "Sokovia saves less than α, so it sits below the golden rule: k* = 3.175 < k_gold = 10.08." },
+        ],
+        exam: { pts: "Problem set", lines: [
+          "k* = 2<sup>1/0.6</sup> = 3.175, y* = 1.587, c* = 1.270.",
+          "k_gold = 4<sup>1/0.6</sup> = 10.08, s_gold = 0.4; check s = δk<sup>1−α</sup> = 0.1 × 4 = 0.4.",
+          "c_gold = 0.6 × 10.08<sup>0.4</sup> = 1.512." ] },
+      },
+      {
+        id: "sokovia-switch", title: "Sokovia switches to s_gold", source: "Problem Set 5 (c)",
+        blurb: "At t = 0 Sokovia raises saving from 20% to 40%, starting from k = 3.175. Trace consumption.",
+        base: { alpha: 0.4, s: 0.2, delta: 0.1, n: 0, A: 1, sAfter: 0.4, k0: 3.17480 },
+        steps: [
+          { say: "Sokovia sits at k* = 3.175 with c* = 1.270. At t = 0 it switches to <b>s = 0.4</b>.", hide: ["cross", "cLong"] },
+          { say: "The same output, but more of it saved.",
+            predict: { kind: "num", q: "Consumption at t = 0, c₀ (three decimals)?", key: "cNow", tol: 0.001 },
+            math: ["c₀ = (1 − 0.4)f(k₀) = 0.6 × 1.587 = <b>0.952</b> (down from 1.270)"],
+            why: "Note the likely typo in PS5: it writes s_gold f(k₀), which is investment, not consumption." },
+          { say: "Capital builds.",
+            predict: { kind: "num", q: "Consumption at t = 1 (three decimals)?", key: "c1", tol: 0.001 },
+            math: ["k₁ = 3.175 + 0.4(1.587) − 0.1(3.175) = 3.492", "c₁ = 0.6 × 3.492<sup>0.4</sup> = <b>0.989</b>"] },
+          { say: "Consumption keeps climbing.",
+            predict: { kind: "num", q: "In which year does c first beat the old 1.270?", key: "cross", tol: 0.001 }, hide: [],
+            math: ["Year 13, then on toward <b>1.512</b>"],
+            why: "Starting below the golden rule, moving to s_gold costs consumption now and pays off later." },
+        ],
+        exam: { pts: "Problem set", lines: ["c₀ = 0.952 (falls immediately), c₁ = 0.989, passes 1.270 around year 13, converges to 1.512."] },
+      },
+      {
+        id: "above-gold", title: "Above the golden rule", source: "Chapter 9 review question",
+        blurb: "y = k<sup>0.5</sup>, δ = 0.1, but the country saves 70%. What happens if it saves less?",
+        base: { alpha: 0.5, s: 0.7, delta: 0.1, n: 0, A: 1 },
+        steps: [
+          { say: "y = k<sup>0.5</sup>, δ = 0.1, and a very high saving rate of <b>70%</b>.",
+            math: ["k* = (0.7/0.1)<sup>2</sup> = 49, y* = 7, c* = 0.3 × 7 = <b>2.1</b>"] },
+          { say: "Compare k* with the golden rule.",
+            predict: { kind: "choice", q: "This economy is…", choices: [{ id: "below", label: "Below the golden rule" }, { id: "above", label: "Above the golden rule" }, { id: "at", label: "At it" }], answer: function (o) { return o.side; } },
+            math: ["k_gold = (0.5/0.1)<sup>2</sup> = 25 < k* = 49", "MPK = 0.5(49)<sup>−0.5</sup> = 0.071 < δ = 0.1"] },
+          { say: "It cuts saving to s_gold = 0.5 at t = 0.", set: { sAfter: 0.5, k0: 49 },
+            predict: { kind: "num", q: "Consumption right away, c₀?", key: "cNow", tol: 0.001 },
+            math: ["c₀ = 0.5 × 7 = <b>3.5</b> (up from 2.1)"] },
+          { say: "Then capital runs down toward k_gold = 25.",
+            predict: { kind: "choice", q: "Compared with the old 2.1, consumption on the way…", choices: [{ id: "always", label: "Stays higher at every date" }, { id: "dips", label: "Dips below 2.1 for a while" }], answer: function (o) { return o.everyDate ? "always" : "dips"; } },
+            math: ["c falls from 3.5 toward c_gold = <b>2.5</b>, never below 2.1"],
+            why: "Above the golden rule there's no trade-off: saving less raises consumption now and forever. A policymaker would never stay there." },
+        ],
+        exam: { pts: "Short answer", lines: [
+          "If k* > k_gold (MPK < δ), cut saving: consumption rises at every date.",
+          "If k* < k_gold, raising saving lowers consumption now and raises it later." ] },
+      },
+    ],
+  });
+})();
+
+// The Models tab: a dashboard per model, the walkthrough player and free play.
+//
+// Everything on screen is drawn from the model's own definition
+// (tools/models/defs/*.js) and solved by tools/models/engine.js. A walkthrough
+// is a list of steps; each step may change some inputs, ask for a
+// prediction first, and then show the working. The right answer to every
+// prediction is computed from the model at that moment, never typed in.
+
+var MODELUI = (function () {
+  "use strict";
+
+  var F = CH.fmt;
+  var root, host;
+  var model = null;            // the model definition on screen
+  var mode = "free";           // "free" | "scenario"
+  var sc = null, stepIdx = 0, stage = "shown";
+  var cur = null, ghost = null, target = null, hide = [];
+  var pinned = null;           // free play's comparison point
+  var results = [];            // this walkthrough's predictions
+  var anim = null;
+  var tab = "forms";
+
+  function $(sel, el) { return (el || root).querySelector(sel); }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function merge(a, b) { var o = clone(a); for (var k in b || {}) o[k] = b[k]; return o; }
+  function weekColor(w) { return (typeof WEEKS !== "undefined" && WEEKS[w - 1]) || { color: "#1F4E8C", soft: "rgba(31,78,140,.10)" }; }
+
+  // ------------------------------------------------------------- layout
+
+  function mount(el, h) {
+    root = el;
+    host = h || {};
+    root.innerHTML =
+      '<div class="mdl-top"><div class="mdl-chips" id="mdl-chips"></div></div>' +
+      '<div class="mdl-grid">' +
+      '  <div class="mdl-main">' +
+      '    <div class="mdl-head"><span class="chip" id="mdl-week"></span><h2 id="mdl-title"></h2><p id="mdl-short"></p></div>' +
+      '    <div class="mdl-card mdl-graph"><div id="mdl-graph"></div><p class="cap" id="mdl-cap"></p></div>' +
+      '    <div class="kpis" id="mdl-kpis"></div>' +
+      '    <div class="mdl-two">' +
+      '      <div class="mdl-card"><h3 id="mdl-line-t"></h3><div id="mdl-line"></div></div>' +
+      '      <div class="mdl-card"><h3 id="mdl-bars-t"></h3><div id="mdl-bars"></div></div>' +
+      "    </div>" +
+      '    <div class="mdl-card mdl-tabs"><div class="seg" id="mdl-seg">' +
+      '      <button type="button" data-tab="forms">All its forms</button>' +
+      '      <button type="button" data-tab="statics">Comparative statics</button>' +
+      '      <button type="button" data-tab="facts">Know cold · traps</button></div>' +
+      '      <div id="mdl-tab"></div></div>' +
+      "  </div>" +
+      '  <aside class="mdl-rail"><div class="rail-in">' +
+      '    <p class="rail-h">Walkthroughs</p><div id="mdl-scs"></div>' +
+      '    <div id="mdl-panel"></div>' +
+      "  </div></aside>" +
+      "</div>";
+    $("#mdl-chips").innerHTML = MODELS.map(function (m, k) {
+      var w = weekColor(m.week);
+      return '<button type="button" class="mchip" data-model="' + m.id + '" style="--c:' + w.color + '"><span>Week ' + m.week + "</span>" + m.title + "</button>";
+    }).join("");
+    root.addEventListener("click", onClick);
+    root.addEventListener("input", onInput);
+    root.addEventListener("keydown", onKey);
+    openModel(MODELS[0].id);
+  }
+
+  function openModel(id, scId) {
+    stopAnim();
+    model = MODELS.filter(function (m) { return m.id === id; })[0] || MODELS[0];
+    var w = weekColor(model.week);
+    root.style.setProperty("--wk", w.color);
+    root.style.setProperty("--wk-soft", w.soft);
+    root.querySelectorAll(".mchip").forEach(function (b) { b.classList.toggle("on", b.dataset.model === model.id); });
+    $("#mdl-week").textContent = "Week " + model.week;
+    $("#mdl-title").textContent = model.title;
+    $("#mdl-short").innerHTML = model.short;
+    $("#mdl-line-t").textContent = model.lineTitle;
+    $("#mdl-bars-t").textContent = model.barsTitle;
+    if (host.remember) host.remember(model.id);
+    renderScenarioList();
+    if (scId) startScenario(scId); else startFree();
+  }
+
+  function renderScenarioList() {
+    var done = (host.modelProgress && host.modelProgress()) || {};
+    $("#mdl-scs").innerHTML = model.scenarios.map(function (s, k) {
+      var d = done[s.id];
+      return '<button type="button" class="sc' + (mode === "scenario" && sc && sc.id === s.id ? " on" : "") + '" data-sc="' + s.id + '">' +
+        '<span class="sc-n">' + (d && d.done ? "✓" : k + 1) + "</span>" +
+        '<span class="sc-b"><b>' + s.title + '</b><small>' + s.source + "</small></span></button>";
+    }).join("") +
+      '<button type="button" class="sc free' + (mode === "free" ? " on" : "") + '" data-free="1"><span class="sc-n">↕</span>' +
+      '<span class="sc-b"><b>Free play</b><small>Move every input yourself</small></span></button>';
+  }
+
+  // ------------------------------------------------------------ drawing
+
+  function draw() {
+    var g = model.graph(cur, ghost, target, hide);
+    $("#mdl-graph").innerHTML = g.svg;
+    $("#mdl-cap").textContent = g.cap || "";
+    var o = model.solve(cur);
+    var prev = ghost ? model.solve(ghost) : null;
+    $("#mdl-kpis").innerHTML = model.kpis.map(function (k) {
+      var v = o[k.key];
+      var hidden = hide.indexOf(k.key) !== -1;
+      var txt = hidden ? "?" : v == null ? "—" : k.pct ? F(v * 100, k.d == null ? 2 : k.d) + "%" : F(v, k.d) + (k.unit || "");
+      var delta = "";
+      if (!hidden && prev && v != null && prev[k.key] != null && Math.abs(v - prev[k.key]) > 1e-9 * Math.max(1, Math.abs(v))) {
+        var up = v > prev[k.key];
+        delta = '<span class="dl ' + (up ? "up" : "down") + '">' + (up ? "▲" : "▼") + " from " +
+          (k.pct ? F(prev[k.key] * 100, k.d == null ? 2 : k.d) + "%" : F(prev[k.key], k.d)) + "</span>";
+      }
+      return '<div class="kpi' + (hidden ? " hid" : "") + '"><span class="kl">' + k.label + '</span><span class="kv">' + txt + "</span>" + delta + "</div>";
+    }).join("");
+    $("#mdl-line").innerHTML = model.line(cur, ghost, target, hide, mode === "scenario" ? sc : null);
+    $("#mdl-bars").innerHTML = model.bars(cur, ghost, target, hide) || '<p class="muted">Shown once the answer is revealed.</p>';
+    if (tab === "statics") renderTab();
+  }
+
+  function renderTab() {
+    root.querySelectorAll("#mdl-seg button").forEach(function (b) { b.classList.toggle("on", b.dataset.tab === tab); });
+    var h = "";
+    if (tab === "forms") {
+      h = model.forms.map(function (f) {
+        return '<div class="form"><p class="fn">' + f.name + '</p><div class="fx">' + f.html + "</div>" + (f.note ? '<p class="fnote">' + f.note + "</p>" : "") + "</div>";
+      }).join("");
+    } else if (tab === "statics") {
+      var st = model.statics;
+      var params = cur;
+      h = '<p class="muted">What happens to each result when one input rises, everything else held fixed. Worked out from the model at the current numbers.</p>' +
+        '<div class="tbl"><table><thead><tr><th></th>' + st.outputs.map(function (o) { return "<th>" + o.label + "</th>"; }).join("") + "</tr></thead><tbody>";
+      st.inputs.forEach(function (inp) {
+        if (params[inp.key] == null) return;
+        var d = ENGINE.direction(model.solve, params, inp.key, st.outputs.map(function (o) { return o.key; }), inp.step);
+        h += "<tr><th>" + inp.label + "</th>" + st.outputs.map(function (o) {
+          var v = d[o.key];
+          var sym = v === "up" ? "↑" : v === "down" ? "↓" : v === "same" ? "—" : "";
+          return '<td class="' + v + '">' + sym + "</td>";
+        }).join("") + "</tr>";
+      });
+      h += "</tbody></table></div>";
+    } else {
+      h = '<div class="facts"><div><p class="fn">Know this cold</p><ul>' + model.facts.cold.map(function (x) { return "<li>" + x + "</li>"; }).join("") +
+        '</ul></div><div class="traps"><p class="fn">Common traps</p><ul>' + model.facts.traps.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul></div></div>";
+    }
+    $("#mdl-tab").innerHTML = h;
+  }
+
+  // --------------------------------------------------------- animation
+
+  function stopAnim() { if (anim) { cancelAnimationFrame(anim.raf); anim = null; } }
+
+  /** Moves every numeric input from where it is to `next`, redrawing as it
+   *  goes, so a shift is seen happening rather than just appearing. */
+  function animateTo(next, ghostState, done) {
+    stopAnim();
+    var from = clone(cur);
+    ghost = ghostState;
+    target = next;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var t0 = performance.now(), dur = reduce ? 0 : 650;
+    var tick = function (now) {
+      var u = dur ? Math.min(1, (now - t0) / dur) : 1;
+      var e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+      var mid = clone(next);
+      for (var k in next) {
+        if (typeof next[k] === "number" && typeof from[k] === "number") mid[k] = from[k] + (next[k] - from[k]) * e;
+      }
+      cur = u >= 1 ? clone(next) : mid;
+      draw();
+      if (u < 1) anim = { raf: requestAnimationFrame(tick) };
+      else { anim = null; target = null; draw(); if (done) done(); }
+    };
+    anim = { raf: requestAnimationFrame(tick) };
+  }
+
+  // ---------------------------------------------------------- free play
+
+  function startFree() {
+    stopAnim();
+    mode = "free"; sc = null;
+    cur = clone(model.base); pinned = clone(model.base); ghost = null; target = null; hide = [];
+    renderScenarioList();
+    renderPanel();
+    draw();
+    renderTab();
+  }
+
+  function sliderPos(inp, v) {
+    if (inp.log) return Math.round(1000 * Math.log(v / inp.min) / Math.log(inp.max / inp.min));
+    return v;
+  }
+  function sliderVal(inp, pos) {
+    if (inp.log) return inp.min * Math.pow(inp.max / inp.min, pos / 1000);
+    return pos;
+  }
+
+  function renderPanel() {
+    var h = "";
+    if (mode === "free") {
+      h = '<div class="panel"><p class="rail-h">Free play</p><p class="muted">Drag an input. The faint lines and the ▲▼ arrows compare with your pinned starting point.</p>';
+      model.inputs.forEach(function (inp) {
+        var v = cur[inp.key];
+        h += '<label class="sl"><span><b>' + inp.label + '</b><output id="out-' + inp.key + '">' + F(v, inp.step < 0.01 ? 3 : inp.step < 1 ? 2 : 0) + "</output></span>" +
+          '<input type="range" id="sl-' + inp.key + '" data-key="' + inp.key + '" min="' + (inp.log ? 0 : inp.min) + '" max="' + (inp.log ? 1000 : inp.max) +
+          '" step="' + (inp.log ? 1 : inp.step) + '" value="' + sliderPos(inp, v) + '"></label>';
+      });
+      h += '<div class="row2"><button type="button" class="ghost-btn" data-act="pin">Pin as starting point</button><button type="button" class="ghost-btn" data-act="reset">Reset</button></div></div>';
+    } else {
+      h = playerHTML();
+    }
+    $("#mdl-panel").innerHTML = h;
+    var inp = $("#mdl-panel .num-in");
+    if (inp && stage === "ask") setTimeout(function () { try { inp.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }, 30);
+  }
+
+  function onInput(e) {
+    var el = e.target;
+    if (!el.matches || !el.matches('input[type="range"][data-key]')) return;
+    var inp = model.inputs.filter(function (i) { return i.key === el.dataset.key; })[0];
+    var v = sliderVal(inp, Number(el.value));
+    cur[inp.key] = v;
+    ghost = pinned;
+    var out = $("#out-" + inp.key);
+    if (out) out.textContent = F(v, inp.step < 0.01 ? 3 : inp.step < 1 ? 2 : 0);
+    draw();
+  }
+
+  // ------------------------------------------------------- walkthroughs
+
+  /** The inputs as they stand when step k opens: the scenario's start plus
+   *  every earlier step's change. */
+  function stateAt(k) {
+    var s = clone(sc.base);
+    for (var j = 0; j < k; j++) s = merge(s, sc.steps[j].set);
+    return s;
+  }
+  function hideAt(k) {
+    var h = [];
+    for (var j = 0; j < k; j++) if (sc.steps[j].hide) h = sc.steps[j].hide.slice();
+    return h;
+  }
+
+  function startScenario(id) {
+    stopAnim();
+    sc = model.scenarios.filter(function (s) { return s.id === id; })[0];
+    if (!sc) return startFree();
+    mode = "scenario"; results = [];
+    if (host.remember) host.remember(model.id, sc.id);
+    renderScenarioList();
+    renderTab();
+    enterStep(0);
+  }
+
+  function enterStep(k) {
+    stopAnim();
+    stepIdx = k;
+    if (k >= sc.steps.length) { stage = "exam"; ghost = null; renderPanel(); draw(); finish(); return; }
+    var st = sc.steps[k];
+    cur = stateAt(k); ghost = null; target = null;
+    hide = hideAt(k);
+    if (st.predict) {
+      stage = "ask";
+      renderPanel(); draw();
+    } else {
+      stage = "shown";
+      if (st.hide) hide = st.hide.slice();
+      var next = merge(cur, st.set);
+      renderPanel();
+      if (st.set) animateTo(next, clone(cur)); else draw();
+    }
+  }
+
+  function answerFor(st, before, after) {
+    var pr = st.predict;
+    var oa = model.solve(after);
+    if (pr.kind === "dir") {
+      var a, b;
+      if (pr.vs) { a = oa[pr.vs]; b = oa[pr.key]; }
+      else { a = model.solve(pr.from === "base" ? sc.base : before)[pr.key]; b = oa[pr.key]; }
+      var tol = 1e-9 * Math.max(1, Math.abs(a));
+      return b > a + tol ? "up" : b < a - tol ? "down" : "same";
+    }
+    if (pr.kind === "num") return pr.value ? pr.value(oa, after) : oa[pr.key];
+    return typeof pr.answer === "function" ? pr.answer(oa, after) : pr.answer;
+  }
+
+  function reveal(given) {
+    var st = sc.steps[stepIdx];
+    var before = clone(cur);
+    var after = merge(cur, st.set);
+    var right = answerFor(st, before, after);
+    var ok;
+    if (st.predict.kind === "num") {
+      var x = Number(String(given).replace(/[,%\s]/g, ""));
+      ok = isFinite(x) && Math.abs(x - right) <= (st.predict.tol || 0.002) * Math.max(1, Math.abs(right));
+    } else ok = given === right;
+    results.push({ step: stepIdx, ok: ok, q: st.predict.q, given: given, right: right });
+    if (!ok && host.missedPrediction) host.missedPrediction({ model: model.id, scenario: sc.id, q: st.predict.q });
+    stage = "shown";
+    lastGiven = { given: given, right: right, ok: ok };
+    if (st.hide) hide = st.hide.slice();
+    renderPanel();
+    var ghostState = st.predict.from === "base" ? clone(sc.base) : before;
+    if (st.set) animateTo(after, ghostState);
+    else { ghost = st.predict.from === "base" ? ghostState : null; draw(); }
+  }
+  var lastGiven = null;
+
+  function finish() {
+    var right = results.filter(function (r) { return r.ok; }).length;
+    if (host.scenarioDone) host.scenarioDone({ model: model.id, scenario: sc.id, right: right, total: results.length });
+    renderScenarioList();
+  }
+
+  function mathHTML(st, state) {
+    if (!st.math) return "";
+    var o = model.solve(state), p = state;
+    return '<div class="math">' + st.math.map(function (m) {
+      return "<div>" + (typeof m === "function" ? m(o, p) : m) + "</div>";
+    }).join("") + "</div>";
+  }
+
+  var DIRS = [{ id: "up", label: "↑ Rises", key: "↑" }, { id: "down", label: "↓ Falls", key: "↓" }, { id: "same", label: "— No change", key: "0" }];
+
+  function playerHTML() {
+    var n = sc.steps.length;
+    var dots = "";
+    for (var k = 0; k <= n; k++) dots += '<span class="pd' + (k < stepIdx ? " done" : k === stepIdx ? " on" : "") + '"></span>';
+    var h = '<div class="panel player"><div class="ph"><p class="rail-h">' + sc.title + '</p><span class="src">' + sc.source + "</span></div>" +
+      '<div class="dots">' + dots + "</div>";
+    if (stage === "exam") {
+      var right = results.filter(function (r) { return r.ok; }).length;
+      h += '<div class="exam"><p class="fn">On the exam · ' + sc.exam.pts + "</p><ol>" + sc.exam.lines.map(function (l) { return "<li>" + l + "</li>"; }).join("") + "</ol></div>" +
+        (results.length ? '<p class="score">' + right + " of " + results.length + " predictions right</p>" : "") +
+        '<div class="row2"><button type="button" class="ghost-btn" data-act="back">← Back</button><button type="button" class="go" data-act="again">Run it again</button></div>' +
+        '<button type="button" class="ghost-btn wide" data-free="1">Free play with this model</button></div>';
+      return h;
+    }
+    var st = sc.steps[stepIdx];
+    if (stepIdx === 0) h += '<p class="blurb">' + sc.blurb + "</p>";
+    h += '<div class="say">' + st.say + "</div>";
+    var after = merge(cur, st.set);
+    if (st.predict && stage === "ask") {
+      h += '<div class="ask"><p class="q"><span class="tag-predict">Predict</span>' + st.predict.q + "</p>";
+      if (st.predict.kind === "num") {
+        h += '<form class="numf" data-act="num"><input class="num-in" id="pred-num" inputmode="decimal" autocomplete="off" placeholder="your answer" aria-label="Your answer">' +
+          '<button type="submit" class="go">Check</button></form>';
+      } else {
+        var ch = st.predict.kind === "dir" ? DIRS : st.predict.choices;
+        h += '<div class="choices">' + ch.map(function (c) { return '<button type="button" class="choice" data-pick="' + c.id + '">' + c.label + "</button>"; }).join("") + "</div>";
+        if (st.predict.kind === "dir") h += '<p class="keyhint">Keys: ↑ rises · ↓ falls · 0 no change</p>';
+      }
+      h += "</div>";
+      h += '<div class="row2"><button type="button" class="ghost-btn" data-act="back"' + (stepIdx ? "" : " disabled") + '>← Back</button><button type="button" class="ghost-btn" data-act="skip">Show me</button></div>';
+    } else {
+      if (st.predict && lastGiven) {
+        var g = lastGiven;
+        var show = function (v) {
+          if (st.predict.kind === "num") {
+            var x = Number(v), a = Math.abs(x);
+            // Enough digits to tell 0.0625 from 0.063 and 7.996 from 8.
+            return F(x, a >= 100 ? 1 : a >= 1 ? 3 : 4).replace(/(\.\d*?[1-9])0+$/, "$1").replace(/\.0+$/, "");
+          }
+          var c = (st.predict.kind === "dir" ? DIRS : st.predict.choices).filter(function (x) { return x.id === v; })[0];
+          return c ? c.label : v;
+        };
+        h += '<div class="fb ' + (g.ok ? "ok" : g.given == null ? "skip" : "no") + '">' +
+          (g.ok ? "<b>Right.</b> " : g.given == null ? "<b>Answer:</b> " : "<b>Not quite.</b> You said " + show(g.given) + "; ") +
+          (g.ok ? "" : "it's <b>" + show(g.right) + "</b>.") + "</div>";
+      }
+      h += mathHTML(st, after);
+      if (st.why) h += '<p class="why">' + st.why + "</p>";
+      h += '<div class="row2"><button type="button" class="ghost-btn" data-act="back"' + (stepIdx ? "" : " disabled") + '>← Back</button>' +
+        '<button type="button" class="go" data-act="next">' + (stepIdx === n - 1 ? "Finish →" : "Next →") + "</button></div>" +
+        '<p class="keyhint">Enter for next</p>';
+    }
+    return h + "</div>";
+  }
+
+  // ------------------------------------------------------------- events
+
+  function onClick(e) {
+    var b = e.target.closest("button");
+    if (!b || !root.contains(b)) return;
+    if (b.dataset.model) return openModel(b.dataset.model);
+    if (b.dataset.sc) return startScenario(b.dataset.sc);
+    if (b.dataset.free) return startFree();
+    if (b.dataset.tab) { tab = b.dataset.tab; return renderTab(); }
+    if (b.dataset.pick && stage === "ask") return reveal(b.dataset.pick);
+    var a = b.dataset.act;
+    if (a === "next") { lastGiven = null; return enterStep(stepIdx + 1); }
+    if (a === "back") { lastGiven = null; return enterStep(Math.max(0, stage === "exam" ? sc.steps.length - 1 : stepIdx - 1)); }
+    if (a === "skip") return reveal(null);
+    if (a === "again") return startScenario(sc.id);
+    if (a === "pin") { pinned = clone(cur); ghost = null; return draw(); }
+    if (a === "reset") return startFree();
+  }
+
+  document.addEventListener("submit", function (e) {
+    if (!root || !root.contains(e.target)) return;
+    e.preventDefault();
+    var v = $("#pred-num").value.trim();
+    if (v === "" || stage !== "ask") return;
+    reveal(v);
+  });
+
+  function onKey(e) {
+    // Arrow and number keys answer direction predictions; Enter moves on.
+    if (mode !== "scenario") return;
+    if (e.target && e.target.closest && e.target.closest("button")) return;   // a focused button handles its own Enter
+    var typing = e.target && e.target.matches && e.target.matches("input");
+    if (stage === "ask") {
+      var st = sc.steps[stepIdx];
+      if (typing || !st.predict || st.predict.kind !== "dir") return;
+      var pick = e.key === "ArrowUp" ? "up" : e.key === "ArrowDown" ? "down" : e.key === "0" ? "same" : null;
+      if (pick) { e.preventDefault(); reveal(pick); }
+      return;
+    }
+    if (e.key === "Enter" && !typing && stage === "shown") { e.preventDefault(); lastGiven = null; enterStep(stepIdx + 1); }
+  }
+
+  /** Key presses arrive at the document when nothing in the tab has focus. */
+  function handleKey(e) {
+    if (!root) return false;
+    if (e.target && root.contains(e.target) && e.target !== document.body) return false;
+    var before = e.defaultPrevented;
+    onKey(e);
+    return e.defaultPrevented && !before;
+  }
+
+  return { mount: mount, open: openModel, handleKey: handleKey,
+           current: function () { return { model: model && model.id, scenario: mode === "scenario" && sc ? sc.id : null }; } };
+})();
+
+</script>
+<script>
 // ------------------------------------------------------------- scheduling
 //
 // Accelerated Anki for exam week. Three grades:
@@ -1401,12 +3907,27 @@ function shuffle(a) {
     try { localStorage.setItem(LOCAL_KEY, JSON.stringify(progress)); } catch (e) { /* private window */ }
   }
 
-  /** Per card, keep whichever copy was graded last. */
+  /** Per card, keep whichever copy was graded last. Study days take the
+   *  larger count, walkthroughs count as done if either copy finished them,
+   *  and the missed-prediction lists are combined. */
   function merge(other) {
-    for (const id in (other && other.cards) || {}) {
+    if (!other) return;
+    for (const id in other.cards || {}) {
       const a = progress.cards[id], b = other.cards[id];
       if (BY_ID[id] && (!a || (b.last || 0) > (a.last || 0))) progress.cards[id] = b;
     }
+    progress.days = progress.days || {};
+    for (const d in other.days || {}) progress.days[d] = Math.max(progress.days[d] || 0, other.days[d]);
+    progress.models = progress.models || {};
+    for (const id in other.models || {}) {
+      const a = progress.models[id], b = other.models[id];
+      if (!a || (b.at || 0) > (a.at || 0)) progress.models[id] = b;
+    }
+    const seen = new Set();
+    progress.missed = (progress.missed || []).concat(other.missed || [])
+      .filter((m) => { const k = m.at + m.q; if (seen.has(k)) return false; seen.add(k); return true; })
+      .sort((a, b) => b.at - a.at).slice(0, 40);
+    if (other.last && (!progress.last || (other.last.at || 0) > (progress.last.at || 0))) progress.last = other.last;
   }
 
   let docRef = null;
@@ -1489,10 +4010,15 @@ function shuffle(a) {
       where = "account";
       localSave();
       // Write only when this browser holds grades the account doesn't.
-      if (JSON.stringify(progress.cards) !== JSON.stringify(remote.cards || {})) accountSave();
+      const keys = ["cards", "days", "models", "missed"];
+      // Empty and missing count as the same, so opening the page with nothing
+      // new writes nothing.
+      const norm = (v) => (v && (Array.isArray(v) ? v.length : Object.keys(v).length) ? JSON.stringify(v) : "");
+      const differs = keys.some((k) => norm(progress[k]) !== norm(remote && remote[k]));
+      if (differs) accountSave();
       else setSaveState("saved");
-      if (!$("#menu").hidden) renderMenu();
-      else renderStoreNote();
+      refreshTab();
+      renderStoreNote();
     } catch (e) {
       setSaveState("local");
     }
@@ -1508,9 +4034,28 @@ function shuffle(a) {
       if (mode === "cram" || !BY_ID[id]) return;
       if (!["missed", "shaky", "confident"].includes(rating)) return;
       progress.cards[id] = schedule(progress.cards[id], rating, t);
+      studied(t);
       save();
     },
   };
+
+  /** One more thing done today, for the streak. */
+  function studied(t) {
+    progress.days = progress.days || {};
+    const d = isoDay(t || Date.now());
+    progress.days[d] = (progress.days[d] || 0) + 1;
+  }
+
+  /** Days in a row with something studied, counting back from today (or
+   *  from yesterday, so a streak isn't lost before today's first card). */
+  function streak() {
+    const days = progress.days || {};
+    let t = Date.now(), n = 0;
+    if (!days[isoDay(t)]) t -= 86400000;
+    while (days[isoDay(t)]) { n++; t -= 86400000; }
+    return n;
+  }
+
 
   // ---------------------------------------------------------------- sessions
 
@@ -1524,39 +4069,66 @@ function shuffle(a) {
     return { ...card, links, step: s ? s.step : 0 };
   }
 
-  function begin(cards, cram) {
-    if (!cards.length) return;
-    mode = cram ? "cram" : "review";
-    $("#quit").textContent = cram ? "Cram · nothing is rescheduled" : "Esc for the menu";
-    $("#menu").hidden = true;
-    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-    startSession(cards.map(forPage), cram);
-    renderSaveState();
-  }
-
-  function showMenu() {
-    hidePeek();
-    clearTimeout(wakeTimer);
-    $("#app").style.display = "none";
-    $("#done").style.display = "none";
-    $("#menu").hidden = false;
-    $("#menu").scrollTop = 0;
-    renderMenu();
-    $("#m-review").focus({ preventScroll: true });
-  }
-
   function reviewQueue(filter, limit) {
     const q = buildQueue(ALL, progress, Date.now(), filter, limit);
     return interleave(q.due, q.fresh);
   }
 
-  // ---------------------------------------------------------------- menu
+  let tabBefore = "home";
+
+  /** A flashcard session takes the whole screen; Esc returns to the tab it
+   *  was started from. */
+  function begin(cards, cram) {
+    if (!cards.length) return;
+    mode = cram ? "cram" : "review";
+    $("#quit").textContent = cram ? "Cram · nothing is rescheduled" : "Esc for the menu";
+    tabBefore = currentTab;
+    $("#shell").hidden = true;
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    startSession(cards.map(forPage), cram);
+    renderSaveState();
+  }
+
+  function inSession() { return $("#shell").hidden; }
+
+  function endSession() {
+    hidePeek();
+    clearTimeout(wakeTimer);
+    $("#app").style.display = "none";
+    $("#done").style.display = "none";
+    $("#shell").hidden = false;
+    showTab(tabBefore);
+  }
+
+  // ---------------------------------------------------------------- tabs
+
+  let currentTab = "home";
+
+  function showTab(name) {
+    currentTab = name;
+    document.querySelectorAll("#shell .view").forEach((v) => { v.hidden = v.id !== "tab-" + name; });
+    document.querySelectorAll(".tabbtn").forEach((b) => b.setAttribute("aria-current", b.dataset.tab === name ? "page" : "false"));
+    $("#shell").scrollTop = 0;
+    if (name === "home") renderHome();
+    if (name === "review") renderReview();
+    if (name === "progress") renderProgress();
+    if (name === "models") ensureModels();
+    renderSaveState();
+  }
+
+  /** Redraw the open tab without moving it, after the account answers. */
+  function refreshTab() {
+    if (inSession()) return;
+    if (currentTab === "home") renderHome();
+    if (currentTab === "review") renderReview();
+    if (currentTab === "progress") renderProgress();
+  }
 
   function timeOf(ms) {
     return new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   }
 
-  /** Where the last grade went, shown on the menu and along the top of a
+  /** Where the last grade went, shown on Home and along the top of a
    *  session, so a save that isn't landing is visible straight away. */
   function renderSaveState() {
     const account = where === "account";
@@ -1567,71 +4139,122 @@ function shuffle(a) {
       retrying: "Can’t reach your account · retrying (kept in this browser meanwhile)",
       local: "Saved in this browser only",
     }[saveState];
-    if (mode !== "cram" && $("#menu").hidden) {
+    if (mode !== "cram" && inSession()) {
       $("#quit").textContent = "Esc for the menu" + (label ? " · " + label : "");
     }
-    $("#m-saved").textContent = label + (saveState === "saved" && savedAt ? " at " + timeOf(savedAt) : "");
+    document.querySelectorAll(".save-state").forEach((el) => {
+      el.textContent = label + (saveState === "saved" && savedAt ? " at " + timeOf(savedAt) : "");
+    });
   }
 
   function renderStoreNote() {
-    $("#m-store").textContent = where === "account"
+    const t = where === "account"
       ? "Progress is saved to your claude.ai account, so it follows you to any computer you sign in on. It's separate from the phone app's progress."
       : "Progress is saved in this browser only. Open this page while signed in to claude.ai to keep it on your account.";
+    document.querySelectorAll(".store-note").forEach((el) => { el.textContent = t; });
   }
 
-  function renderMenu() {
+  // ------------------------------------------------------------------ home
+
+  const ICON = {
+    layers: '<path d="M12.8 2.2a2 2 0 0 0-1.6 0L2.6 6.1a1 1 0 0 0 0 1.8l8.6 3.9a2 2 0 0 0 1.6 0l8.6-3.9a1 1 0 0 0 0-1.8z"/><path d="m2 12.6 9.2 4.2a2 2 0 0 0 1.6 0L22 12.6"/><path d="m2 17.6 9.2 4.2a2 2 0 0 0 1.6 0L22 17.6"/>',
+    cap: '<path d="M21.4 10.9a1 1 0 0 0 0-1.8l-8.6-3.9a2 2 0 0 0-1.6 0L2.6 9.1a1 1 0 0 0 0 1.8l8.6 3.9a2 2 0 0 0 1.6 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
+    chart: '<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>',
+    play: '<path d="M6 3l14 9-14 9z"/>',
+    chev: '<path d="m9 18 6-6-6-6"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+  };
+  const icon = (n, cls) => `<svg class="ic ${cls || ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
+
+  function modelStats(m) {
+    const done = m.scenarios.filter((s) => (progress.models || {})[s.id] && progress.models[s.id].done).length;
+    return { done, total: m.scenarios.length };
+  }
+
+  /** The single most useful next thing, chosen for him: cards that are
+   *  owed, then an unfinished walkthrough, then the first model not done. */
+  function primaryAction(st) {
+    if (st.due) return { label: `Review ${st.due} card${st.due === 1 ? "" : "s"}`, sub: st.newLeft ? `plus ${st.newLeft} new` : "due now", icon: "layers", act: "review" };
+    if (st.newLeft) return { label: `Learn ${st.newLeft} new card${st.newLeft === 1 ? "" : "s"}`, sub: "today's new cards, tested ones first", icon: "cap", act: "review" };
+    const last = progress.last;
+    if (last && last.scenario && !((progress.models || {})[last.scenario] || {}).done) {
+      const m = MODELS.find((x) => x.id === last.model), sc = m && m.scenarios.find((x) => x.id === last.scenario);
+      if (sc) return { label: "Continue: " + sc.title, sub: m.title, icon: "play", act: "model", model: m.id, scenario: sc.id };
+    }
+    const next = MODELS.find((m) => modelStats(m).done < m.scenarios.length);
+    if (next) {
+      const sc = next.scenarios.find((s) => !((progress.models || {})[s.id] || {}).done);
+      return { label: "Walk through " + sc.title, sub: next.title + " · " + sc.source, icon: "chart", act: "model", model: next.id, scenario: sc.id };
+    }
+    return { label: "Cram the tested cards", sub: "Everything is caught up", icon: "layers", act: "tested" };
+  }
+
+  function renderHome() {
     const now = Date.now();
     const st = summary(ALL, progress, now);
+    const n = streak();
+    $("#h-streak").innerHTML = `<svg class="ic ${n ? "lit" : ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4.1 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><b>${n}</b><span>day${n === 1 ? "" : "s"}</span>`;
+
+    const pa = primaryAction(st);
+    const btn = $("#h-primary");
+    btn.dataset.act = pa.act;
+    btn.dataset.model = pa.model || "";
+    btn.dataset.scenario = pa.scenario || "";
+    btn.innerHTML = `<span class="pl">${icon(pa.icon)}<span><b>${esc(pa.label)}</b><small>${esc(pa.sub)}</small></span></span><span class="pr"><kbd>Enter</kbd>${icon("chev")}</span>`;
+
+    $("#h-learn").textContent = st.newLeft;
+    $("#h-due").textContent = st.due;
+    $("#h-wave").textContent = !st.due && st.upcoming < Infinity
+      ? `next card back at ${timeOf(st.upcoming)}` : "";
+    $("#h-solid").textContent = `${st.solid} of ${st.total} solid`;
     const seen = st.total - st.unseen;
+    const pct = (x) => (100 * x / st.total).toFixed(2) + "%";
+    $("#h-bar").innerHTML = `<span style="width:${pct(st.solid)};background:#2E7D52"></span><span style="width:${pct(seen - st.solid)};background:var(--primary)"></span>`;
 
-    $("#m-status").textContent = st.due + st.newLeft
-      ? `${st.due} due now · ${st.newLeft} new available today · ${st.solid} of ${st.total} solid`
-      : `All caught up${st.upcoming < Infinity ? " · next card at " + timeOf(st.upcoming) : ""} · ${st.solid} of ${st.total} solid`;
+    $("#h-models").innerHTML = MODELS.map((m) => {
+      const ms = modelStats(m), w = DECK.weeks[m.week - 1];
+      return `<button type="button" class="hm" data-model="${m.id}" style="--c:${w.color}">` +
+        `<span class="wk">Week ${m.week}</span><span class="nm">${esc(m.title)}</span>` +
+        `<span class="mini"><span style="width:${(100 * ms.done / ms.total).toFixed(0)}%"></span></span>` +
+        `<span class="ct">${ms.done ? ms.done + " of " + ms.total + " walkthroughs" : ms.total + " walkthroughs"}</span></button>`;
+    }).join("");
+    renderStoreNote();
+  }
 
-    // One bar for the whole deck: solid, seen, never seen.
-    const pct = (n) => (100 * n / st.total).toFixed(2) + "%";
-    $("#m-bar").innerHTML =
-      `<span style="width:${pct(st.solid)};background:#2E7D52"></span>` +
-      `<span style="width:${pct(seen - st.solid)};background:#1F4E8C"></span>`;
-    $("#m-legend").innerHTML =
-      `<span><i style="background:#2E7D52"></i>${st.solid} solid</span>` +
-      `<span><i style="background:#1F4E8C"></i>${seen - st.solid} learning</span>` +
-      `<span><i style="background:rgba(43,33,24,.15)"></i>${st.unseen} not seen yet</span>`;
+  // ---------------------------------------------------------------- review
 
-    const btn = $("#m-review");
+  function renderReview() {
+    const st = summary(ALL, progress, Date.now());
     const owed = st.due + st.newLeft;
-    btn.disabled = owed === 0;
+    const b = $("#r-review");
+    b.disabled = owed === 0;
     if (owed) {
       const parts = [];
       if (st.due) parts.push(st.due + " due");
       if (st.newLeft) parts.push(st.newLeft + " new");
-      const next = st.nextCard;
-      btn.innerHTML = `<span><b>Review ${parts.join(" + ")}</b><small>Starting with ${esc(plain(next.term))}${next.starred ? " ★" : ""}</small></span><span class="go">Enter ↵</span>`;
+      b.innerHTML = `<span class="pl">${icon("layers")}<span><b>Review ${parts.join(" + ")}</b><small>Starting with ${esc(plain(st.nextCard.term))}${st.nextCard.starred ? " ★" : ""}</small></span></span><span class="pr"><kbd>Enter</kbd>${icon("chev")}</span>`;
     } else {
-      btn.innerHTML = `<span><b>All caught up</b><small>${st.upcoming < Infinity ? "Next card comes due at " + timeOf(st.upcoming) + ". Cram a week below in the meantime." : "Cram a week below to keep going."}</small></span>`;
+      b.innerHTML = `<span class="pl">${icon("check")}<span><b>All caught up</b><small>${st.upcoming < Infinity ? "Next card comes due at " + timeOf(st.upcoming) + ". Cram a week below meanwhile." : "Cram a week below to keep going."}</small></span></span>`;
     }
-
     const tested = reviewQueue((c) => c.starred, Infinity);
-    $("#m-tested").innerHTML = `★ Tested cards only<small>${tested.length ? tested.length + " due or new of the 65 on the practice midterm" : "All 65 caught up · crams them instead"}</small>`;
-
-    $("#m-weeks").innerHTML = DECK.weeks.map((w, k) => {
+    $("#r-tested").innerHTML = `★ Tested cards only<small>${tested.length ? tested.length + " due or new of the 65 on the practice midterm" : "All 65 caught up · crams them instead"}</small>`;
+    $("#r-weeks").innerHTML = DECK.weeks.map((w, k) => {
       const cs = ALL.filter((c) => c.week === k + 1);
       const q = reviewQueue((c) => c.week === k + 1, Infinity);
       const solid = cs.filter((c) => (progress.cards[c.id] || {}).solid).length;
       const seenW = cs.filter((c) => progress.cards[c.id]).length;
-      return `<button class="m-week" type="button" data-week="${k + 1}" style="--c:${w.color}">` +
-        `<span class="wk">WEEK ${k + 1}</span><span class="nm">${esc(w.title)}</span>` +
+      return `<button class="hm" type="button" data-week="${k + 1}" style="--c:${w.color}">` +
+        `<span class="wk">Week ${k + 1}</span><span class="nm">${esc(w.title)}</span>` +
         `<span class="mini"><span style="width:${(100 * seenW / cs.length).toFixed(1)}%"></span></span>` +
         `<span class="ct">${q.length ? q.length + " to review" : "caught up · cram"} · ${solid}/${cs.length} solid</span></button>`;
     }).join("");
-
-    renderStoreNote();
-    renderSaveState();
-    if (!$("#stats").hidden) renderStats();
   }
 
-  function renderStats(confirming) {
-    const lines = DECK.weeks.map((w, k) => {
+  // -------------------------------------------------------------- progress
+
+  function renderProgress(confirming) {
+    const st = summary(ALL, progress, Date.now());
+    const weeks = DECK.weeks.map((w, k) => {
       const cs = ALL.filter((c) => c.week === k + 1);
       const seen = cs.filter((c) => progress.cards[c.id]).length;
       const solid = cs.filter((c) => (progress.cards[c.id] || {}).solid).length;
@@ -1640,56 +4263,126 @@ function shuffle(a) {
     const hard = ALL.map((c) => ({ c, s: progress.cards[c.id] }))
       .filter((x) => x.s && x.s.lapses > 0)
       .sort((a, b) => b.s.lapses - a.s.lapses).slice(0, 8)
-      .map((x) => `<li>${esc(plain(x.c.term))} <span style="opacity:.55">missed ${x.s.lapses}×</span></li>`).join("");
-    $("#stats").innerHTML = lines +
-      (hard ? `<div><p class="m-h" style="margin-top:6px">Missed most</p><ul>${hard}</ul></div>` : "") +
-      (confirming
-        ? `<div class="m-confirm"><span>Reset all 126 cards to new? This can't be undone.</span><button class="yes" type="button" data-m="reset-yes">Reset</button><button type="button" data-m="reset-no">Cancel</button></div>`
-        : `<div><button class="m-small danger" type="button" data-m="reset">Reset all progress…</button></div>`);
+      .map((x) => `<li>${esc(plain(x.c.term))} <span class="dim">missed ${x.s.lapses}×</span></li>`).join("");
+    const models = MODELS.map((m) => {
+      const rows = m.scenarios.map((s) => {
+        const r = (progress.models || {})[s.id];
+        return `<li class="${r && r.done ? "done" : ""}">${r && r.done ? icon("check") : '<span class="dot0"></span>'}<span>${esc(s.title)}</span>` +
+          `<span class="dim">${r && r.done ? (r.total ? r.right + "/" + r.total + " predictions" : "done") : "not yet"}</span></li>`;
+      }).join("");
+      return `<div class="pm"><p class="pm-h" style="color:${DECK.weeks[m.week - 1].color}">${esc(m.title)}</p><ul>${rows}</ul></div>`;
+    }).join("");
+    const missed = (progress.missed || []).slice(0, 10).map((x) => {
+      const m = MODELS.find((y) => y.id === x.model), sc = m && m.scenarios.find((y) => y.id === x.scenario);
+      return `<li>${x.q} <span class="dim">${sc ? esc(sc.title) : ""}</span></li>`;
+    }).join("");
+    $("#p-body").innerHTML =
+      `<section class="card pad"><p class="sec">Flashcards · ${st.solid} of ${st.total} solid · ${st.unseen} not seen</p>${weeks}` +
+      (hard ? `<p class="sec gap">Cards missed most</p><ul class="plain">${hard}</ul>` : "") + "</section>" +
+      `<section class="card pad"><p class="sec">Model walkthroughs</p><div class="pms">${models}</div>` +
+      (missed ? `<p class="sec gap">Predictions you missed lately</p><ul class="plain">${missed}</ul>` : "") + "</section>" +
+      `<section class="card pad"><p class="sec">Reset</p>` + (confirming
+        ? `<div class="m-confirm"><span>Reset all 126 cards and every walkthrough? This can't be undone.</span><button class="yes" type="button" data-m="reset-yes">Reset</button><button type="button" data-m="reset-no">Cancel</button></div>`
+        : `<button class="m-small danger" type="button" data-m="reset">Reset all progress…</button>`) +
+      `<p class="store-note dim"></p></section>`;
+    renderStoreNote();
   }
 
-  $("#menu").addEventListener("click", (e) => {
+  // ---------------------------------------------------------------- models
+
+  let modelsMounted = false;
+
+  /** The dashboard is built the first time the tab opens. */
+  function ensureModels() {
+    if (modelsMounted) return;
+    modelsMounted = true;
+    MODELUI.mount($("#models"), {
+      modelProgress: () => progress.models || {},
+      remember: (model, scenario) => { progress.last = { model, scenario: scenario || null, at: Date.now() }; localSave(); },
+      missedPrediction: (x) => {
+        progress.missed = [{ ...x, at: Date.now() }].concat(progress.missed || []).slice(0, 40);
+      },
+      scenarioDone: (x) => {
+        progress.models = progress.models || {};
+        progress.models[x.scenario] = { done: true, right: x.right, total: x.total, at: Date.now() };
+        studied();
+        save();
+      },
+    });
+  }
+
+  function openModels(modelId, scenarioId) {
+    showTab("models");
+    if (modelId) MODELUI.open(modelId, scenarioId);
+  }
+
+  // ---------------------------------------------------------------- clicks
+
+  function startReview() {
+    const st = summary(ALL, progress, Date.now());
+    begin(reviewQueue(null, st.newLeft), false);
+  }
+
+  document.addEventListener("click", (e) => {
     const b = e.target.closest("button");
     if (!b) return;
-    if (b.id === "m-review") {
-      const st = summary(ALL, progress, Date.now());
-      begin(reviewQueue(null, st.newLeft), false);
-    } else if (b.id === "m-tested") {
+    if (b.closest("#toMenu") || b.id === "toMenu") return endSession();
+    if (b.classList.contains("tabbtn")) {
+      if (b.dataset.tab === "models") return openModels(null);
+      return showTab(b.dataset.tab);
+    }
+    if (!$("#shell").contains(b)) return;
+    if (b.id === "h-primary") {
+      const a = b.dataset.act;
+      if (a === "review") return startReview();
+      if (a === "model") return openModels(b.dataset.model, b.dataset.scenario);
+      if (a === "tested") return begin(shuffle(ALL.filter((c) => c.starred)), true);
+    }
+    if (b.id === "r-review") return startReview();
+    if (b.id === "h-learn-btn") return startReview();
+    if (b.id === "r-tested" || b.id === "h-tested") {
       const q = reviewQueue((c) => c.starred, Infinity);
-      if (q.length) begin(q, false);
-      else begin(shuffle(ALL.filter((c) => c.starred)), true);
-    } else if (b.id === "m-cram") {
-      begin(shuffle(ALL.slice()), true);
-    } else if (b.dataset.week) {
+      return q.length ? begin(q, false) : begin(shuffle(ALL.filter((c) => c.starred)), true);
+    }
+    if (b.id === "r-cram") return begin(shuffle(ALL.slice()), true);
+    if (b.dataset.week) {
       const k = Number(b.dataset.week);
       const q = reviewQueue((c) => c.week === k, Infinity);
-      if (q.length) begin(q, false);
-      else begin(shuffle(ALL.filter((c) => c.week === k)), true);
-    } else if (b.id === "m-stats-btn") {
-      $("#stats").hidden = !$("#stats").hidden;
-      if (!$("#stats").hidden) renderStats();
-    } else if (b.dataset.m === "reset") {
-      renderStats(true);
-    } else if (b.dataset.m === "reset-no") {
-      renderStats();
-    } else if (b.dataset.m === "reset-yes") {
-      progress = { cards: {} };
-      save();
-      renderMenu();
-      renderStats();
+      return q.length ? begin(q, false) : begin(shuffle(ALL.filter((c) => c.week === k)), true);
     }
+    if (b.dataset.model && b.classList.contains("hm")) return openModels(b.dataset.model);
+    if (b.dataset.m === "reset") return renderProgress(true);
+    if (b.dataset.m === "reset-no") return renderProgress();
+    if (b.dataset.m === "reset-yes") {
+      progress = { cards: {}, days: progress.days || {} };
+      save();
+      return renderProgress();
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("#logo") && inSession()) endSession();
   });
 
   // ---------------------------------------------------------------- keys
 
   document.addEventListener("keydown", (e) => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
-    if (!$("#menu").hidden) return;              // menu buttons handle Enter themselves
+    if (!inSession()) {
+      if (currentTab === "models") { MODELUI.handleKey(e); return; }
+      // Enter on Home or Review starts what the big button says, unless a
+      // control already has the focus.
+      if (e.key === "Enter" && (!document.activeElement || document.activeElement === document.body)) {
+        const big = currentTab === "home" ? $("#h-primary") : currentTab === "review" ? $("#r-review") : null;
+        if (big && !big.disabled) { e.preventDefault(); big.click(); }
+      }
+      return;
+    }
     const k = e.key;
     const arrows = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
-    if (k === "Escape") { e.preventDefault(); if (peekOpen()) hidePeek(); else showMenu(); return; }
+    if (k === "Escape") { e.preventDefault(); if (peekOpen()) hidePeek(); else endSession(); return; }
     if ($("#done").style.display === "flex") {
-      if (k === "Enter") { e.preventDefault(); showMenu(); }
+      if (k === "Enter") { e.preventDefault(); endSession(); }
       return;
     }
     if (peekOpen()) {
@@ -1709,11 +4402,6 @@ function shuffle(a) {
     else grade("missed");
   });
 
-  document.addEventListener("click", (e) => {
-    if (e.target.closest("#toMenu")) showMenu();
-    else if (e.target.closest("#logo")) showMenu();
-  });
-
   // Key labels on the grade buttons.
   const keyFor = { missed: "↑↓", shaky: "←", confident: "→" };
   document.querySelectorAll("footer .btn").forEach((b) => {
@@ -1725,7 +4413,8 @@ function shuffle(a) {
   // ---------------------------------------------------------------- start
 
   merge(localLoad());
-  showMenu();
+  $("#app").style.display = "none";
+  showTab("home");
   connectAccount();
 })();
 </script>

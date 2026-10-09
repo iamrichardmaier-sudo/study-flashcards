@@ -1,49 +1,101 @@
-<div id="menu" hidden>
-  <div class="m-wrap">
-    <div class="m-head">
-      <div class="m-eyebrow">
-        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+<div id="shell">
+  <nav class="tabs" aria-label="Sections">
+    <div class="tabs-in">
+      <span class="brand">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M6 5v29h29" stroke-width="2.6"/><path d="M10 29c6-1 9-5 12-11s6-9 11-10" stroke-width="2.6"/>
           <path d="M10 12l23 17" stroke-width="2" opacity=".55"/>
-        </svg>ECON 381 · Midterm 1
-      </div>
-      <h1 class="m-title">Term &amp; definition cards</h1>
-      <p class="m-sub" id="m-status">Loading your progress…</p>
-      <p class="m-sub m-saved" id="m-saved"></p>
-    </div>
-
-    <div class="m-meter">
-      <div class="m-bar" id="m-bar"></div>
-      <div class="m-legend" id="m-legend"></div>
-    </div>
-
-    <button class="m-primary" id="m-review" type="button"></button>
-
-    <div>
-      <p class="m-h">By week</p>
-      <div class="m-weeks" id="m-weeks"></div>
-    </div>
-
-    <div class="m-row">
-      <button class="m-btn star" id="m-tested" type="button"></button>
-      <button class="m-btn" id="m-cram" type="button">Cram all 126<small>Shuffled · nothing is rescheduled</small></button>
-      <button class="m-btn" id="m-stats-btn" type="button">Progress<small>Per week, and the cards you miss most</small></button>
-    </div>
-
-    <div id="stats" hidden></div>
-
-    <div>
-      <p class="m-h">Keys</p>
-      <div class="m-keys">
-        <span><kbd>Enter</kbd><kbd>→</kbd></span><span>Flip the card</span>
-        <span><kbd>→</kbd></span><span>Confident · back in 4 hours, then 8, then daily</span>
-        <span><kbd>←</kbd></span><span>Shaky · back in 1 hour</span>
-        <span><kbd>↑</kbd><kbd>↓</kbd></span><span>Missed · back of the deck, right now</span>
-        <span><kbd>Enter</kbd></span><span>On the answer: flip back to the term</span>
-        <span><kbd>Esc</kbd></span><span>Back to this menu (your grades are already saved)</span>
+        </svg>ECON 381
+      </span>
+      <div class="tablist">
+        <button type="button" class="tabbtn" data-tab="home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+          <span>Home</span></button>
+        <button type="button" class="tabbtn" data-tab="review">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.8 2.2a2 2 0 0 0-1.6 0L2.6 6.1a1 1 0 0 0 0 1.8l8.6 3.9a2 2 0 0 0 1.6 0l8.6-3.9a1 1 0 0 0 0-1.8z"/><path d="m2 12.6 9.2 4.2a2 2 0 0 0 1.6 0L22 12.6"/><path d="m2 17.6 9.2 4.2a2 2 0 0 0 1.6 0L22 17.6"/></svg>
+          <span>Review</span></button>
+        <button type="button" class="tabbtn" data-tab="models">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          <span>Models</span></button>
+        <button type="button" class="tabbtn" data-tab="progress">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+          <span>Progress</span></button>
       </div>
     </div>
+  </nav>
 
-    <p class="m-note" id="m-store"></p>
+  <div class="views">
+    <section class="view" id="tab-home">
+      <div class="wrap">
+        <div class="h-top">
+          <div>
+            <h1>ECON 381</h1>
+            <p>Midterm 1 · the terms and the models behind them.</p>
+          </div>
+          <div class="streak" id="h-streak" title="Days in a row with something studied"></div>
+        </div>
+
+        <button type="button" class="primary" id="h-primary"></button>
+        <p class="save-state dim small"></p>
+
+        <section class="sect-h">
+          <h2>Flashcards</h2>
+          <div class="tiles">
+            <div class="tile"><p class="tv" id="h-learn">0</p><p class="tl">new today</p></div>
+            <div class="tile"><p class="tv" id="h-due">0</p><p class="tl">to review</p><p class="tw" id="h-wave"></p></div>
+          </div>
+          <div class="meter"><div class="m-bar" id="h-bar"></div><p class="dim small" id="h-solid"></p></div>
+          <div class="pair">
+            <button type="button" class="second" id="h-learn-btn">Review now</button>
+            <button type="button" class="second" id="h-tested">★ Tested cards only</button>
+          </div>
+        </section>
+
+        <section class="sect-h">
+          <h2>Models</h2>
+          <div class="grid3" id="h-models"></div>
+        </section>
+
+        <p class="store-note dim small"></p>
+      </div>
+    </section>
+
+    <section class="view" id="tab-review" hidden>
+      <div class="wrap">
+        <div class="h-top"><div><h1>Review</h1><p>Flip with Enter or →. Then → Confident, ← Shaky, ↑↓ Missed.</p></div></div>
+        <button type="button" class="primary" id="r-review"></button>
+        <p class="save-state dim small"></p>
+        <section class="sect-h">
+          <h2>By week</h2>
+          <div class="grid3" id="r-weeks"></div>
+        </section>
+        <div class="pair">
+          <button type="button" class="second star" id="r-tested"></button>
+          <button type="button" class="second" id="r-cram">Cram all 126<small>Shuffled · nothing is rescheduled</small></button>
+        </div>
+        <section class="sect-h">
+          <h2>Keys</h2>
+          <div class="keys card pad">
+            <span><kbd>Enter</kbd><kbd>→</kbd></span><span>Flip the card</span>
+            <span><kbd>→</kbd></span><span>Confident · back in 4 hours, then 8, then daily</span>
+            <span><kbd>←</kbd></span><span>Shaky · back in 1 hour</span>
+            <span><kbd>↑</kbd><kbd>↓</kbd></span><span>Missed · back of the deck, right now</span>
+            <span><kbd>Enter</kbd></span><span>On the answer: flip back to the term</span>
+            <span><kbd>Esc</kbd></span><span>Back to the menu (your grades are already saved)</span>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="view" id="tab-models" hidden>
+      <div class="wrap wide" id="models"></div>
+    </section>
+
+    <section class="view" id="tab-progress" hidden>
+      <div class="wrap">
+        <div class="h-top"><div><h1>Progress</h1><p>Cards, walkthroughs, and what to look at again.</p></div></div>
+        <div id="p-body" class="stack"></div>
+      </div>
+    </section>
   </div>
 </div>
