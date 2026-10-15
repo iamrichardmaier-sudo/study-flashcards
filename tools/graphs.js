@@ -580,4 +580,8 @@
   };
 
   window.GRAPHS = G;
+  // The drawing helpers, for the other classes' graph files (tools/graphs/<id>.js),
+  // which add their own entries to window.GRAPHS in the same style.
+  window.GRAPHKIT = { svg: svg, t: t, ln: ln, dot: dot, rect: rect, r: r, pathD: pathD, curve: curve, area: area,
+    plot: plot, scale: scale, axes: axes, vguide: vguide, hguide: hguide, W: W, H: H, X0: X0, Y0: Y0, X1: X1, Y1: Y1 };
 })();

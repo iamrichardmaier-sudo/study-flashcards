@@ -7,7 +7,7 @@
 // that gets pasted into Scriptable, with the deck, graphs and scheduler
 // embedded).
 
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, copyFileSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, copyFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import vm from "node:vm";
@@ -30,7 +30,7 @@ for (let w = 1; w <= weeks.length; w++) {
 const graphSrc = read("tools/graphs.js");
 const sandbox = { window: {} };
 vm.runInNewContext(graphSrc, sandbox);
-const GRAPHS = sandbox.window.GRAPHS;
+let GRAPHS = sandbox.window.GRAPHS;
 
 const EXPECTED_CARDS = 126;
 const EXPECTED_STARRED = 65;   // "★ = tested directly on the practice midterm (65 cards)"
@@ -211,7 +211,7 @@ const modelFiles = ["engine.js", "charts.js", "defs/production.js", "defs/funds.
 const modelsJs = "var MODELS = [];\n" + modelFiles.map((f) => read("tools/models/" + f)).join("\n");
 
 /** One class's app as page content, for the given saving backend. */
-function appContent({ course, deck, examJs, extraJs, extraCss, backend, content }) {
+function appContent({ course, deck, examJs, extraJs, extraCss, backend, content, graphs }) {
   let js = page.js;
   js = split(js, "/*__WEEKS__*/[]", json(deck.weeks));
   js = split(js, "/*__UI__*/{}", JSON.stringify(webUI));
@@ -235,7 +235,7 @@ function appContent({ course, deck, examJs, extraJs, extraCss, backend, content 
     "<style>\n" + page.css + "\n" + read("tools/web/web.css") + "\n" + read("tools/models/models.css") + "\n" +
     read("tools/practice/practice.css") + "\n" + (extraCss || "") + "</style>\n" +
     shell + "\n" + body + "\n" +
-    "<script>\n" + safe(graphSrc) + "\n</script>\n" +
+    "<script>\n" + safe(graphSrc + (graphs ? "\n" + graphs : "")) + "\n</script>\n" +
     "<script>\n" + safe(js) + "</script>\n" +
     "<script>\n" + safe(extraJs) + "\n</script>\n" +
     "<script>\n" + safe(examJs) + "\n" +
@@ -302,6 +302,11 @@ for (const id of COURSES) {
   const cs = (await import(join(root, `courses/${id}/cards.mjs`))).default;
   const P = (await import(join(root, `courses/${id}/practice.mjs`))).default;
   const where = id;
+  // The class's own graphs, added to the shared library (tools/graphs/<id>.js).
+  const classGraphs = existsSync(join(root, `tools/graphs/${id}.js`)) ? read(`tools/graphs/${id}.js`) : "";
+  const gsb = { window: {} };
+  vm.runInNewContext(graphSrc + "\n" + classGraphs, gsb);
+  GRAPHS = gsb.window.GRAPHS;
   const cids = checkCourseCards(cs, meta, where);
   checkPractice(P, cids, where, !meta.enriched);
   const deck = { title: meta.code + " · " + meta.name, weeks: meta.units, cards: cs };
@@ -310,7 +315,7 @@ for (const id of COURSES) {
     practiceHeading: exam.heading, localKey: `study-${id}-progress`, phone: false, models: false, tools: true };
   const extraJs = read("tools/kit/kit.js") + "\n" + read(`classes/${id}.js`);
   const content = contentOf(course, deck, exam);
-  const siteApp = appContent({ course, deck, examJs: "var EXAM = " + json(exam) + ";", extraJs, content: content.stamp,
+  const siteApp = appContent({ course, deck, examJs: "var EXAM = " + json(exam) + ";", extraJs, content: content.stamp, graphs: classGraphs,
     extraCss: read("tools/kit/kit.css"), backend: { ...SUPABASE, table: "study_progress", course: id } });
   const site = sitePage(siteApp, `${meta.code} ${meta.name}: flashcards, practice questions and interactive tools.`);
   writeFileSync(join(root, `site/${id}.html`), site);
