@@ -18,6 +18,7 @@
 
 var EXAM = {
   title: "Midterm 1 · Practice 1",
+  heading: "Practice midterm",
   sections: [
     { id: "p1", title: "Part 1 · Short answer", sub: "20 questions · 2 points each" },
     { id: "p2q1", title: "Part 2 · Q1 · Golden rule in 1860s Massachusetts", sub: "Solow model · 20 points" },

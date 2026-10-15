@@ -15,7 +15,7 @@ var PRACTICEUI = (function () {
   var root, host;
   var QS = EXAM.questions;
   var BY = {};
-  QS.forEach(function (q, k) { q.n = k; BY[q.id] = q; });
+  QS.forEach(function (q, k) { q.n = k; q.steps = q.steps || []; BY[q.id] = q; });
 
   var view = "menu";                 // "menu" | "ask" | "result" | "done"
   var queue = [], at = 0;
@@ -101,7 +101,7 @@ var PRACTICEUI = (function () {
       .sort(function (a, b) { return b.s.lapses - a.s.lapses; }).slice(0, 6)
       .map(function (x) { return "<li>" + esc(sectionShort(x.q)) + " " + esc(x.q.label) + ' <span class="dim">missed ' + x.s.lapses + "×</span></li>"; }).join("");
     root.innerHTML =
-      '<div class="h-top"><div><h1>Practice midterm</h1><p>' + esc(EXAM.title) + " · " + QS.length + " questions as multiple choice. Guess, then see the pattern and where it went wrong.</p></div></div>" +
+      '<div class="h-top"><div><h1>' + esc(EXAM.heading || "Practice") + "</h1><p>" + esc(EXAM.title) + " \u00b7 " + QS.length + " questions as multiple choice. Guess, then see the pattern and where it went wrong.</p></div></div>" +
       big + '<p class="save-state dim small"></p>' +
       '<section class="sect-h"><h2>Score</h2><div class="tiles">' +
       '<div class="tile"><p class="tv">' + st.right + '</p><p class="tl">right last time</p></div>' +
@@ -160,7 +160,7 @@ var PRACTICEUI = (function () {
     return '<div class="pq-top"><span class="pq-count">' + (at + 1) + " / " + queue.length + "</span>" +
       '<div class="pq-bar"><span style="width:' + (100 * at / queue.length).toFixed(1) + "%;background:" + w.color + '"></span></div>' +
       '<button type="button" class="m-small" id="pq-quit">Esc · menu</button></div>' +
-      '<p class="pq-src" style="color:' + w.color + '">' + esc(sec.title) + " · " + esc(q.label) + " · " + q.pts + " pts" +
+      '<p class="pq-src" style="color:' + w.color + '">' + esc(sec.title) + " \u00b7 " + esc(q.label) + (q.pts ? " \u00b7 " + q.pts + " pts" : "") +
       (q.kind === "all" ? ' · <b>select all that apply</b>' : "") + "</p>" +
       (q.setup ? '<p class="pq-setup">' + q.setup + "</p>" : "") +
       '<p class="pq-q">' + q.prompt + "</p>";
@@ -209,10 +209,10 @@ var PRACTICEUI = (function () {
     var related = (q.cards || []).map(function (id) { var t = host.cardTerm(id); return t ? '<span class="pq-chip">' + t + "</span>" : ""; }).join("");
     root.innerHTML = '<div class="pq">' + head(q) +
       '<div class="pq-opts done' + (q.tf ? " tf" : "") + '">' + opts + "</div>" + verdict +
-      '<section class="pq-box pattern"><p class="pq-h">The pattern</p><div>' + q.pattern + "</div></section>" +
+      (q.pattern ? '<section class="pq-box pattern"><p class="pq-h">The pattern</p><div>' + q.pattern + "</div></section>" : "") +
       diag +
-      '<section class="pq-box steps"><p class="pq-h">Step by step' + (wasRight && !allShown ? ' <button type="button" class="m-small" id="pq-show">Show the working</button>' : "") + "</p>" +
-      '<ol class="pq-steps">' + steps + "</ol>" + (allShown ? graph : "") + "</section>" +
+      (q.steps.length ? '<section class="pq-box steps"><p class="pq-h">Step by step' + (wasRight && !allShown ? ' <button type="button" class="m-small" id="pq-show">Show the working</button>' : "") + "</p>" +
+      '<ol class="pq-steps">' + steps + "</ol>" + (allShown ? graph : "") + "</section>" : "") +
       (related ? '<p class="pq-rel"><span class="dim small">' + (wasRight ? "Flashcards on this:" : "Flashcards on this (marked due again):") + "</span> " + related + "</p>" : "") +
       '<div class="pq-next"><button type="button" class="go-btn" id="pq-next">' + nextLabel + " <kbd>Enter</kbd></button></div>" +
       "</div>";

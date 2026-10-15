@@ -1,9 +1,10 @@
 // node --test tools/classes.test.mjs
 //
-// The other class pages (classes/*.js): every deck and question set is well
-// formed, the statistics and micro maths behind the tools match textbook
-// values, the numeric practice answers agree with that maths, and the site
-// build wires the class switcher into ECON 381 only where it should.
+// The other classes: their course files (courses/<id>/) load, the
+// statistics and micro maths behind their tools (classes/<id>.js on
+// tools/kit/kit.js) match textbook values, every tool renders and survives
+// every click, and the site build writes one app page per class with the
+// switcher. (build.mjs itself checks every deck and question set.)
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -13,7 +14,7 @@ import vm from "node:vm";
 const root = new URL("../", import.meta.url);
 const read = (p) => readFileSync(new URL(p, root), "utf8");
 
-/** Runs a course file against a stub Study and returns what it registered. */
+/** Runs a class's tools file against a stub Study and returns what it registered. */
 function load(id) {
   let cfg = null;
   const Study = { h() {}, esc: String, fmt: String, course: (c) => { cfg = c; } };
@@ -25,38 +26,27 @@ const near = (a, b, tol, msg) => assert.ok(Math.abs(a - b) <= tol, `${msg ?? ""}
 
 const IDS = ["econ210", "econ378", "econ380", "ihum242"];
 const C = Object.fromEntries(IDS.map((id) => [id, load(id)]));
+const COURSE = {};
+for (const id of IDS) {
+  COURSE[id] = {
+    meta: (await import(new URL(`courses/${id}/course.mjs`, root))).default,
+    cards: (await import(new URL(`courses/${id}/cards.mjs`, root))).default,
+    practice: (await import(new URL(`courses/${id}/practice.mjs`, root))).default,
+  };
+}
 
 for (const id of IDS) {
-  test(`${id}: deck, questions and tools are well formed`, () => {
-    const c = C[id];
-    assert.equal(c.id, id);
-    for (const f of ["code", "title", "blurb", "color"]) assert.ok(c[f], `missing ${f}`);
-    const groups = new Set(c.groups.map((g) => g.id));
-    const seen = new Set();
-    assert.ok(c.cards.length >= 20, "at least 20 cards");
-    for (const k of c.cards) {
-      assert.ok(k.id && k.term && k.def, `card ${k.id} incomplete`);
-      assert.ok(!seen.has(k.id), `duplicate card ${k.id}`); seen.add(k.id);
-      assert.ok(groups.has(k.group), `card ${k.id} has unknown group ${k.group}`);
-    }
-    const qs = new Set();
-    assert.ok(c.practice.length >= 10, "at least 10 questions");
-    for (const q of c.practice) {
-      assert.ok(!qs.has(q.id), `duplicate question ${q.id}`); qs.add(q.id);
-      assert.ok(groups.has(q.group), `question ${q.id} has unknown group`);
-      assert.equal(q.options.filter((o) => o.right).length, 1, `question ${q.id} needs exactly one right option`);
-      for (const o of q.options) assert.ok(o.t && o.why, `question ${q.id}: every option needs text and a why`);
-      assert.equal(new Set(q.options.map((o) => o.t)).size, q.options.length, `question ${q.id} repeats an option`);
-    }
-    assert.ok(c.tools.length >= 3, "at least 3 tools");
-    for (const t of c.tools) assert.ok(t.id && t.name && t.blurb && typeof t.mount === "function", `tool ${t.id} incomplete`);
-    // Card and question HTML goes into innerHTML, so tags must balance.
-    const text = JSON.stringify([c.cards, c.practice]);
-    for (const tag of ["b", "i", "sub", "sup"]) {
-      const open = (text.match(new RegExp(`<${tag}>`, "g")) || []).length;
-      const close = (text.match(new RegExp(`</${tag}>`, "g")) || []).length;
-      assert.equal(open, close, `unbalanced <${tag}>`);
-    }
+  test(`${id}: course files, units and tools`, () => {
+    const { meta, cards, practice } = COURSE[id];
+    assert.equal(meta.id, id);
+    for (const f of ["code", "name", "tagline", "color"]) assert.ok(meta[f], `missing ${f}`);
+    assert.ok(meta.units.length >= 3 && meta.units.every((u) => u.title && /^#[0-9A-F]{6}$/i.test(u.color) && u.soft), "units with colors");
+    assert.ok(cards.length >= 20, "at least 20 cards");
+    assert.ok(practice.questions.length >= 10, "at least 10 questions");
+    for (const q of practice.questions) assert.equal(new Set(q.options.map((o) => o.t)).size, q.options.length, `question ${q.id} repeats an option`);
+    assert.equal(C[id].id, id);
+    assert.ok(C[id].tools.length >= 3, "at least 3 tools");
+    for (const t of C[id].tools) assert.ok(t.id && t.name && t.blurb && typeof t.mount === "function", `tool ${t.id} incomplete`);
   });
 }
 
@@ -185,10 +175,16 @@ function fakeDom(page) {
   class El {
     constructor(tag) {
       this.tagName = tag.toUpperCase(); this.children = []; this.attrs = {}; this.parent = null;
-      this.style = { setProperty() {} }; this.value = ""; this.checked = false; this.disabled = false; this._text = "";
+      this.style = { setProperty() {} }; this._v = ""; this.checked = false; this.disabled = false; this._text = "";
       const cls = new Set();
       this.classList = { add: (c) => cls.add(c), remove: (c) => cls.delete(c), contains: (c) => cls.has(c) };
     }
+    // A select with nothing chosen reads as its first option, as in a browser.
+    get value() {
+      if (this.tagName === "SELECT" && !this._v) { const o = this.children.find((c) => c.attrs && (c.attrs.value != null || c._v)); return o ? o.attrs.value ?? o._v : ""; }
+      return this._v;
+    }
+    set value(v) { this._v = String(v); }
     setAttribute(k, v) { this.attrs[k] = String(v); if (k === "disabled") this.disabled = true; }
     getAttribute(k) { return this.attrs[k] ?? null; }
     get id() { return this.attrs.id; } set id(v) { this.attrs.id = v; }
@@ -206,6 +202,7 @@ function fakeDom(page) {
     get selectedOptions() { return [{ textContent: "option" }]; }
     addEventListener(type, fn) { on(this, type, fn); }
     click() { if (!this.disabled) fire(this, "click"); }
+    dispatchEvent(ev) { fire(this, ev.type); return true; }
     focus() {} blur() {}
     contains(x) { for (let n = x; n; n = n.parent) if (n === this) return true; return false; }
     getBoundingClientRect() { return { left: 0, top: 0, right: 100, bottom: 30, width: 100, height: 30 }; }
@@ -237,55 +234,64 @@ function fakeDom(page) {
     get hash() { return hash ? "#" + hash : ""; },
     set hash(v) { hash = String(v).replace(/^#/, ""); fire(window, "hashchange"); },
   };
+  // Downloads (the CSV export) make object URLs from the fake Blob.
+  const FakeURL = class extends URL { static createObjectURL() { return "blob:x"; } static revokeObjectURL() {} };
   const store = {};
   const localStorage = { getItem: (k) => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v); } };
   const ctx = vm.createContext({
-    window, document, location, localStorage, URL, Math, JSON, Date, Number, String, Object, Array, Set, Map, isFinite, parseInt,
+    window, document, location, localStorage, URL: FakeURL, Math, JSON, Date, Number, String, Object, Array, Set, Map, isFinite, parseInt,
     setTimeout: () => 0, confirm: () => true, Blob: class {}, Event: class { constructor(t) { this.type = t; } },
   });
   ctx.window.document = document;
-  URL.createObjectURL ||= () => "blob:x";
+
   /** Every element under root (depth first). */
   const all = (root = body) => { const out = []; const w = (n) => { for (const c of n.children) { out.push(c); w(c); } }; w(root); return out; };
   return { ctx, window, document, fire, all, setHash: (v) => { location.hash = v; } };
 }
 
 for (const id of IDS) {
-  test(`${id}: every view and tool renders and survives every click`, () => {
+  test(`${id}: every tool renders and survives every click`, () => {
     const d = fakeDom(`${id}.html`);
-    for (const f of ["classes/nav.js", "classes/study.js", `classes/${id}.js`]) vm.runInContext(read(f), d.ctx, { filename: f });
-    d.fire(d.document, "DOMContentLoaded");
-    assert.ok(d.all().some((e) => e.className.includes("cn-btn")), "switcher mounted");
-    const poke = () => {
-      for (const e of d.all()) {
+    for (const f of ["tools/kit/kit.js", `classes/${id}.js`]) vm.runInContext(read(f), d.ctx, { filename: f });
+    const tools = d.window.COURSE_TOOLS.tools;
+    const poke = (root) => {
+      for (const e of d.all(root)) {
         if (e.tagName === "INPUT" || e.tagName === "TEXTAREA") { if (e.attrs.type === "number") e.value = "3"; d.fire(e, "input"); d.fire(e, "change"); }
         if (e.tagName === "SELECT") d.fire(e, "change");
       }
-      for (const e of d.all()) if (e.tagName === "BUTTON" && e.parent) e.click();
+      for (const e of d.all(root)) if (e.tagName === "BUTTON" && e.parent) e.click();
     };
-    const views = ["flashcards", "practice", "tools", ...C[id].tools.map((t) => "tools/" + t.id)];
-    for (const v of views) {
-      d.setHash(v);
-      for (let round = 0; round < 3; round++) poke();
-      // the keyboard paths of sessions and quizzes
-      d.setHash(v === "flashcards" ? "practice" : "flashcards");
-      d.setHash(v);
-      for (const key of ["Enter", " ", "ArrowRight", " ", "ArrowLeft", " ", "ArrowUp", "a", "Enter", "1", "Escape"]) d.fire(d.document, "keydown", { key });
+    for (const t of tools) {
+      const box = d.document.body.appendChild(d.document.createElement("div"));
+      t.mount(box);
+      assert.ok(box.children.length || box.innerHTML, `${t.id} rendered nothing`);
+      for (let round = 0; round < 3; round++) poke(box);
     }
   });
 }
 
-test("site build: class pages and the switcher", () => {
+test("site build: one app page per class, and the switcher", () => {
   const site = read("site/index.html"), artifact = read("web/econ381.html"), rootIndex = read("index.html");
   assert.equal(site.split('<script src="classes/nav.js"></script>').length - 1, 1, "site/index.html loads nav.js once");
   assert.equal(site, rootIndex, "root index.html matches site/index.html");
   assert.ok(!artifact.includes("classes/nav.js"), "the Artifact build stays self-contained");
   assert.ok(!read("scriptable/econ381-review.js").includes("classes/nav.js"), "the Scriptable build stays self-contained");
-  for (const f of ["classes.html", "econ210.html", "econ378.html", "econ380.html", "ihum242.html",
-    "classes/nav.js", "classes/study.js", "classes/study.css", ...IDS.map((id) => `classes/${id}.js`)]) {
+  for (const f of ["classes.html", "classes/nav.js", "classes/study.css"]) {
     assert.ok(existsSync(new URL("site/" + f, root)), `site/${f} missing`);
     assert.equal(read("site/" + f), read(f), `site/${f} is stale`);
   }
-  for (const id of IDS) assert.ok(read(`${id}.html`).includes(`src="classes/${id}.js"`), `${id}.html loads its course`);
+  for (const id of IDS) {
+    const page = read(`site/${id}.html`);
+    assert.equal(page, read(`${id}.html`), `${id}.html at the root matches site/`);
+    assert.equal(page.split('<script src="classes/nav.js"></script>').length - 1, 1, `${id} loads the switcher once`);
+    assert.ok(page.includes(`"localKey":"study-${id}-progress"`), `${id} keeps its own progress`);
+    assert.ok(page.includes('"table":"study_progress"') && page.includes(`"course":"${id}"`), `${id} saves to study_progress`);
+    assert.ok(page.includes('data-tab="tools"') && !page.includes('data-tab="models"'), `${id} has Tools, not Models`);
+    const content = JSON.parse(read(`site/content/${id}.json`));
+    assert.equal(content.course.id, id);
+    assert.equal(content.cards.length, COURSE[id].cards.length, `${id} content file has every card`);
+    assert.ok(content.version && content.rev >= 0, `${id} content is stamped`);
+  }
+  assert.ok(site.includes('data-tab="models"') && !site.includes('data-tab="tools"'), "ECON 381 keeps Models");
   assert.ok(!existsSync(new URL("arab201.html", root)), "no ARAB 201 page");
 });

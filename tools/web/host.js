@@ -11,10 +11,22 @@
 // well, so a signed-out visit or a failed write still keeps the session.
 
 (function () {
-  const DECK = /*__DECK__*/ null;
+  // Which class this page is. build.mjs fills it in:
+  //   id, code, name, tagline, localKey, phone (ECON 381's phone app shares
+  //   its progress), models (the Models tab), tools (the class's Tools tab)
+  const COURSE = /*__COURSE__*/ { id: "econ381", code: "ECON 381", localKey: "econ381-progress", phone: true, models: true, tools: false };
+  const DECK = DECK_DATA;           // tools/web/content.js
   const ALL = DECK.cards;
   const BY_ID = Object.fromEntries(ALL.map((c) => [c.id, c]));
-  const LOCAL_KEY = "econ381-progress";
+  const LOCAL_KEY = COURSE.localKey;
+  const STARRED = ALL.filter((c) => c.starred).length;
+  const HAS_MODELS = COURSE.models && typeof MODELS !== "undefined";
+  // Each class in its own accent, where ECON 381 has its blue.
+  if (COURSE.color) {
+    const n = parseInt(COURSE.color.slice(1), 16);
+    document.documentElement.style.setProperty("--primary", COURSE.color);
+    document.documentElement.style.setProperty("--primary-glow", `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},.6)`);
+  }
 
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (ch) =>
@@ -141,7 +153,7 @@
       signOut() { keep(null); },
       async pull() {
         const t = await token();
-        const res = await call("/rest/v1/econ381_progress?select=data", { headers: { Authorization: "Bearer " + t } });
+        const res = await call(`/rest/v1/${cfg.table}?select=data` + (cfg.course ? "&course_id=eq." + encodeURIComponent(cfg.course) : ""), { headers: { Authorization: "Bearer " + t } });
         if (res.status === 401) { keep(null); throw { code: "signed_out" }; }
         if (!res.ok) throw { code: "unavailable" };
         const rows = await res.json();
@@ -153,10 +165,10 @@
         const theirs = await remote.pull();
         if (theirs) merge(theirs);
         const t = await token();
-        const res = await call("/rest/v1/econ381_progress?on_conflict=user_id", {
+        const res = await call(`/rest/v1/${cfg.table}?on_conflict=` + (cfg.course ? "user_id,course_id" : "user_id"), {
           method: "POST",
           headers: { Authorization: "Bearer " + t, Prefer: "resolution=merge-duplicates,return=minimal" },
-          body: JSON.stringify({ user_id: session.user_id, data: p }),
+          body: JSON.stringify(cfg.course ? { user_id: session.user_id, course_id: cfg.course, data: p } : { user_id: session.user_id, data: p }),
         });
         if (res.status === 401) { keep(null); throw { code: "signed_out" }; }
         if (!res.ok) throw { code: "unavailable" };
@@ -235,6 +247,33 @@
       refreshTab();
       if (!(e && e.code === "signed_out")) retryTimer = setTimeout(connectAccount, 8000);
     }
+  }
+
+  /** Newer cards in Supabase than this page was built with (the nightly
+   *  routine published some, and this browser has an older copy of the
+   *  page)? Save them for the next load and say so. Posted site only. */
+  async function checkContent() {
+    if (BACKEND.kind !== "supabase") return;
+    const get = (path) => withTimeout(fetch(BACKEND.url + "/rest/v1/" + path, { headers: { apikey: BACKEND.key } }), 10000)
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
+    try {
+      const id = encodeURIComponent(COURSE.id);
+      const [row] = await get(`study_courses?id=eq.${id}&select=version,rev`);
+      // Only ever newer than this page: a page can be ahead of Supabase for
+      // the minute between a deploy and its sync.
+      if (!row || row.version === CONTENT.version || row.version === CONTENT.using || !(row.rev > CONTENT.rev)) return;
+      const [cs, qs] = await Promise.all([
+        get(`study_cards?course_id=eq.${id}&select=data&order=n`),
+        get(`study_questions?course_id=eq.${id}&select=data&order=n`),
+      ]);
+      if (!cs.length) return;
+      localStorage.setItem("study-content-" + COURSE.id, JSON.stringify({
+        version: row.version, rev: row.rev,
+        cards: cs.map((x) => x.data), questions: qs.map((x) => x.data),
+      }));
+      const note = $("#content-note");
+      if (note) { note.hidden = false; note.innerHTML = `New cards were added (${cs.length} in this class now). <button type="button" class="m-small" data-m="reload">Reload</button>`; }
+    } catch (e) { /* offline or not set up: the built-in cards stand */ }
   }
 
   /** Coming back to the tab: pick up anything graded on the phone meanwhile. */
@@ -332,6 +371,7 @@
     if (name === "review") renderReview();
     if (name === "progress") renderProgress();
     if (name === "models") ensureModels();
+    if (name === "tools") ensureTools();
     if (name === "practice") ensurePractice();
     renderSaveState();
   }
@@ -372,7 +412,7 @@
     let t;
     if (remote.kind === "supabase") {
       t = where === "account"
-        ? "Progress is saved to your account (the same login as the Arabic app), and shared with the ECON 381 phone app."
+        ? "Progress is saved to your account (the same login as the Arabic app)" + (COURSE.phone ? ", and shared with the ECON 381 phone app." : ", on every device you sign in on.")
         : "Not signed in: progress is only kept in this browser until you sign in above.";
     } else {
       t = where === "account"
@@ -425,8 +465,13 @@
   function primaryAction(st) {
     if (st.due) return { label: `Review ${st.due} card${st.due === 1 ? "" : "s"}`, sub: st.newLeft ? `plus ${st.newLeft} new` : "due now", icon: "layers", act: "review" };
     const ps = PRACTICEUI.stats();
-    if (ps.due) return { label: `Retry ${ps.due} practice question${ps.due === 1 ? "" : "s"}`, sub: "the practice midterm questions you missed", icon: "pen", act: "practice" };
-    if (st.newLeft) return { label: `Learn ${st.newLeft} new card${st.newLeft === 1 ? "" : "s"}`, sub: "today's new cards, tested ones first", icon: "cap", act: "review" };
+    if (ps.due) return { label: `Retry ${ps.due} practice question${ps.due === 1 ? "" : "s"}`, sub: "the practice questions you missed", icon: "pen", act: "practice" };
+    if (st.newLeft) return { label: `Learn ${st.newLeft} new card${st.newLeft === 1 ? "" : "s"}`, sub: STARRED ? "today's new cards, tested ones first" : "today's new cards, in course order", icon: "cap", act: "review" };
+    if (!HAS_MODELS) {
+      if (ps.owed) return { label: "Drill the practice questions", sub: `${ps.right} of ${ps.total} right so far`, icon: "pen", act: "practice" };
+      return STARRED ? { label: "Cram the tested cards", sub: "Everything is caught up", icon: "layers", act: "tested" }
+        : { label: `Cram all ${ALL.length} cards`, sub: "Everything is caught up · nothing is rescheduled", icon: "layers", act: "cram" };
+    }
     const last = progress.last;
     if (last && last.scenario && !((progress.models || {})[last.scenario] || {}).done) {
       const m = MODELS.find((x) => x.id === last.model), sc = m && m.scenarios.find((x) => x.id === last.scenario);
@@ -453,6 +498,7 @@
     btn.dataset.scenario = pa.scenario || "";
     btn.innerHTML = `<span class="pl">${icon(pa.icon)}<span><b>${esc(pa.label)}</b><small>${esc(pa.sub)}</small></span></span><span class="pr"><kbd>Enter</kbd>${icon("chev")}</span>`;
 
+    $("#h-tested").hidden = !STARRED;
     $("#h-learn").textContent = st.newLeft;
     $("#h-due").textContent = st.due;
     $("#h-wave").textContent = !st.due && st.upcoming < Infinity
@@ -464,9 +510,10 @@
 
     const ps = PRACTICEUI.stats();
     $("#h-practice").innerHTML = ps.owed
-      ? `Drill the practice midterm<small>${ps.right} of ${ps.total} right · ${ps.due ? ps.due + " to retry" + (ps.fresh ? ", " : "") : ""}${ps.fresh ? ps.fresh + " not tried" : ""}</small>`
-      : `Practice midterm · ${ps.right} of ${ps.total} right<small>All caught up${ps.next < Infinity ? " · next back at " + timeOf(ps.next) : ""}</small>`;
+      ? `Drill the ${esc(EXAM.heading || "practice questions").toLowerCase()}<small>${ps.right} of ${ps.total} right · ${ps.due ? ps.due + " to retry" + (ps.fresh ? ", " : "") : ""}${ps.fresh ? ps.fresh + " not tried" : ""}</small>`
+      : `${esc(EXAM.heading || "Practice")} · ${ps.right} of ${ps.total} right<small>All caught up${ps.next < Infinity ? " · next back at " + timeOf(ps.next) : ""}</small>`;
 
+    if (!HAS_MODELS) { renderToolShelf(); renderStoreNote(); return; }
     $("#h-models").innerHTML = MODELS.map((m) => {
       const ms = modelStats(m), w = DECK.weeks[m.week - 1];
       return `<button type="button" class="hm" data-model="${m.id}" style="--c:${w.color}">` +
@@ -493,7 +540,8 @@
       b.innerHTML = `<span class="pl">${icon("check")}<span><b>All caught up</b><small>${st.upcoming < Infinity ? "Next card comes due at " + timeOf(st.upcoming) + ". Cram a week below meanwhile." : "Cram a week below to keep going."}</small></span></span>`;
     }
     const tested = reviewQueue((c) => c.starred, Infinity);
-    $("#r-tested").innerHTML = `★ Tested cards only<small>${tested.length ? tested.length + " due or new of the 65 on the practice midterm" : "All 65 caught up · crams them instead"}</small>`;
+    $("#r-tested").hidden = $("#h-tested").hidden = !STARRED;
+    $("#r-tested").innerHTML = `★ Tested cards only<small>${tested.length ? tested.length + " due or new of the " + STARRED + " tested" : "All " + STARRED + " caught up · crams them instead"}</small>`;
     $("#r-weeks").innerHTML = DECK.weeks.map((w, k) => {
       const cs = ALL.filter((c) => c.week === k + 1);
       const q = reviewQueue((c) => c.week === k + 1, Infinity);
@@ -520,7 +568,7 @@
       .filter((x) => x.s && x.s.lapses > 0)
       .sort((a, b) => b.s.lapses - a.s.lapses).slice(0, 8)
       .map((x) => `<li>${esc(plain(x.c.term))} <span class="dim">missed ${x.s.lapses}×</span></li>`).join("");
-    const models = MODELS.map((m) => {
+    const models = !HAS_MODELS ? "" : MODELS.map((m) => {
       const rows = m.scenarios.map((s) => {
         const r = (progress.models || {})[s.id];
         return `<li class="${r && r.done ? "done" : ""}">${r && r.done ? icon("check") : '<span class="dot0"></span>'}<span>${esc(s.title)}</span>` +
@@ -528,7 +576,7 @@
       }).join("");
       return `<div class="pm"><p class="pm-h" style="color:${DECK.weeks[m.week - 1].color}">${esc(m.title)}</p><ul>${rows}</ul></div>`;
     }).join("");
-    const missed = (progress.missed || []).slice(0, 10).map((x) => {
+    const missed = !HAS_MODELS ? "" : (progress.missed || []).slice(0, 10).map((x) => {
       const m = MODELS.find((y) => y.id === x.model), sc = m && m.scenarios.find((y) => y.id === x.scenario);
       return `<li>${x.q} <span class="dim">${sc ? esc(sc.title) : ""}</span></li>`;
     }).join("");
@@ -536,10 +584,10 @@
       `<section class="card pad"><p class="sec">Flashcards · ${st.solid} of ${st.total} solid · ${st.unseen} not seen</p>${weeks}` +
       (hard ? `<p class="sec gap">Cards missed most</p><ul class="plain">${hard}</ul>` : "") + "</section>" +
       practiceSection() +
-      `<section class="card pad"><p class="sec">Model walkthroughs</p><div class="pms">${models}</div>` +
-      (missed ? `<p class="sec gap">Predictions you missed lately</p><ul class="plain">${missed}</ul>` : "") + "</section>" +
+      (HAS_MODELS ? `<section class="card pad"><p class="sec">Model walkthroughs</p><div class="pms">${models}</div>` +
+      (missed ? `<p class="sec gap">Predictions you missed lately</p><ul class="plain">${missed}</ul>` : "") + "</section>" : "") +
       `<section class="card pad"><p class="sec">Reset</p>` + (confirming
-        ? `<div class="m-confirm"><span>Reset all 126 cards, the practice midterm and every walkthrough? This can't be undone.</span><button class="yes" type="button" data-m="reset-yes">Reset</button><button type="button" data-m="reset-no">Cancel</button></div>`
+        ? `<div class="m-confirm"><span>Reset all ${ALL.length} cards, the practice questions${HAS_MODELS ? " and every walkthrough" : ""}? This can't be undone.</span><button class="yes" type="button" data-m="reset-yes">Reset</button><button type="button" data-m="reset-no">Cancel</button></div>`
         : `<button class="m-small danger" type="button" data-m="reset">Reset all progress…</button>`) +
       `<p class="store-note dim"></p></section>` +
       (remote.kind === "supabase" && where === "account"
@@ -556,7 +604,7 @@
       const tried = qs.filter((q) => pr[q.id]).length;
       return `<div class="row"><span class="lbl">${esc(sec.title)}</span><span class="val">${tried}/${qs.length} tried · ${right} right</span></div>`;
     }).join("");
-    return `<section class="card pad"><p class="sec">Practice midterm · ${ps.right} of ${ps.total} right on the latest try</p>${rows}</section>`;
+    return `<section class="card pad"><p class="sec">${esc(EXAM.heading || "Practice")} · ${ps.right} of ${ps.total} right on the latest try</p>${rows}</section>`;
   }
 
   // -------------------------------------------------------------- practice
@@ -589,6 +637,44 @@
   function openPractice(drill) {
     showTab("practice");
     if (drill) PRACTICEUI.drill();
+  }
+
+  // ----------------------------------------------------------------- tools
+  //
+  // The class's interactive tools (classes/<id>.js, built on tools/kit/kit.js),
+  // one at a time under a row of chips, in the Models tab's place.
+
+  const TOOLS = (COURSE.tools && window.COURSE_TOOLS && window.COURSE_TOOLS.tools) || [];
+  let toolOpen = null;
+
+  function renderToolShelf() {
+    $("#h-shelf-t").textContent = "Tools";
+    $("#h-models").innerHTML = TOOLS.map((t, k) =>
+      `<button type="button" class="hm" data-tool="${esc(t.id)}" style="--c:${DECK.weeks[k % DECK.weeks.length].color}">` +
+      `<span class="wk">Tool ${k + 1}</span><span class="nm">${esc(t.name)}</span><span class="ct">${esc(t.blurb || "")}</span></button>`).join("");
+  }
+
+  function ensureTools(id) {
+    const root = $("#tools");
+    if (!root.firstChild) {
+      root.innerHTML = `<div class="mdl-top"><div class="mdl-chips" id="tool-chips">` + TOOLS.map((t, k) =>
+        `<button type="button" class="mchip" data-tool="${esc(t.id)}" style="--c:${DECK.weeks[k % DECK.weeks.length].color}"><span>Tool ${k + 1}</span>${esc(t.name)}</button>`).join("") +
+        `</div></div><div class="tool-head"><h2 id="tool-name"></h2><p class="dim" id="tool-blurb"></p></div><div class="kit" id="tool-body"></div>`;
+      root.querySelector(".kit").style.setProperty("--c", COURSE.color || "#1F4E8C");
+    }
+    openTool(id || toolOpen || (TOOLS[0] && TOOLS[0].id));
+  }
+
+  function openTool(id) {
+    const t = TOOLS.find((x) => x.id === id);
+    if (!t || toolOpen === id && $("#tool-body").firstChild) return;
+    toolOpen = id;
+    document.querySelectorAll("#tool-chips .mchip").forEach((b) => b.classList.toggle("on", b.dataset.tool === id));
+    $("#tool-name").textContent = t.name;
+    $("#tool-blurb").textContent = t.blurb || "";
+    const body = $("#tool-body");
+    body.innerHTML = "";
+    t.mount(body);
   }
 
   // ---------------------------------------------------------------- models
@@ -651,13 +737,15 @@
       const q = reviewQueue((c) => c.starred, Infinity);
       return q.length ? begin(q, false) : begin(shuffle(ALL.filter((c) => c.starred)), true);
     }
-    if (b.id === "r-cram") return begin(shuffle(ALL.slice()), true);
     if (b.dataset.week) {
       const k = Number(b.dataset.week);
       const q = reviewQueue((c) => c.week === k, Infinity);
       return q.length ? begin(q, false) : begin(shuffle(ALL.filter((c) => c.week === k)), true);
     }
     if (b.dataset.model && b.classList.contains("hm")) return openModels(b.dataset.model);
+    if (b.dataset.tool) { if (currentTab !== "tools") showTab("tools"); return openTool(b.dataset.tool); }
+    if (b.id === "r-cram" || (b.id === "h-primary" && b.dataset.act === "cram")) return begin(shuffle(ALL.slice()), true);
+    if (b.dataset.m === "reload") return location.reload();
     if (b.dataset.m === "signout") {
       remote.signOut();
       connected = false; where = "local";
@@ -733,4 +821,5 @@
   $("#app").style.display = "none";
   showTab("home");
   connectAccount();
+  checkContent();
 })();

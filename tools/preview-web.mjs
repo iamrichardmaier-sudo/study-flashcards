@@ -447,7 +447,13 @@ console.log("✓ account store write hangs: times out, retried and saved");
   const db = { row: { cards: { [phoneCard]: { step: 2, due: Date.now() + 864e5, seen: 2, lapses: 0, first: 1, last: Date.now() - 5000 } } }, writes: 0 };
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 860 } });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
-  await ctx.route("https://iamrichardmaier-sudo.github.io/**", (r) => r.fulfill({ contentType: "text/html", body: site }));
+  /** The posted site as GitHub Pages serves it: the page, and its scripts from site/. */
+  const pages = (r) => {
+    const path = new URL(r.request().url()).pathname.replace(/^\/study-flashcards\/?/, "");
+    if (/\.(js|css)$/.test(path)) return r.fulfill({ contentType: path.endsWith(".js") ? "text/javascript" : "text/css", body: readFileSync(join(root, "site", path), "utf8") });
+    return r.fulfill({ contentType: "text/html", body: site });
+  };
+  await ctx.route("https://iamrichardmaier-sudo.github.io/**", pages);
   await ctx.route(SB + "/**", async (r) => {
     const req = r.request(), url = req.url();
     const json = (status, body) => r.fulfill({ status, contentType: "application/json", body: JSON.stringify(body) });
@@ -456,7 +462,12 @@ console.log("✓ account store write hangs: times out, retried and saved");
       if (b.password !== "right") return json(400, { error: "invalid_grant", error_description: "Invalid login credentials" });
       return json(200, { access_token: "tok", refresh_token: "ref", expires_in: 3600, user: { id: "u1", email: b.email } });
     }
+    // Card content (public): nothing newer than the page until db.content is set.
+    if (url.includes("/rest/v1/study_courses")) return json(200, db.content ? [{ version: db.content.version, rev: db.content.rev }] : []);
+    if (url.includes("/rest/v1/study_cards")) return json(200, db.content ? db.content.cards.map((c) => ({ data: c })) : []);
+    if (url.includes("/rest/v1/study_questions")) return json(200, db.content ? db.content.questions.map((q) => ({ data: q })) : []);
     assert.equal(req.headers()["authorization"], "Bearer tok");
+    assert.ok(url.includes("/rest/v1/econ381_progress"), "ECON 381 saves to its own table: " + url);
     if (req.method() === "GET") return json(200, db.row ? [{ data: db.row }] : []);
     const b = JSON.parse(req.postData());
     assert.equal(b.user_id, "u1");
@@ -504,6 +515,37 @@ console.log("✓ account store write hangs: times out, retried and saved");
   assert.ok(await sp.evaluate("!document.querySelector('#signin').hidden"), "signing out shows the form again");
   await ctx.close();
   console.log("✓ posted site: Supabase sign-in, pull on sign-in and reload, merged push, sign out");
+
+  // Newer cards published to Supabase than this page was built with: they're
+  // saved, offered with a reload, and used on the next load. An older copy
+  // in Supabase (the minute between a deploy and its sync) is ignored.
+  const stamp = JSON.parse(readFileSync(join(root, "site/content/econ381.json"), "utf8"));
+  const sp2 = await (await browser.newContext({ viewport: { width: 1280, height: 860 } })).newPage();
+  await sp2.context().route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
+  await sp2.context().route("https://iamrichardmaier-sudo.github.io/**", pages);
+  await sp2.context().route(SB + "/**", async (r) => {
+    const url = r.request().url(), body = (b) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(b) });
+    if (url.includes("study_courses")) return body([{ version: db.content.version, rev: db.content.rev }]);
+    if (url.includes("study_cards")) return body(db.content.cards.map((c) => ({ data: c })));
+    if (url.includes("study_questions")) return body(db.content.questions.map((q) => ({ data: q })));
+    return body([]);
+  });
+  const extra = { ...stamp.cards[0], id: "brand-new-card", n: stamp.cards.length + 1, term: "A card published tonight" };
+  db.content = { version: "older", rev: stamp.rev - 100, cards: stamp.cards.slice(0, 3), questions: stamp.exam.questions };
+  await sp2.goto("https://iamrichardmaier-sudo.github.io/study-flashcards/");
+  await sp2.waitForTimeout(400);
+  assert.ok(await sp2.evaluate("document.querySelector('#content-note').hidden"), "older Supabase content is ignored");
+  db.content = { version: "newer", rev: stamp.rev + 100, cards: stamp.cards.concat(extra), questions: stamp.exam.questions };
+  await sp2.reload();
+  await sp2.waitForSelector("#content-note:not([hidden])");
+  assert.equal(await sp2.evaluate("DECK_DATA.cards.length"), stamp.cards.length, "this load keeps its own cards");
+  await sp2.click('[data-m="reload"]');
+  await sp2.waitForTimeout(400);
+  assert.equal(await sp2.evaluate("DECK_DATA.cards.length"), stamp.cards.length + 1, "the next load uses the newer cards");
+  assert.ok(await sp2.evaluate("DECK_DATA.cards.some((c) => c.id === 'brand-new-card')"));
+  assert.ok(await sp2.evaluate("document.querySelector('#content-note').hidden"), "and doesn't offer them again");
+  await sp2.context().close();
+  console.log("✓ posted site: newer cards from Supabase are picked up; older ones ignored");
 }
 
 const real = errors.filter((e) => !/ERR_FAILED/.test(e));

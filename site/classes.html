@@ -19,9 +19,8 @@
 </style>
 </head><body>
 <main class="st-main">
-  <div class="st-h"><h1>Your classes</h1><p>Flashcards, practice questions and interactive tools. Progress is saved in this browser.</p></div>
+  <div class="st-h"><h1>Your classes</h1><p>Flashcards, practice questions and interactive tools, all in one app. Sign in on any class with your Wazn login and your progress syncs everywhere.</p></div>
   <div class="cls" id="cls"></div>
-  <p class="dim small">ECON 381 is the full app with its own sign-in and sync to the phone. The other classes save locally.</p>
 </main>
 <script src="classes/nav.js"></script>
 <script>
@@ -29,15 +28,15 @@
     var box = document.getElementById("cls");
     var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
     window.ClassNav.classes.forEach(function (c) {
+      // What this browser has for the class (synced from the account when signed in).
       var stat = "";
-      if (c.id !== "econ381") {
-        try {
-          var cards = JSON.parse(localStorage.getItem("study." + c.id + ".cards") || "{}");
-          var now = Date.now(), seen = 0, due = 0;
-          for (var k in cards) { seen++; if (cards[k].due <= now) due++; }
-          stat = seen ? seen + " cards started · " + due + " due" : "Not started yet";
-        } catch (e) { stat = ""; }
-      } else stat = "Midterm 1 · 126 cards";
+      try {
+        var key = c.id === "econ381" ? "econ381-progress" : "study-" + c.id + "-progress";
+        var cards = (JSON.parse(localStorage.getItem(key) || "null") || {}).cards || {};
+        var now = Date.now(), seen = 0, due = 0;
+        for (var k in cards) { seen++; if (cards[k].due <= now) due++; }
+        stat = seen ? seen + " cards started · " + due + " due" : "Not started yet";
+      } catch (e) { stat = ""; }
       var a = document.createElement("a");
       a.className = "cl";
       a.href = window.ClassNav.url(c);
