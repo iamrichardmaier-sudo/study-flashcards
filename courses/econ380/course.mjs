@@ -1,6 +1,7 @@
 // ECON 380 · Intermediate Micro Theory: the course, its units (colors as ECON 381's weeks).
 export default {
   "id": "econ380",
+  "enriched": true,
   "code": "ECON 380",
   "name": "Intermediate Micro Theory",
   "tagline": "Consumer choice, markets and taxes, monopoly, games.",
