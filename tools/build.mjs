@@ -214,7 +214,7 @@ const modelsJs = "var MODELS = [];\n" + modelFiles.map((f) => read("tools/models
 function appContent({ course, deck, examJs, extraJs, extraCss, backend, content, graphs }) {
   let js = page.js;
   js = split(js, "/*__WEEKS__*/[]", json(deck.weeks));
-  js = split(js, "/*__UI__*/{}", JSON.stringify(webUI));
+  js = split(js, "/*__UI__*/{}", JSON.stringify({ ...webUI, unitTitles: !course.models }));
   let body = read("tools/page/page.html");
   body = split(body, "__QUIT__", "");
   body = split(body, "__CODE__", course.code);
@@ -224,6 +224,7 @@ function appContent({ course, deck, examJs, extraJs, extraCss, backend, content,
   shell = split(shell, "__TAGLINE__", course.tagline);
   shell = split(shell, "__PRACTICE__", course.practiceHeading);
   shell = split(shell, "__N__", String(deck.cards.length));
+  shell = split(shell, "__UNITS__", course.models ? "week" : "unit");
   shell = shell.replace(course.models ? /<!--TOOLS-->[\s\S]*?<!--\/TOOLS-->/ : /<!--MODELS-->[\s\S]*?<!--\/MODELS-->/, "")
     .replace(/<!--\/?(MODELS|TOOLS)-->\n?/g, "");
   let host = read("tools/web/host.js");

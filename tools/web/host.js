@@ -548,7 +548,7 @@
       const solid = cs.filter((c) => (progress.cards[c.id] || {}).solid).length;
       const seenW = cs.filter((c) => progress.cards[c.id]).length;
       return `<button class="hm" type="button" data-week="${k + 1}" style="--c:${w.color}">` +
-        `<span class="wk">Week ${k + 1}</span><span class="nm">${esc(w.title)}</span>` +
+        `<span class="wk">${COURSE.models ? "Week" : "Unit"} ${k + 1}</span><span class="nm">${esc(w.title)}</span>` +
         `<span class="mini"><span style="width:${(100 * seenW / cs.length).toFixed(1)}%"></span></span>` +
         `<span class="ct">${q.length ? q.length + " to review" : "caught up · cram"} · ${solid}/${cs.length} solid</span></button>`;
     }).join("");
@@ -562,7 +562,7 @@
       const cs = ALL.filter((c) => c.week === k + 1);
       const seen = cs.filter((c) => progress.cards[c.id]).length;
       const solid = cs.filter((c) => (progress.cards[c.id] || {}).solid).length;
-      return `<div class="row"><span class="lbl">Week ${k + 1} · ${esc(w.title)}</span><span class="val">${seen}/${cs.length} seen · ${solid} solid</span></div>`;
+      return `<div class="row"><span class="lbl">${COURSE.models ? "Week" : "Unit"} ${k + 1} · ${esc(w.title)}</span><span class="val">${seen}/${cs.length} seen · ${solid} solid</span></div>`;
     }).join("");
     const hard = ALL.map((c) => ({ c, s: progress.cards[c.id] }))
       .filter((x) => x.s && x.s.lapses > 0)

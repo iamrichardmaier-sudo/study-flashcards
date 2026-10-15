@@ -5,6 +5,7 @@ export default {
   "name": "Statistics for Economists",
   "tagline": "Distributions, the CLT, confidence intervals, hypothesis tests.",
   "color": "#6D4BB0",
+  "enriched": true,
   "units": [
     {
       "id": "desc",
