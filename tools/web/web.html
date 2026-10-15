@@ -5,7 +5,7 @@
         <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M6 5v29h29" stroke-width="2.6"/><path d="M10 29c6-1 9-5 12-11s6-9 11-10" stroke-width="2.6"/>
           <path d="M10 12l23 17" stroke-width="2" opacity=".55"/>
-        </svg>ECON 381
+        </svg>__CODE__
       </span>
       <div class="tablist">
         <button type="button" class="tabbtn" data-tab="home">
@@ -17,9 +17,15 @@
         <button type="button" class="tabbtn" data-tab="practice">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>
           <span>Practice</span></button>
+<!--MODELS-->
         <button type="button" class="tabbtn" data-tab="models">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
           <span>Models</span></button>
+<!--/MODELS--><!--TOOLS-->
+        <button type="button" class="tabbtn" data-tab="tools">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></svg>
+          <span>Tools</span></button>
+<!--/TOOLS-->
         <button type="button" class="tabbtn" data-tab="progress">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
           <span>Progress</span></button>
@@ -32,15 +38,15 @@
       <div class="wrap">
         <div class="h-top">
           <div>
-            <h1>ECON 381</h1>
-            <p>Midterm 1 · the terms and the models behind them.</p>
+            <h1>__CODE__</h1>
+            <p>__TAGLINE__</p>
           </div>
           <div class="streak" id="h-streak" title="Days in a row with something studied"></div>
         </div>
 
         <form class="card pad signin" id="signin" hidden autocomplete="on">
           <p class="sec">Sign in to save your progress</p>
-          <p class="dim small">Use the same email and password as your Arabic app (Wazn). Your cards and walkthroughs then save to your account, and the ECON 381 phone app shares them.</p>
+          <p class="dim small">Use the same email and password as your Arabic app (Wazn). Your progress then saves to your account and follows you to every class page and device.</p>
           <div class="sgrid">
             <input id="si-email" type="email" name="email" autocomplete="username" placeholder="email" required>
             <input id="si-pass" type="password" name="password" autocomplete="current-password" placeholder="password" required>
@@ -49,6 +55,7 @@
           <p class="si-err" id="si-err" role="alert"></p>
         </form>
 
+        <p class="content-note card pad small" id="content-note" hidden></p>
         <button type="button" class="primary" id="h-primary"></button>
         <p class="save-state dim small"></p>
 
@@ -66,12 +73,12 @@
         </section>
 
         <section class="sect-h">
-          <h2>Practice midterm</h2>
+          <h2>__PRACTICE__</h2>
           <button type="button" class="second" id="h-practice"></button>
         </section>
 
         <section class="sect-h">
-          <h2>Models</h2>
+          <h2 id="h-shelf-t">Models</h2>
           <div class="grid3" id="h-models"></div>
         </section>
 
@@ -90,7 +97,7 @@
         </section>
         <div class="pair">
           <button type="button" class="second star" id="r-tested"></button>
-          <button type="button" class="second" id="r-cram">Cram all 126<small>Shuffled · nothing is rescheduled</small></button>
+          <button type="button" class="second" id="r-cram">Cram all __N__<small>Shuffled · nothing is rescheduled</small></button>
         </div>
         <section class="sect-h">
           <h2>Keys</h2>
@@ -108,6 +115,10 @@
 
     <section class="view" id="tab-practice" hidden>
       <div class="wrap" id="practice"></div>
+    </section>
+
+    <section class="view" id="tab-tools" hidden>
+      <div class="wrap wide" id="tools"></div>
     </section>
 
     <section class="view" id="tab-models" hidden>

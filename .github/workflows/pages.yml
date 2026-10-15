@@ -1,4 +1,4 @@
-# Posts the ECON 381 site (site/) to GitHub Pages:
+# Posts the study site (site/: ECON 381 and every other class) to GitHub Pages:
 #   https://iamrichardmaier-sudo.github.io/study-flashcards/
 #
 # One-time setup: repo Settings → Pages → Build and deployment → Source:
@@ -33,10 +33,20 @@ jobs:
       - name: Build and check the deck, models and site
         run: |
           node tools/build.mjs
-          node --test tools/schedule.test.mjs tools/models.test.mjs tools/practice.test.mjs
+          node --test tools/schedule.test.mjs tools/models.test.mjs tools/practice.test.mjs tools/classes.test.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
       - id: deployment
         uses: actions/deploy-pages@v4
+      # Every class's cards and practice questions into Supabase (study_*
+      # tables), from this commit's site/content/<class>.json. See
+      # supabase/functions/study-sync.
+      - name: Sync the cards to Supabase
+        run: |
+          for f in site/content/*.json; do
+            c=$(basename "$f" .json)
+            curl -fsS --retry 3 "https://fphpcfecgnfoogfaeihu.supabase.co/functions/v1/study-sync?course=$c&ref=$GITHUB_SHA"
+            echo
+          done

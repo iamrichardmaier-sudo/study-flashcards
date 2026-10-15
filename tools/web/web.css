@@ -28,7 +28,7 @@ body { font-family: Inter, -apple-system, system-ui, sans-serif; }
           font-size: 13.5px; padding: 7px 13px; border-radius: 12px; cursor: pointer; transition: background .15s, color .15s, transform .1s; }
 .tabbtn svg { width: 18px; height: 18px; }
 .tabbtn:hover { background: rgba(43,33,24,.06); color: var(--ink); }
-.tabbtn[aria-current="page"] { background: var(--primary); color: var(--primary-ink); box-shadow: 0 4px 12px -6px rgba(31,78,140,.6); }
+.tabbtn[aria-current="page"] { background: var(--primary); color: var(--primary-ink); box-shadow: 0 4px 12px -6px var(--primary-glow, rgba(31,78,140,.6)); }
 .tabbtn:active { transform: scale(.94); }
 
 .views { padding-bottom: 40px; }
