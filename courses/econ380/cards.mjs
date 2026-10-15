@@ -1,212 +1,636 @@
 // ECON 380 flashcards, in the ECON 381 card schema (see cards/src/week2.mjs).
+//
+// Running examples, so the numbers connect across cards (and match the
+// graphs in tools/graphs/econ380.js; tools/course-econ380.test.mjs re-derives
+// every number):
+//   Unit 1  U = x^0.5 y^0.5, I = 100, px = 2, py = 5 → x = 25, y = 10,
+//           U = √250 = 15.81, MRS = y/x = 0.4, λ = 0.158.
+//           px rises 2 → 8: new x = 6.25; Hicks-compensated x = 12.5 (costs 200).
+//   Unit 2  Q = K^0.5 L^0.5, w = 4, r = 1: Q = 20 at least cost → L = 10, K = 40, C = 80.
+//           A firm with TC = 32 + q³ − 6q² + 20q: min AVC = 11 (q = 3), min ATC = 20 (q = 4).
+//   Unit 3  Demand P = 100 − 2Q, supply P = 10 + Q → Q = 30, P = 40, CS = 900, PS = 450.
+//           $6 tax → Q = 28, Pb = 44, Ps = 38, DWL = 6. $34 ceiling → shortage 9, DWL 54.
+//           Edgeworth box: A has (8, 2), B has (2, 8), both U = x^0.5 y^0.5.
+//   Unit 4  Same demand, MC = 20 → Q = 20, P = 60, profit 800, DWL 400.
+//   Unit 5  Pricing game (High/Low: 10,10 / 2,12 / 12,2 / 5,5); Cournot P = 120 − Q, MC = 0.
+
+import { fr, op } from "../../cards/src/helpers.mjs";
+
+const sp = '<span style="display:inline-block;width:16px"></span>';
+
 export default [
+  // ------------------------------------------------------------ unit 1
   {
-    "id": "axioms",
-    "n": 1,
-    "week": 1,
-    "term": "Preference axioms",
-    "simple": "Complete (any two bundles can be ranked), transitive (A ≿ B and B ≿ C ⇒ A ≿ C). Usually also monotone (more is better) and convex (averages preferred to extremes)."
+    id: "axioms", n: 1, week: 1,
+    term: "Preference axioms",
+    simple: "Rational preferences are <b>complete</b> (any two bundles can be ranked) and <b>transitive</b>; we usually also assume more is better (monotone) and averages are preferred to extremes (convex).",
+    formula: `<i>A</i> ≿ <i>B</i> and <i>B</i> ≿ <i>C</i>${op("⇒")}<i>A</i> ≿ <i>C</i>`,
+    more: [
+      "Completeness and transitivity are what let a <b>utility function</b> represent preferences: give every bundle a number, and the ranking can never loop. Monotonicity makes indifference curves slope down, with higher curves better; convexity bows them toward the origin, which gives a diminishing MRS.",
+      "Utility is <b>ordinal</b>: any increasing transformation (√U, ln U, 2U + 7) represents the same preferences and predicts the same choices. Only the ranking matters, so “U = 16 is twice as happy as U = 8” means nothing.",
+      "Exam traps: indifference curves can't cross (if they did, transitivity would make one bundle both better than and as good as another). “Convex preferences” means the set of bundles at least as good is convex, so the curve bows <i>toward</i> the origin.",
+    ],
+    connections: ["mrs", "tangency", "pareto"],
+    example: "Someone who prefers Coke to Pepsi, Pepsi to Sprite and Sprite to Coke can be exploited: a vending-machine owner could charge a small fee for each swap and walk them round the loop forever. Transitivity rules this out.",
+    played: [
+      "An intransitive shopper prefers A to B, B to C and C to A, and will pay $1 to trade up each time.",
+      "Start with C. Pay $1 to swap to B, $1 more for A, and $1 more to get C back.",
+      "After 3 trades: the same bundle C, and $3 poorer. This “money pump” is why we assume transitivity.",
+    ],
+    graph: { key: "econ380Budget", args: { mode: "ic" } },
   },
   {
-    "id": "mrs",
-    "n": 2,
-    "week": 1,
-    "term": "MRS",
-    "simple": "Marginal rate of substitution: MRS = MU<sub>x</sub>/MU<sub>y</sub>, the rate the consumer will trade y for one more x and stay indifferent. The (absolute) slope of the indifference curve.",
-    "more": [
-      "Cobb–Douglas x<sup>a</sup>y<sup>1−a</sup>: MRS = (a/(1−a))·(y/x)."
-    ]
+    id: "mrs", n: 2, week: 1,
+    term: "Marginal rate of substitution (MRS)",
+    simple: "The MRS is how much y the consumer would give up for one more unit of x and stay just as happy: the absolute slope of the indifference curve.",
+    formula: `MRS${op("=")}${fr("<i>MU<sub>x</sub></i>", "<i>MU<sub>y</sub></i>")}${op("=")}−${fr("<i>dy</i>", "<i>dx</i>")}${sp}(<i>U</i> fixed)`,
+    more: [
+      "Why a ratio of marginal utilities: moving along an indifference curve utility doesn't change, so MU<sub>x</sub>·dx + MU<sub>y</sub>·dy = 0, which gives −dy/dx = MU<sub>x</sub>/MU<sub>y</sub>.",
+      "<b>Diminishing MRS</b> (convex preferences): the more x you already have, the less y you'll give up for another unit. For Cobb–Douglas x<sup>a</sup>y<sup>1−a</sup>, MRS = (a/(1 − a))·(y/x), which falls as x rises.",
+      "Traps: with x on the horizontal axis, MU<sub>x</sub> goes on top (y given up per unit of x). Perfect substitutes have a constant MRS (straight-line indifference curves); perfect complements have none at the kink.",
+    ],
+    connections: ["axioms", "tangency", "cddemand", "mrts"],
+    example: "A commuter who is just indifferent between a $3 express bus and a free local bus that takes 20 minutes longer is trading time for money at $0.15 a minute. That trade-off (their MRS between time and money) is what transport planners call the value of time.",
+    played: [
+      "Running example U = x<sup>0.5</sup>y<sup>0.5</sup>: MU<sub>x</sub> = 0.5(y/x)<sup>0.5</sup>, MU<sub>y</sub> = 0.5(x/y)<sup>0.5</sup>, so MRS = y/x.",
+      "At (x, y) = (25, 10): MRS = 10/25 = 0.4. One more x is worth 0.4 units of y.",
+      "At (10, 25), on the same curve (U = 15.8): MRS = 25/10 = 2.5. When x is scarce each unit is worth far more y: diminishing MRS.",
+    ],
+    graph: { key: "econ380Budget", args: { mode: "mrs" } },
   },
   {
-    "id": "tangency",
-    "n": 3,
-    "week": 1,
-    "term": "Utility-max condition",
-    "simple": "Interior optimum: MRS = p<sub>x</sub>/p<sub>y</sub> (equivalently MU<sub>x</sub>/p<sub>x</sub> = MU<sub>y</sub>/p<sub>y</sub>) and the budget is spent: p<sub>x</sub>x + p<sub>y</sub>y = I."
+    id: "tangency", n: 3, week: 1,
+    term: "Utility-max condition",
+    simple: "At an interior optimum the consumer spends all income on the bundle where the indifference curve is tangent to the budget line, so the MRS equals the price ratio.",
+    formula: `MRS${op("=")}${fr("<i>p<sub>x</sub></i>", "<i>p<sub>y</sub></i>")}${sp}<i>p<sub>x</sub>x</i>${op("+")}<i>p<sub>y</sub>y</i>${op("=")}<i>I</i>`,
+    more: [
+      "Intuition: the MRS is what the consumer is <i>willing</i> to trade; p<sub>x</sub>/p<sub>y</sub> is what the market <i>lets</i> them trade. If MRS &gt; p<sub>x</sub>/p<sub>y</sub>, x is worth more than it costs in y, so buy more x. At the optimum the two match.",
+      "Equivalent “bang for the buck” form: MU<sub>x</sub>/p<sub>x</sub> = MU<sub>y</sub>/p<sub>y</sub>. The last dollar spent on each good adds the same utility, and that common value is λ.",
+      "Traps: tangency is the rule only for an <b>interior</b> solution with smooth, convex preferences. Perfect substitutes give corners (spend everything on the good with more MU per dollar); perfect complements give a kink. And always use the budget line too: two equations, two unknowns.",
+    ],
+    connections: ["mrs", "cddemand", "lagrange", "costmin"],
+    example: "When a streaming service raises its monthly price, a subscriber who was just at the tangency now finds the last dollar on streaming buys less enjoyment than a dollar on other things, so some cancel or move to a cheaper ad-supported tier.",
+    played: [
+      "Running example: U = x<sup>0.5</sup>y<sup>0.5</sup>, I = 100, p<sub>x</sub> = 2, p<sub>y</sub> = 5.",
+      "Tangency: y/x = 2/5, so y = 0.4x. Budget: 2x + 5(0.4x) = 4x = 100, so x = 25, y = 10.",
+      "Compare an affordable bundle off the tangency, (40, 4): its MRS is 0.1 &lt; 0.4 and U = √160 = 12.6 &lt; 15.8. Shifting spending back toward y raises utility.",
+    ],
+    graph: { key: "econ380Budget", args: { mode: "opt" } },
   },
   {
-    "id": "cddemand",
-    "n": 4,
-    "week": 1,
-    "term": "Cobb–Douglas demands",
-    "simple": "U = x<sup>a</sup>y<sup>1−a</sup> ⇒ x* = aI/p<sub>x</sub>, y* = (1−a)I/p<sub>y</sub>. A constant budget share a goes to x."
+    id: "cddemand", n: 4, week: 1,
+    term: "Cobb–Douglas demands",
+    simple: "With Cobb–Douglas utility the consumer always spends the fixed share a of income on x and the share 1 − a on y.",
+    formula: `<i>U</i>${op("=")}<i>x<sup>a</sup>y</i><sup>1−<i>a</i></sup>${op("⇒")}<i>x</i>*${op("=")}${fr("<i>aI</i>", "<i>p<sub>x</sub></i>")}, <i>y</i>*${op("=")}${fr("(1 − <i>a</i>)<i>I</i>", "<i>p<sub>y</sub></i>")}`,
+    more: [
+      "Derivation: tangency (a/(1 − a))(y/x) = p<sub>x</sub>/p<sub>y</sub> gives p<sub>y</sub>y = ((1 − a)/a)p<sub>x</sub>x. Put that in the budget and p<sub>x</sub>x = aI.",
+      "Consequences: demand for x doesn't depend on p<sub>y</sub> (no cross-price effect), its own-price elasticity is exactly −1 (spending on x stays aI whatever its price), and its income elasticity is exactly 1. Both goods are normal; neither can be Giffen.",
+      "Trap: if the exponents don't add to 1 (U = x<sup>2</sup>y<sup>3</sup>), the shares are a/(a + b) and b/(a + b), here 2/5 and 3/5. Normalise first.",
+    ],
+    connections: ["tangency", "elas", "goods", "slutsky"],
+    example: "Cobb–Douglas is a reasonable first guess for broad budget categories whose shares are fairly stable, such as housing taking roughly a third of US household spending. It fails for necessities like food, whose budget share falls as income rises (Engel's law).",
+    played: [
+      "U = x<sup>0.5</sup>y<sup>0.5</sup>, I = 100, p<sub>x</sub> = 2, p<sub>y</sub> = 5.",
+      "x* = 0.5 × 100 / 2 = 25; y* = 0.5 × 100 / 5 = 10. Half the budget ($50) goes on each good.",
+      "Income doubles to 200: x* = 50, y* = 20. If instead p<sub>y</sub> doubles to 10: x* stays 25 and y* falls to 5.",
+    ],
+    graph: { key: "econ380Budget", args: { mode: "income" } },
   },
   {
-    "id": "lagrange",
-    "n": 5,
-    "week": 1,
-    "term": "Lagrange multiplier λ",
-    "simple": "In max U(x,y) s.t. p<sub>x</sub>x + p<sub>y</sub>y = I, λ* is the marginal utility of income: how much the maximized utility rises per extra dollar."
+    id: "lagrange", n: 5, week: 1,
+    term: "Lagrange multiplier λ",
+    simple: "In max U(x, y) subject to the budget, the multiplier λ at the optimum is the marginal utility of income: how much maximised utility rises per extra dollar.",
+    formula: `ℒ${op("=")}<i>U</i>(<i>x</i>, <i>y</i>)${op("+")}λ(<i>I</i> − <i>p<sub>x</sub>x</i> − <i>p<sub>y</sub>y</i>)${sp}λ*${op("=")}${fr("<i>MU<sub>x</sub></i>", "<i>p<sub>x</sub></i>")}${op("=")}${fr("∂<i>U</i>*", "∂<i>I</i>")}`,
+    more: [
+      "First-order conditions: MU<sub>x</sub> = λp<sub>x</sub>, MU<sub>y</sub> = λp<sub>y</sub>, and the budget. Dividing the first two gives the tangency MRS = p<sub>x</sub>/p<sub>y</sub>; the budget then says where on the line.",
+      "λ is a <b>shadow price</b>: the value of loosening the constraint by one unit. The same idea appears in cost minimisation, where the multiplier on the output constraint is marginal cost.",
+      "Trap: because utility is ordinal, the size of λ depends on which utility function you picked. Its role in the conditions is meaningful; comparing its level across people is not.",
+    ],
+    connections: ["tangency", "hicks", "costmin"],
+    example: "An extra $100 rebate matters far more to a household living paycheck to paycheck than to a very wealthy one. That idea, a falling marginal utility of income, is behind arguments for progressive transfers, though comparing λ across people needs assumptions beyond ordinal utility.",
+    played: [
+      "Running example at (25, 10): MU<sub>x</sub> = 0.5√(10/25) = 0.5√0.4 = 0.316.",
+      "λ = MU<sub>x</sub>/p<sub>x</sub> = 0.316/2 = 0.158. Check: MU<sub>y</sub>/p<sub>y</sub> = 0.5√2.5 / 5 = 0.791/5 = 0.158.",
+      "Raise I to 101: x = 25.25, y = 10.1, U = √255.025 = 15.970, up 0.158 from 15.811. λ predicted it.",
+    ],
+    graph: { key: "econ380Budget", args: { mode: "opt" } },
   },
   {
-    "id": "hicks",
-    "n": 6,
-    "week": 1,
-    "term": "Marshallian vs Hicksian demand",
-    "simple": "Marshallian x(p, I): maximizes utility given income. Hicksian h(p, U): minimizes the spending needed to reach utility U. Hicksian demand only has substitution effects."
+    id: "hicks", n: 6, week: 1,
+    term: "Marshallian vs Hicksian demand",
+    simple: "Marshallian demand x(p, I) is what a consumer buys with a fixed income; Hicksian (compensated) demand h(p, U) is the cheapest bundle that keeps utility at U, so it shows only the substitution effect.",
+    formula: `<i>h<sub>x</sub></i>(<i>p</i>, <i>U</i>)${op("=")}<i>x</i>(<i>p</i>, <i>e</i>(<i>p</i>, <i>U</i>))`,
+    more: [
+      "Marshallian demand comes from maximising utility; Hicksian from <b>minimising expenditure</b> (min p<sub>x</sub>x + p<sub>y</sub>y subject to U(x, y) = U). The minimum spending, e(p, U), is the expenditure function. At the starting prices and utility the two demands give the same bundle.",
+      "Hicksian demand always slopes down. For a <b>normal</b> good the Marshallian curve is more price-responsive (flatter in the usual P-on-the-vertical picture), because the income effect adds to the substitution effect; for an inferior good it's less responsive.",
+      "Uses: the Slutsky equation and exact welfare measures (compensating variation is the area to the left of the Hicksian curve). Trap: you can't see Hicksian demand in market data; you get it by compensating income.",
+    ],
+    connections: ["slutsky", "lagrange", "goods", "elas"],
+    example: "Indexing Social Security benefits to the CPI is an attempt at Hicksian compensation: raise income after prices rise so retirees can stay as well off. A fixed-basket index overcompensates because it ignores that people substitute away from goods that got dearer.",
+    played: [
+      "Running example, and p<sub>x</sub> rises from 2 to 8 (p<sub>y</sub> = 5, I = 100).",
+      "Marshallian: x = 0.5 × 100 / 8 = 6.25 (from 25).",
+      "Hicksian at U = 15.81: x = U√(p<sub>y</sub>/p<sub>x</sub>) = 15.81 × √(5/8) = 12.5, with y = 20, costing 8(12.5) + 5(20) = $200.",
+      "The compensated fall (25 → 12.5) is smaller than the ordinary fall (25 → 6.25): x is a normal good.",
+    ],
+    graph: "econ380Demand",
   },
   {
-    "id": "slutsky",
-    "n": 7,
-    "week": 1,
-    "term": "Slutsky equation",
-    "simple": "∂x/∂p<sub>x</sub> = ∂h/∂p<sub>x</sub> − x·∂x/∂I. Total effect = substitution effect (always ≤ 0) + income effect.",
-    "more": [
-      "See the Consumer optimizer tool for the A → B → C decomposition."
-    ]
+    id: "slutsky", n: 7, week: 1,
+    term: "Slutsky equation",
+    simple: "The Slutsky equation splits the effect of a price change on demand into a substitution effect (never positive) and an income effect from the change in purchasing power.",
+    formula: `${fr("∂<i>x</i>", "∂<i>p<sub>x</sub></i>")}${op("=")}${fr("∂<i>h</i>", "∂<i>p<sub>x</sub></i>")}${op("−")}<i>x</i>${fr("∂<i>x</i>", "∂<i>I</i>")}`,
+    more: [
+      "Read it in two parts: a higher p<sub>x</sub> makes x relatively dearer (substitution, ∂h/∂p<sub>x</sub> ≤ 0) and makes you poorer by about x dollars per $1 rise (income, −x·∂x/∂I). For a normal good both parts are negative.",
+      "On a graph (A → B → C): A is the old optimum; B is where the old indifference curve touches a line at the new price ratio (Hicks), or the optimum when you can just afford A (Slutsky compensation); C is the new optimum. A → B is substitution, B → C is income.",
+      "Traps: the income effect is weighted by x, so it matters most for goods with a big budget share. A Giffen good needs an inferior good <i>and</i> a big budget share. Hicks and Slutsky compensation split a large price change slightly differently; for small changes they agree.",
+    ],
+    connections: ["hicks", "goods", "cddemand", "mrs"],
+    example: "When US gasoline prices spiked in 2022, drivers cut back on trips and some shifted toward more fuel-efficient cars (substitution), while families with long commutes also cut other spending because their real income fell (income effect).",
+    played: [
+      "Running example at p<sub>x</sub> = 2: x = 25 and ∂x/∂p<sub>x</sub> = −aI/p<sub>x</sub><sup>2</sup> = −50/4 = −12.5.",
+      "Substitution: ∂h/∂p<sub>x</sub> = −0.5U√p<sub>y</sub>/p<sub>x</sub><sup>1.5</sup> = −0.5 × 15.81 × 2.236 / 2.828 = −6.25.",
+      "Income: x·∂x/∂I = 25 × 0.5/2 = 6.25, entering with a minus sign: −6.25 − 6.25 = −12.5 ✓.",
+      "For the big jump 2 → 8 (the graph): substitution 25 → 12.5, income 12.5 → 6.25.",
+    ],
+    graph: "econ380PriceEffects",
   },
   {
-    "id": "goods",
-    "n": 8,
-    "week": 1,
-    "term": "Normal, inferior, Giffen",
-    "simple": "Normal: x rises with income. Inferior: x falls with income. Giffen: an inferior good whose income effect outweighs the substitution effect, so demand slopes up."
+    id: "goods", n: 8, week: 1,
+    term: "Normal, inferior, Giffen",
+    simple: "A normal good is bought more when income rises and an inferior good less; a Giffen good is an inferior good whose income effect is strong enough that a price rise increases the quantity demanded.",
+    formula: `η${op("=")}${fr("∂<i>x</i>", "∂<i>I</i>")}·${fr("<i>I</i>", "<i>x</i>")}${sp}normal: η &gt; 0, inferior: η &lt; 0`,
+    more: [
+      "Within normal goods, <b>necessities</b> have 0 &lt; η &lt; 1 (their budget share falls as income rises) and <b>luxuries</b> have η &gt; 1.",
+      "Giffen needs three things: an inferior good, a large budget share (so the income effect is big) and few substitutes (so the substitution effect is small). Every Giffen good is inferior, but almost no inferior goods are Giffen.",
+      "Traps: “inferior” is about income, not quality, and it depends on the income range: a good can be normal for the very poor and inferior for the middle class. No good can be inferior at every income, since spending has to rise from zero somewhere.",
+    ],
+    connections: ["slutsky", "hicks", "cddemand", "elas"],
+    example: "Jensen and Miller subsidised rice for very poor households in Hunan, China, and found Giffen behaviour: many bought <i>less</i> rice when it got cheaper, using the freed-up income for more appealing foods. Instant noodles and long-distance bus travel are classic inferior goods.",
+    numbers: [
+      ["Share of after-tax income spent on food, lowest income fifth, 2023", "32.6%"],
+      ["Same, highest income fifth, 2023", "8.1%"],
+    ],
+    numbersSource: "Sources: USDA Economic Research Service, Charts of Note (2023 data; ERS has since moved to before-tax income); Jensen & Miller, “Giffen Behavior and Subsistence Consumption”, American Economic Review (2008). Food is normal but a necessity: richer households spend more dollars but a smaller share.",
+    played: [
+      "Running example x = 0.5I/p<sub>x</sub>: income 100 → 120 raises x from 25 to 30. Normal.",
+      "η = (Δx/x)/(ΔI/I) = (5/25)/(20/100) = 0.2/0.2 = 1. Cobb–Douglas goods have unit income elasticity.",
+      "Contrast an inferior good: a student buys 20 packs of instant noodles a month on $2,000, but 16 on $2,500. η = (−20%)/(25%) = −0.8.",
+    ],
+    graph: "econ380Engel",
   },
   {
-    "id": "elas",
-    "n": 9,
-    "week": 1,
-    "term": "Price elasticity of demand",
-    "simple": "ε = (∂Q/∂P)(P/Q). |ε| &gt; 1 elastic (raising price cuts revenue), |ε| &lt; 1 inelastic. On linear demand, elasticity changes along the curve."
+    id: "elas", n: 9, week: 1,
+    term: "Price elasticity of demand",
+    simple: "The price elasticity of demand is the percentage change in quantity demanded for a 1% change in price; demand is elastic if |ε| &gt; 1 and inelastic if |ε| &lt; 1.",
+    formula: `ε${op("=")}${fr("∂<i>Q</i>", "∂<i>P</i>")}·${fr("<i>P</i>", "<i>Q</i>")}`,
+    more: [
+      "Revenue rule: when demand is elastic, a price cut raises revenue; when inelastic, it lowers it. Revenue peaks where |ε| = 1, which is where MR = 0.",
+      "On a <b>linear</b> demand curve the slope is constant but the elasticity isn't: |ε| = (1/b)(P/Q) runs from ∞ at the price intercept, through 1 at the midpoint, to 0 at the quantity intercept. Don't read “steep” as “inelastic” unless you compare two curves at the same point.",
+      "Demand is more elastic with close substitutes, a large budget share, a narrowly defined good (Shell gasoline rather than gasoline) and more time to adjust.",
+    ],
+    connections: ["lerner", "incidence", "mrmc", "cddemand"],
+    example: "When gasoline prices jump, drivers barely cut back in the first months: they still have to get to work. Over years they buy more efficient cars and move closer to work, so long-run demand is several times more elastic.",
+    numbers: [
+      ["Short-run price elasticity of US gasoline demand, 2001–06", "−0.034 to −0.077"],
+      ["Same, 1975–80", "−0.21 to −0.34"],
+    ],
+    numbersSource: "Source: Hughes, Knittel & Sperling, “Evidence of a Shift in the Short-Run Price Elasticity of Gasoline Demand”, The Energy Journal 29(1), 2008.",
+    played: [
+      "Market demand P = 100 − 2Q, so Q = 50 − P/2 and dQ/dP = −0.5. At P = 40, Q = 30.",
+      "ε = −0.5 × 40/30 = −0.67: inelastic. Raise P to 42: Q = 29, revenue 1,200 → 1,218. Up.",
+      "At P = 60, Q = 20: ε = −0.5 × 60/20 = −1.5: elastic. Raise P to 62: Q = 19, revenue 1,200 → 1,178. Down.",
+      "Unit elastic at the midpoint P = 50, Q = 25, where revenue peaks at 1,250.",
+    ],
+    graph: "econ380Elasticity",
+  },
+
+  // ------------------------------------------------------------ unit 2
+  {
+    id: "rts", n: 10, week: 2,
+    term: "Returns to scale",
+    simple: "Returns to scale describe what happens to output when every input is scaled up by the same factor: output rises more than proportionally (increasing), proportionally (constant) or less (decreasing).",
+    formula: `<i>F</i>(<i>tK</i>, <i>tL</i>) vs <i>t</i>·<i>F</i>(<i>K</i>, <i>L</i>)${sp}<i>K</i><sup>α</sup><i>L</i><sup>β</sup>: compare α + β with 1`,
+    more: [
+      "Returns to scale is a long-run, all-inputs-together idea. Diminishing <b>marginal</b> product is one input at a time. A function can have diminishing MP<sub>L</sub> and MP<sub>K</sub> and still have increasing returns to scale (K<sup>0.6</sup>L<sup>0.6</sup>).",
+      "Returns to scale shape long-run average cost: with fixed input prices, increasing returns mean falling average cost (economies of scale), constant returns flat, decreasing returns rising.",
+      "Traps: for Cobb–Douglas, add the exponents; don't judge each one alone. And returns can differ by scale: increasing for a small plant, decreasing for a huge one.",
+    ],
+    connections: ["mrts", "costmin", "lrcomp", "mcac"],
+    example: "Pipelines show increasing returns: doubling a pipe's diameter roughly quadruples its cross-section (what it can carry) but only about doubles the steel around it. That geometry is one reason oil and gas pipelines tend toward natural monopoly.",
+    played: [
+      "Running example Q = K<sup>0.5</sup>L<sup>0.5</sup> at K = 40, L = 10: Q = √400 = 20.",
+      "Double both: K = 80, L = 20, so Q = √1,600 = 40. Exactly double: constant returns (0.5 + 0.5 = 1).",
+      "Compare Q = K<sup>0.3</sup>L<sup>0.8</sup>: doubling both inputs multiplies output by 2<sup>1.1</sup> = 2.14 &gt; 2. Increasing returns.",
+    ],
+    graph: { key: "econ380Isoquant", args: { mode: "scale" } },
   },
   {
-    "id": "rts",
-    "n": 10,
-    "week": 2,
-    "term": "Returns to scale",
-    "simple": "Scale all inputs by t: output rises by more than t (increasing), exactly t (constant) or less (decreasing). For K<sup>α</sup>L<sup>β</sup>, compare α + β with 1."
+    id: "mrts", n: 11, week: 2,
+    term: "MRTS",
+    simple: "The marginal rate of technical substitution is how much capital the firm can give up for one more unit of labor while keeping output the same: the absolute slope of the isoquant.",
+    formula: `MRTS${op("=")}${fr("<i>MP<sub>L</sub></i>", "<i>MP<sub>K</sub></i>")}${op("=")}−${fr("<i>dK</i>", "<i>dL</i>")}${sp}(<i>Q</i> fixed)`,
+    more: [
+      "Same algebra as the MRS: along an isoquant MP<sub>L</sub>·dL + MP<sub>K</sub>·dK = 0. Diminishing MRTS (convex isoquants) means each extra worker replaces less and less capital.",
+      "Unlike utility, output is <b>cardinal</b>: the Q = 40 isoquant really is twice the output of Q = 20.",
+      "Shapes: perfect substitutes (straight isoquants, constant MRTS), fixed proportions (L-shaped: one driver per truck), Cobb–Douglas in between.",
+    ],
+    connections: ["mrs", "costmin", "rts"],
+    example: "A supermarket can run checkout with more cashiers or more self-checkout machines. In a store that is already mostly self-checkout, one more cashier frees up few machines; in a store with almost none, a cashier replaces a lot.",
+    played: [
+      "Q = K<sup>0.5</sup>L<sup>0.5</sup>: MP<sub>L</sub> = 0.5√(K/L), MP<sub>K</sub> = 0.5√(L/K), so MRTS = K/L.",
+      "At (L, K) = (10, 40), Q = 20: MRTS = 4. One more worker replaces 4 units of capital.",
+      "At (20, 20), on the same isoquant: MRTS = 1. Diminishing MRTS.",
+    ],
+    graph: { key: "econ380Isoquant", args: { mode: "mrts" } },
   },
   {
-    "id": "mrts",
-    "n": 11,
-    "week": 2,
-    "term": "MRTS",
-    "simple": "Marginal rate of technical substitution = MP<sub>L</sub>/MP<sub>K</sub>: the slope of the isoquant."
+    id: "costmin", n: 12, week: 2,
+    term: "Cost-minimization condition",
+    simple: "To make a given output at the lowest cost, the firm picks the inputs where the isoquant is tangent to an isocost line, so the MRTS equals the input price ratio w/r.",
+    formula: `${fr("<i>MP<sub>L</sub></i>", "<i>MP<sub>K</sub></i>")}${op("=")}${fr("<i>w</i>", "<i>r</i>")}${op("⇔")}${fr("<i>MP<sub>L</sub></i>", "<i>w</i>")}${op("=")}${fr("<i>MP<sub>K</sub></i>", "<i>r</i>")}`,
+    more: [
+      "Intuition: if MP<sub>L</sub>/w &gt; MP<sub>K</sub>/r, a dollar moved from capital to labor buys more output, so keep switching until output per dollar is equal for both inputs.",
+      "Doing this for every output level gives the cost function C(Q) and the conditional input demands L(w, r, Q), K(w, r, Q). The Lagrange multiplier on the output constraint is marginal cost.",
+      "Traps: cost minimisation is only the first step of profit maximisation; a firm can make the wrong quantity at least cost. A rise in w makes the firm substitute toward capital <i>for a given Q</i>.",
+    ],
+    connections: ["mrts", "tangency", "lagrange", "mcac"],
+    example: "Fast-food chains such as McDonald's have installed self-order kiosks. Whenever wages rise relative to the cost of machines, the cost-minimising mix shifts toward kiosks and away from counter staff; where labor is cheap, staffed counters stay cheaper.",
+    played: [
+      "Running example: Q = K<sup>0.5</sup>L<sup>0.5</sup>, w = 4, r = 1, target Q = 20.",
+      "Tangency: K/L = w/r = 4, so K = 4L. Then Q = √(4L<sup>2</sup>) = 2L = 20, so L = 10, K = 40.",
+      "Cost = 4(10) + 1(40) = $80, an average cost of $4 a unit. Check (L, K) = (20, 20), also Q = 20: cost 4(20) + 20 = $100. Dearer.",
+    ],
+    graph: { key: "econ380Isoquant", args: { mode: "opt" } },
   },
   {
-    "id": "costmin",
-    "n": 12,
-    "week": 2,
-    "term": "Cost-minimization condition",
-    "simple": "MP<sub>L</sub>/MP<sub>K</sub> = w/r (isoquant tangent to isocost), equivalently MP<sub>L</sub>/w = MP<sub>K</sub>/r: the last dollar buys the same output from each input."
+    id: "mcac", n: 13, week: 2,
+    term: "MC crosses AC at its minimum",
+    simple: "When marginal cost is below average cost, average cost falls, and when it is above, average cost rises, so the MC curve crosses AVC and ATC at their lowest points.",
+    formula: `ATC${op("=")}AVC${op("+")}${fr("FC", "<i>q</i>")}${sp}${fr("<i>d</i>AC", "<i>dq</i>")}${op("=")}${fr("MC − AC", "<i>q</i>")}`,
+    more: [
+      "Grade analogy: if your next exam score (the marginal one) is below your average, your average falls. It's the same arithmetic.",
+      "Short-run shapes: average fixed cost FC/q falls forever; AVC and ATC are U-shaped; the gap between ATC and AVC is AFC, which shrinks as q grows. Fixed cost doesn't affect MC at all.",
+      "Drawing rule for exams: MC passes through the <b>bottom</b> of AVC first and then the bottom of ATC (min ATC is at a larger q than min AVC). Label every curve and both minimum points.",
+    ],
+    connections: ["shutdown", "lrcomp", "costmin", "rts"],
+    example: "An airline's planes and gates are paid for whether a flight is full or not, so average cost per passenger falls as seats fill, while the marginal cost of one more passenger on a half-empty flight is little more than a snack and a bit of fuel.",
+    played: [
+      "Running firm: TC = 32 + q<sup>3</sup> − 6q<sup>2</sup> + 20q, so MC = 3q<sup>2</sup> − 12q + 20 and AVC = q<sup>2</sup> − 6q + 20.",
+      "Min AVC at q = 3: AVC = 9 − 18 + 20 = 11, and MC(3) = 27 − 36 + 20 = 11. Equal.",
+      "Min ATC at q = 4: ATC = 16 − 24 + 20 + 32/4 = 20, and MC(4) = 48 − 48 + 20 = 20. Equal.",
+    ],
+    graph: "econ380Costs",
   },
   {
-    "id": "mcac",
-    "n": 13,
-    "week": 2,
-    "term": "MC crosses AC at its minimum",
-    "simple": "When MC &lt; AC, average cost falls; when MC &gt; AC it rises. So MC cuts AC (and AVC) at their minimum points."
+    id: "shutdown", n: 14, week: 2,
+    term: "Short-run shutdown rule",
+    simple: "In the short run a competitive firm produces where P = MC as long as price covers minimum average variable cost; below that it shuts down and loses only its fixed cost.",
+    formula: `produce where <i>P</i>${op("=")}MC if <i>P</i>${op("≥")}min AVC; otherwise <i>q</i>${op("=")}0`,
+    more: [
+      "Fixed cost is sunk in the short run: it's paid whether or not the firm produces, so it shouldn't affect the decision. What matters is whether revenue covers <b>variable</b> cost.",
+      "So the short-run supply curve is the MC curve above min AVC. Between min AVC and min ATC the firm produces at a loss, but a smaller one than shutting down. In the long run (no fixed costs) it exits if P &lt; min ATC.",
+      "Trap: “shut down” (produce nothing for now, still pay fixed cost) is not “exit” (leave the industry and pay nothing).",
+    ],
+    connections: ["mcac", "lrcomp", "csps"],
+    example: "During the 2020 COVID-19 lockdowns many restaurants closed their dining rooms for months while still paying rent: takeout sales wouldn't cover staff and food (variable costs), and the lease (fixed) had to be paid either way.",
+    played: [
+      "Running firm: min AVC = 11 (q = 3), min ATC = 20 (q = 4), fixed cost 32.",
+      "P = 35: MC = 35 at q = 5. Revenue 175, cost 32 + 125 − 150 + 100 = 107, profit 68.",
+      "P = 14.75: MC = 14.75 at q = 3.5. Revenue 51.6, cost 71.4: a loss of 19.75, less than the 32 lost by shutting. Stay open.",
+      "P = 8 &lt; 11: at q = 2, AVC = 12 &gt; 8, so producing loses 32 + 8 = 40. Shut down and lose 32.",
+    ],
+    graph: { key: "econ380Costs", args: { mode: "shutdown" } },
   },
   {
-    "id": "shutdown",
-    "n": 14,
-    "week": 2,
-    "term": "Short-run shutdown rule",
-    "simple": "A competitive firm produces where P = MC as long as P ≥ min AVC. Below that it shuts down and loses only its fixed cost."
+    id: "lrcomp", n: 15, week: 2,
+    term: "Long-run competitive equilibrium",
+    simple: "In the long run, free entry and exit push price to the minimum of average cost, so each firm earns zero economic profit and produces at its efficient scale.",
+    formula: `<i>P</i>${op("=")}MC${op("=")}min ATC`,
+    more: [
+      "Positive profit draws entrants, shifting market supply right and pulling P down; losses cause exit, pushing P up. Movement stops only where P = min ATC.",
+      "Zero <b>economic</b> profit still means a normal return: opportunity costs, including the owner's time and capital, are already counted as costs.",
+      "With identical firms and constant input prices the long-run supply curve is flat at min ATC and the number of firms adjusts to demand. If input prices rise as the industry grows, long-run supply slopes up (an increasing-cost industry).",
+    ],
+    connections: ["mcac", "shutdown", "fwt", "rts"],
+    example: "When bubble tea became popular in US cities, early shops earned high profits. New shops opened on many blocks, and prices and profits fell back toward normal.",
+    played: [
+      "Running firm: min ATC = 20 at q = 4, so the long-run price is $20.",
+      "Market demand Q = 1,000 − 20P: at P = 20, Q = 600.",
+      "Number of firms = 600 / 4 = 150, each earning (20 − 20) × 4 = 0.",
+      "Demand rises to Q = 1,200 − 20P: price and profit rise for a while; firms enter until P = 20 again, now 800 / 4 = 200 firms.",
+    ],
+    graph: "econ380LongRun",
+  },
+
+  // ------------------------------------------------------------ unit 3
+  {
+    id: "csps", n: 16, week: 3,
+    term: "Consumer & producer surplus",
+    simple: "Consumer surplus is what buyers were willing to pay minus what they paid (the area under demand, above the price); producer surplus is what sellers received minus their marginal cost (the area above supply, below the price).",
+    formula: `CS${op("=")}∫(<i>D</i>(<i>Q</i>) − <i>P</i>)<i>dQ</i>${sp}linear: ½ × base × height`,
+    more: [
+      "Each point on the demand curve is some buyer's willingness to pay; each point on supply is some seller's marginal cost. Surplus adds up the gain on every unit traded.",
+      "Total surplus (CS + PS) is largest at the competitive equilibrium: every trade worth more than it costs happens, and none worth less.",
+      "Traps: PS is not profit (it ignores fixed cost). With linear curves use triangles, but check where the curves meet the axes. With a tax, the buyers' price bounds CS and the sellers' price bounds PS.",
+    ],
+    connections: ["dwl", "incidence", "fwt", "mrmc"],
+    example: "Uber's surge pricing let economists see how ridership responded to price at many points along the demand curve, and so estimate how much more riders would have paid than they actually did.",
+    numbers: [
+      ["Consumer surplus from UberX, 4 US cities, 2015", "≈ $2.9 billion"],
+      ["Consumer surplus per $1 spent", "≈ $1.60"],
+    ],
+    numbersSource: "Source: Cohen, Hahn, Hall, Levitt & Metcalfe, “Using Big Data to Estimate Consumer Surplus: The Case of Uber”, NBER Working Paper 22627 (2016). Two of the authors worked at Uber.",
+    played: [
+      "Running market: demand P = 100 − 2Q, supply P = 10 + Q. 100 − 2Q = 10 + Q, so Q = 30 and P = 40.",
+      "CS = ½ × 30 × (100 − 40) = 900.",
+      "PS = ½ × 30 × (40 − 10) = 450. Total surplus = 1,350.",
+    ],
+    graph: "econ380Surplus",
   },
   {
-    "id": "lrcomp",
-    "n": 15,
-    "week": 2,
-    "term": "Long-run competitive equilibrium",
-    "simple": "Free entry and exit drive economic profit to zero: P = MC = min AC."
+    id: "dwl", n: 17, week: 3,
+    term: "Deadweight loss",
+    simple: "Deadweight loss is the total surplus lost compared with the efficient outcome: trades that would benefit both sides but don't happen (or wasteful trades that do).",
+    formula: `DWL${op("≈")}½ × <i>t</i> × Δ<i>Q</i>${sp}(linear curves)`,
+    more: [
+      "Nobody collects it. Tax revenue goes to the government, so it isn't part of the DWL; the DWL triangle is the value of the trades the tax prevented.",
+      "DWL grows with the <b>square</b> of the tax: doubling a tax roughly quadruples it. That is the case for broad tax bases with low rates. It's also bigger when supply and demand are more elastic, because quantity responds more.",
+      "Sources: taxes, subsidies (too much is produced), price controls, monopoly, externalities. Trap: a subsidy creates DWL too, even though buyers and sellers both seem to gain.",
+    ],
+    connections: ["incidence", "csps", "ceiling", "mrmc"],
+    example: "England's window tax (1696–1851) charged houses by the number of windows. Owners bricked windows up: they lost light and air, and the Treasury collected nothing from the windows that vanished. That loss is pure deadweight.",
+    played: [
+      "Running market with a $6 per-unit tax: 100 − 2Q = 10 + Q + 6, so Q = 28 (from 30).",
+      "DWL = ½ × 6 × (30 − 28) = 6.",
+      "Check the accounts: CS = 784, PS = 392, revenue = 6 × 28 = 168. Total 1,344, against 1,350 before: 6 lost.",
+      "Double the tax to $12: Q = 26 and DWL = ½ × 12 × 4 = 24, four times as large.",
+    ],
+    graph: "econ380Tax",
   },
   {
-    "id": "csps",
-    "n": 16,
-    "week": 3,
-    "term": "Consumer & producer surplus",
-    "simple": "CS: the area below demand and above the price paid. PS: the area above supply and below the price received."
+    id: "incidence", n: 18, week: 3,
+    term: "Tax incidence",
+    simple: "Tax incidence is who actually bears a tax; it depends on elasticities, not on who legally pays, and the less elastic side bears more.",
+    formula: `buyers' share${op("=")}${fr("ε<sub>S</sub>", "ε<sub>S</sub> + |ε<sub>D</sub>|")}`,
+    more: [
+      "A per-unit tax drives a wedge t between the price buyers pay and the price sellers keep: P<sub>b</sub> − P<sub>s</sub> = t. Whether the government collects it from buyers or from sellers, the same P<sub>b</sub>, P<sub>s</sub> and Q result.",
+      "With linear curves, the buyers' share is also (demand slope)/(demand slope + supply slope), with slopes measured as ΔP per unit of Q: the steeper side pays more.",
+      "Extremes: perfectly inelastic demand or perfectly elastic supply means buyers pay it all; perfectly inelastic supply (land) means sellers pay it all.",
+    ],
+    connections: ["dwl", "elas", "csps", "ceiling"],
+    example: "US payroll taxes are split by law half on workers and half on employers, but because labor supply is fairly inelastic, economists generally think workers bear much of the employer's half too, through lower wages. State gasoline taxes show up almost one-for-one in pump prices.",
+    numbers: [
+      ["Federal gasoline excise tax (unchanged since 1993)", "18.4¢ a gallon"],
+      ["Average pass-through of state gasoline taxes to pump prices", "≈ 100%"],
+      ["Payroll tax on each of employer and employee: Social Security + Medicare (2025)", "6.2% + 1.45%"],
+    ],
+    numbersSource: "Sources: Tax Policy Center (federal gas tax); Marion & Muehlegger, “Fuel Tax Incidence and Supply Conditions”, Journal of Public Economics (2011); IRS/SSA 2025 payroll tax rates.",
+    played: [
+      "Running market, $6 tax: Q = 28, P<sub>b</sub> = 100 − 56 = 44, P<sub>s</sub> = 44 − 6 = 38 (from 40).",
+      "Buyers pay 4 of the 6 (67%); sellers bear 2 (33%).",
+      "Elasticities at the old equilibrium: |ε<sub>D</sub>| = 0.5 × 40/30 = 0.67, ε<sub>S</sub> = 1 × 40/30 = 1.33. Buyers' share = 1.33/(1.33 + 0.67) = 0.67 ✓.",
+    ],
+    graph: { key: "econ380Tax", args: { mode: "incidence" } },
   },
   {
-    "id": "dwl",
-    "n": 17,
-    "week": 3,
-    "term": "Deadweight loss",
-    "simple": "Total surplus lost compared with the efficient outcome: trades worth more to buyers than they cost sellers that don’t happen (or inefficient trades that do)."
+    id: "ceiling", n: 19, week: 3,
+    term: "Binding price ceiling",
+    simple: "A binding price ceiling is a legal maximum price set below the equilibrium price; quantity falls to what sellers will supply, leaving a shortage and a deadweight loss.",
+    formula: `<i>Q</i>${op("=")}<i>Q<sub>S</sub></i>(<i>P̄</i>)${op("&lt;")}<i>Q<sub>D</sub></i>(<i>P̄</i>)${sp}shortage${op("=")}<i>Q<sub>D</sub></i> − <i>Q<sub>S</sub></i>`,
+    more: [
+      "It only binds if it's set <b>below</b> the equilibrium price; a ceiling above it does nothing. (A price floor binds only above equilibrium.)",
+      "The textbook DWL assumes the scarce units go to the buyers who value them most. In practice they go to whoever queues, searches longest or knows the landlord, so the real losses are larger: time spent searching, black markets, quality cuts.",
+      "Who gains: buyers who still get the good, at a lower price. Who loses: sellers, and buyers squeezed out. Supply is more elastic in the long run, so shortages grow over time.",
+    ],
+    connections: ["dwl", "csps", "incidence", "pareto"],
+    example: "Rent control: when San Francisco extended rent control to small older apartment buildings in 1994, covered tenants were more likely to stay put, but landlords converted many covered buildings to condos and owner-occupied housing, shrinking the rental stock.",
+    numbers: [
+      ["Fall in rental housing supplied by landlords newly covered by SF rent control", "15%"],
+      ["Fall in covered tenants' mobility (more stayed put)", "≈ 20%"],
+    ],
+    numbersSource: "Source: Diamond, McQuade & Qian, “The Effects of Rent Control Expansion on Tenants, Landlords, and Inequality: Evidence from San Francisco”, American Economic Review (2019).",
+    played: [
+      "Running market, ceiling P̄ = $34 (the equilibrium price was $40).",
+      "Supply: Q<sub>S</sub> = 34 − 10 = 24. Demand: Q<sub>D</sub> = (100 − 34)/2 = 33. Shortage = 9.",
+      "On the 24th unit buyers would pay 100 − 48 = $52, but it costs sellers only $34.",
+      "DWL = ½ × (30 − 24) × (52 − 34) = 54, assuming the 24 units go to the buyers who value them most.",
+    ],
+    graph: "econ380Ceiling",
   },
   {
-    "id": "incidence",
-    "n": 18,
-    "week": 3,
-    "term": "Tax incidence",
-    "simple": "Who bears a tax doesn’t depend on who legally pays it. The less elastic side bears more: the buyers’ share = ε<sub>S</sub>/(ε<sub>S</sub> + |ε<sub>D</sub>|)."
+    id: "pareto", n: 20, week: 3,
+    term: "Pareto efficiency & the contract curve",
+    simple: "An allocation is Pareto efficient if no one can be made better off without making someone else worse off; in an Edgeworth box these are the points where the two people's MRSs are equal, which together form the contract curve.",
+    formula: `MRS<sub>A</sub>${op("=")}MRS<sub>B</sub>`,
+    more: [
+      "If the MRSs differ, there's a trade both like: A values x more (in units of y) than B does, so B sells x to A at a rate in between. The lens between their indifference curves through the starting point holds all such trades.",
+      "The contract curve runs from one origin to the other. Points on it are efficient but can be very unequal, including one person having everything. Efficiency says nothing about fairness.",
+      "Trap: a <b>Pareto improvement</b> (someone better off, nobody worse off) is not the same as <b>Pareto efficient</b> (no improvement left). Moving from an inefficient point to some efficient point isn't always an improvement for both.",
+    ],
+    connections: ["fwt", "mrs", "axioms", "ceiling"],
+    example: "Swapping lunch items: if you value your friend's cookie more than they do, and they value your apple more than you do, a swap makes both better off. Once no such swaps are left, the lunch allocation is Pareto efficient.",
+    played: [
+      "Two people, each U = x<sup>0.5</sup>y<sup>0.5</sup> (MRS = y/x). Totals: 10 of x, 10 of y. A starts with (8, 2), B with (2, 8).",
+      "MRS<sub>A</sub> = 2/8 = 0.25, MRS<sub>B</sub> = 8/2 = 4. Unequal, so not efficient: A would give up x for y.",
+      "Contract curve: y<sub>A</sub>/x<sub>A</sub> = (10 − y<sub>A</sub>)/(10 − x<sub>A</sub>), so y<sub>A</sub> = x<sub>A</sub>: the diagonal.",
+      "Move to (5, 5) each: utility rises from √16 = 4 to 5 for both. A Pareto improvement, onto the contract curve.",
+    ],
+    graph: "econ380Edgeworth",
   },
   {
-    "id": "ceiling",
-    "n": 19,
-    "week": 3,
-    "term": "Binding price ceiling",
-    "simple": "A maximum price below equilibrium: quantity falls to what suppliers offer, causing a shortage and deadweight loss (plus search and queueing costs in practice)."
+    id: "fwt", n: 21, week: 3,
+    term: "First welfare theorem",
+    simple: "The first welfare theorem says that with competitive markets, no externalities and full information, a competitive equilibrium is Pareto efficient.",
+    formula: `MRS<sub>A</sub>${op("=")}${fr("<i>p<sub>x</sub></i>", "<i>p<sub>y</sub></i>")}${op("=")}MRS<sub>B</sub>`,
+    more: [
+      "Why: every consumer sets their MRS equal to the price ratio, and they all face the same prices, so every MRS is equal: efficient exchange. Firms set price equal to MC, so what it costs to make more of a good matches what consumers will give up for it.",
+      "It's Adam Smith's invisible hand made precise, and it lists exactly when markets fail: market power, externalities, public goods, asymmetric information. Those failures are much of the rest of microeconomics.",
+      "The <b>second</b> welfare theorem runs the other way: any efficient allocation can be reached as a competitive equilibrium after suitable lump-sum transfers. In theory, efficiency and equity can be handled separately.",
+    ],
+    connections: ["pareto", "lrcomp", "csps", "mrmc"],
+    example: "Wholesale electricity auctions apply the idea: generators bid to supply, the market clears at one price, and power comes from the cheapest plants. When suppliers could exercise market power, as in the 2000–01 California electricity crisis, the theorem's conditions failed and prices spiked.",
+    played: [
+      "Edgeworth economy: A has (8, 2), B has (2, 8), both U = x<sup>0.5</sup>y<sup>0.5</sup>. Set p<sub>y</sub> = 1.",
+      "Try p<sub>x</sub> = 1. A's wealth = 8 + 2 = 10, so A demands x = 0.5 × 10 / 1 = 5 and y = 5. B's wealth is also 10: B demands (5, 5).",
+      "Markets clear: x demanded 5 + 5 = 10 = x available. MRS<sub>A</sub> = MRS<sub>B</sub> = 1 = p<sub>x</sub>/p<sub>y</sub>: on the contract curve. Efficient.",
+    ],
+    graph: { key: "econ380Edgeworth", args: { mode: "ce" } },
+  },
+
+  // ------------------------------------------------------------ unit 4
+  {
+    id: "mrmc", n: 22, week: 4,
+    term: "Monopoly rule",
+    simple: "A monopolist maximises profit by producing where marginal revenue equals marginal cost and charging the highest price the demand curve allows at that quantity.",
+    formula: `MR(<i>Q</i>)${op("=")}MC(<i>Q</i>)${sp}<i>P</i>${op("=")}<i>a</i> − <i>bQ</i>${op("⇒")}MR${op("=")}<i>a</i> − 2<i>bQ</i>`,
+    more: [
+      "MR is below price because to sell one more unit the monopolist must cut the price on <b>all</b> its units, not just the last one. With linear demand, MR has the same intercept and twice the slope.",
+      "Compared with competition: lower Q, higher P, a transfer from consumers to the firm (the profit rectangle) and a deadweight-loss triangle between demand and MC from Q<sub>m</sub> to Q<sub>c</sub>.",
+      "Traps: a monopolist has no supply curve (its output depends on the shape of demand, not just the price). Read the price off the <b>demand</b> curve, not MR or MC. It never produces where demand is inelastic, because MR &lt; 0 there.",
+    ],
+    connections: ["lerner", "pricedisc", "dwl", "elas"],
+    example: "For years after 2007, Mylan's EpiPen faced little competition in the US, and its list price rose several-fold: a firm with market power pricing far above its marginal cost.",
+    numbers: [
+      ["EpiPen two-pack list price, January 2007", "$94"],
+      ["Same, May 2016", "$609"],
+    ],
+    numbersSource: "Source: Kaiser Family Foundation, “How Much Has Medicare Spent on the EpiPen Since 2007?” (2016).",
+    played: [
+      "Running market demand P = 100 − 2Q, MC = $20. MR = 100 − 4Q.",
+      "MR = MC: 100 − 4Q = 20, so Q = 20 and P = 100 − 40 = $60.",
+      "Profit = (60 − 20) × 20 = 800. CS = ½ × 20 × 40 = 400.",
+      "Competition would give P = 20, Q = 40. DWL = ½ × (60 − 20) × (40 − 20) = 400.",
+    ],
+    graph: "econ380Monopoly",
   },
   {
-    "id": "pareto",
-    "n": 20,
-    "week": 3,
-    "term": "Pareto efficiency & the contract curve",
-    "simple": "No one can be made better off without making someone worse off. In an Edgeworth box these are the points where the two MRSs are equal: the contract curve."
+    id: "lerner", n: 23, week: 4,
+    term: "Lerner index / inverse-elasticity rule",
+    simple: "The Lerner index measures market power as the markup over marginal cost as a share of price, and at a monopolist's optimum it equals one over the absolute price elasticity of demand.",
+    formula: `<i>L</i>${op("=")}${fr("<i>P</i> − MC", "<i>P</i>")}${op("=")}${fr("1", "|ε|")}${sp}<i>P</i>${op("=")}${fr("MC", "1 − 1/|ε|")}`,
+    more: [
+      "Derivation: MR = P(1 − 1/|ε|). Set MR = MC and rearrange. The more elastic demand is, the smaller the markup; perfect competition (|ε| → ∞) gives L = 0.",
+      "Since MC &gt; 0 requires MR &gt; 0, a monopolist always prices where |ε| &gt; 1, on the elastic part of demand. If a question says a monopolist faces |ε| = 0.5 at its optimum, something is wrong.",
+      "Trap: the markup is a share of <b>price</b>, not of cost. |ε| = 4 gives L = 0.25, so P = MC/0.75: a 33% markup on cost, not 25%.",
+    ],
+    connections: ["mrmc", "elas", "pricedisc"],
+    example: "Supermarkets sell staples on thin margins because shoppers can easily switch stores, while a patented drug with no close substitute can carry a very large markup.",
+    numbers: [
+      ["Average markup of US listed firms over marginal cost, 1980", "21%"],
+      ["Same, 2016", "61%"],
+    ],
+    numbersSource: "Source: De Loecker, Eeckhout & Unger, “The Rise of Market Power and the Macroeconomic Implications”, Quarterly Journal of Economics (2020); sales-weighted. How to measure markups is debated.",
+    played: [
+      "Running monopoly: P = 60, MC = 20, Q = 20.",
+      "L = (60 − 20)/60 = 2/3.",
+      "Elasticity there: |ε| = (1/2)(60/20) = 1.5, and 1/1.5 = 2/3 ✓.",
+      "If instead |ε| = 4 and MC = 30: P = 30/(1 − 1/4) = $40.",
+    ],
+    graph: { key: "econ380Monopoly", args: { mode: "lerner" } },
   },
   {
-    "id": "fwt",
-    "n": 21,
-    "week": 3,
-    "term": "First welfare theorem",
-    "simple": "Under perfect competition (with no externalities and full information) a competitive equilibrium is Pareto efficient."
+    id: "pricedisc", n: 24, week: 4,
+    term: "Price discrimination",
+    simple: "Price discrimination is charging different prices for the same good when the difference isn't due to cost: first degree charges each buyer their reservation price, second degree offers a menu buyers choose from, third degree charges identifiable groups different prices.",
+    formula: `3rd degree: MR<sub>1</sub>${op("=")}MR<sub>2</sub>${op("=")}MC; higher price where |ε| is lower`,
+    more: [
+      "It needs market power, a way to tell buyers apart (or get them to sort themselves) and no resale.",
+      "<b>First degree</b> (perfect): output rises to the competitive level, so there's no DWL, but consumer surplus is zero: the firm takes it all. <b>Second degree</b>: quantity discounts and versions (economy vs business class). <b>Third degree</b>: student, senior and country prices; set MR = MC in each market, and the less elastic group pays more.",
+      "Trap: third-degree discrimination can raise or lower total surplus compared with one price. It raises it when it opens a market that a single price wouldn't serve at all.",
+    ],
+    connections: ["mrmc", "lerner", "elas", "csps"],
+    example: "In 2014 Gilead's hepatitis C cure Sovaldi had a US list price of about $84,000 per course but was offered for around $900 in India and Egypt, with licensing deals meant to stop resale back to richer markets.",
+    numbers: [
+      ["Sovaldi 12-week course, US list price (2014)", "$84,000"],
+      ["Same, low-income-country price (India, Egypt; 2014)", "≈ $900"],
+    ],
+    numbersSource: "Sources: Fierce Pharma and BioCentury reporting on Gilead's tiered pricing (2014).",
+    played: [
+      "MC = $20 in two markets. Adults: P = 100 − 2Q. Students: P = 60 − 2Q.",
+      "Adults: MR = 100 − 4Q = 20, so Q = 20 and P = $60 (|ε| = (1/2)(60/20) = 1.5).",
+      "Students: MR = 60 − 4Q = 20, so Q = 10 and P = $40 (|ε| = (1/2)(40/10) = 2). More elastic, lower price.",
+      "Perfect discrimination among adults instead: sell Q = 40, down to P = 20. Profit = ½ × 40 × 80 = 1,600; CS = 0; DWL = 0.",
+    ],
+    graph: "econ380PriceDisc",
+  },
+
+  // ------------------------------------------------------------ unit 5
+  {
+    id: "nash", n: 25, week: 5,
+    term: "Nash equilibrium",
+    simple: "A Nash equilibrium is a set of strategies, one for each player, in which each is a best response to the others, so no player can gain by changing strategy alone.",
+    formula: `<i>u<sub>i</sub></i>(<i>s<sub>i</sub></i>*, <i>s</i><sub>−<i>i</i></sub>*)${op("≥")}<i>u<sub>i</sub></i>(<i>s<sub>i</sub></i>, <i>s</i><sub>−<i>i</i></sub>*) for every <i>s<sub>i</sub></i> and every player <i>i</i>`,
+    more: [
+      "Finding pure-strategy equilibria in a matrix: in each column, mark the row player's best payoff; in each row, mark the column player's best payoff. Any cell with both marked is a Nash equilibrium.",
+      "A game can have several (coordination games), one, or none in pure strategies (matching pennies). Once mixed strategies are allowed, every finite game has at least one (Nash, 1950).",
+      "Traps: Nash equilibrium is about <b>one player deviating alone</b>. It need not be efficient (prisoner's dilemma), and it doesn't say how players get there.",
+    ],
+    connections: ["dominant", "pd", "cournot", "bertrand"],
+    example: "The Blu-ray vs HD DVD format war was a coordination game: studios and player makers did best on the same format. Both “everyone Blu-ray” and “everyone HD DVD” were equilibria; Toshiba abandoned HD DVD in 2008 and the market settled on Blu-ray.",
+    played: [
+      "Coordination game: both pick X → (2, 2); both pick Y → (1, 1); a mismatch → (0, 0).",
+      "If the other player picks X, X pays 2 against 0: best response X. If they pick Y, Y pays 1 against 0: best response Y.",
+      "Two pure Nash equilibria, (X, X) and (Y, Y). Nobody has a dominant strategy, and (Y, Y) is an equilibrium even though both prefer (X, X).",
+    ],
+    graph: { key: "econ380Matrix", args: { game: "coord" } },
   },
   {
-    "id": "mrmc",
-    "n": 22,
-    "week": 4,
-    "term": "Monopoly rule",
-    "simple": "Produce where MR = MC and charge the price on the demand curve at that quantity. With P = a − bQ, MR = a − 2bQ."
+    id: "dominant", n: 26, week: 5,
+    term: "Dominant strategy",
+    simple: "A strictly dominant strategy gives a player a higher payoff than any alternative, whatever the other players do.",
+    formula: `<i>u<sub>i</sub></i>(<i>s<sub>i</sub></i>*, <i>s</i><sub>−<i>i</i></sub>)${op("&gt;")}<i>u<sub>i</sub></i>(<i>s<sub>i</sub></i>, <i>s</i><sub>−<i>i</i></sub>) for every <i>s</i><sub>−<i>i</i></sub>`,
+    more: [
+      "If every player has a dominant strategy, playing them is the unique Nash equilibrium (a dominant-strategy equilibrium). No one needs to predict what others will do.",
+      "Even without one, you can <b>iteratively eliminate</b> strictly dominated strategies: a rational player never plays one, so cross it out and look again.",
+      "Trap: “dominant” compares your payoffs across <i>your own</i> strategies, holding the other player's choice fixed, not your payoff against theirs. A strategy that wins against one choice and loses against another isn't dominant.",
+    ],
+    connections: ["nash", "pd", "bertrand"],
+    example: "In a sealed-bid second-price (Vickrey) auction, bidding your true value is a weakly dominant strategy: bidding more risks paying more than the item is worth to you, and bidding less only risks losing a profitable win. eBay's proxy bidding works in a similar way.",
+    played: [
+      "Pricing game, payoffs (A, B) in $m: both High (10, 10); A Low, B High (12, 2); A High, B Low (2, 12); both Low (5, 5).",
+      "If B plays High, A gets 12 from Low against 10 from High. If B plays Low, A gets 5 from Low against 2 from High.",
+      "Low is better either way: dominant for A, and by symmetry for B. The equilibrium is (Low, Low) = (5, 5).",
+    ],
+    graph: { key: "econ380Matrix", args: { game: "pd" } },
   },
   {
-    "id": "lerner",
-    "n": 23,
-    "week": 4,
-    "term": "Lerner index / inverse-elasticity rule",
-    "simple": "(P − MC)/P = 1/|ε|. A monopolist always prices on the elastic part of demand (|ε| &gt; 1)."
+    id: "pd", n: 27, week: 5,
+    term: "Prisoner’s dilemma",
+    simple: "A prisoner's dilemma is a game in which each player has a dominant strategy to defect, yet both would be better off if both cooperated.",
+    formula: `<i>T</i>${op("&gt;")}<i>R</i>${op("&gt;")}<i>P</i>${op("&gt;")}<i>S</i>${sp}(temptation, reward, punishment, sucker)`,
+    more: [
+      "The equilibrium (defect, defect) is Pareto-dominated by (cooperate, cooperate): each player acting rationally on their own doesn't give a good result for the group.",
+      "Ways out: <b>repeated</b> play with no known last round lets strategies like tit-for-tat or grim trigger sustain cooperation if players value the future enough; contracts, regulation or reputation can also change the payoffs. With a known final round, backward induction unravels cooperation.",
+      "Applications: cartels and price wars, arms races, overfishing and other commons problems, advertising wars.",
+    ],
+    connections: ["dominant", "nash", "cournot", "pareto"],
+    example: "OPEC members agree on output quotas to keep oil prices high, but each member gains by quietly pumping more than its quota, and cheating has repeatedly undermined the group's agreements.",
+    played: [
+      "Pricing game: (High, High) = (10, 10), (Low, Low) = (5, 5); temptation 12, sucker 2.",
+      "Low is dominant for each, so the equilibrium is (Low, Low): $5m each.",
+      "Both prefer (High, High): $10m each. T = 12 &gt; R = 10 &gt; P = 5 &gt; S = 2 ✓.",
+      "Repeated forever with grim trigger, cooperation holds if 10/(1 − δ) ≥ 12 + 5δ/(1 − δ), that is δ ≥ 2/7 ≈ 0.29.",
+    ],
+    graph: { key: "econ380Matrix", args: { game: "pd", show: "coop" } },
   },
   {
-    "id": "pricedisc",
-    "n": 24,
-    "week": 4,
-    "term": "Price discrimination",
-    "simple": "1st degree: each buyer pays their reservation price (no DWL, no CS). 2nd: menus or quantity discounts that buyers self-select. 3rd: different prices for identifiable groups, with the higher price where demand is less elastic."
+    id: "cournot", n: 28, week: 5,
+    term: "Cournot duopoly",
+    simple: "In Cournot competition firms choose quantities at the same time, each best-responding to the other's output; total output ends up above the monopoly level but below the competitive level.",
+    formula: `<i>q</i><sub>1</sub>${op("=")}${fr("<i>a</i> − <i>c</i> − <i>bq</i><sub>2</sub>", "2<i>b</i>")}${sp}<i>q<sub>i</sub></i>*${op("=")}${fr("<i>a</i> − <i>c</i>", "3<i>b</i>")}`,
+    more: [
+      "Each firm takes its rival's output as given and acts as a monopolist on the <b>residual demand</b> P = (a − bq<sub>2</sub>) − bq<sub>1</sub>. Reaction functions slope down: the more your rival makes, the less you make.",
+      "With n identical firms each makes (a − c)/((n + 1)b), so total output n(a − c)/((n + 1)b) approaches the competitive level as n grows, and price falls toward MC.",
+      "Trap: the Cournot outcome is not the collusive one. Together the firms would earn more by splitting monopoly output, but from there each wants to expand: a prisoner's dilemma in quantities.",
+    ],
+    connections: ["bertrand", "nash", "pd", "mrmc"],
+    example: "Oil producers decide how much to pump and let the world price clear the market, which is closer to Cournot than to price-setting. Airlines choosing route capacity and memory-chip makers choosing fab capacity are similar.",
+    played: [
+      "P = 120 − Q, two firms, MC = 0. Firm 1's MR on residual demand: 120 − q<sub>2</sub> − 2q<sub>1</sub> = 0, so q<sub>1</sub> = (120 − q<sub>2</sub>)/2.",
+      "Symmetric: q = (120 − q)/2, so q = 40 each. Q = 80, P = 40, profit 1,600 each.",
+      "Monopoly: Q = 60, P = 60, profit 3,600 (1,800 each if split). Competition: Q = 120, P = 0.",
+      "Why collusion breaks down: if firm 2 makes 30, firm 1's best response is 45, earning 45 × 45 = 2,025 &gt; 1,800.",
+    ],
+    graph: "econ380Cournot",
   },
   {
-    "id": "nash",
-    "n": 25,
-    "week": 5,
-    "term": "Nash equilibrium",
-    "simple": "A strategy profile where each player’s strategy is a best response to the others’: no one gains by deviating alone."
+    id: "bertrand", n: 29, week: 5,
+    term: "Bertrand duopoly",
+    simple: "In Bertrand competition firms set prices at the same time; with identical products and equal constant marginal cost, the only equilibrium is price equal to marginal cost, so two firms are enough for the competitive outcome.",
+    formula: `<i>P</i><sub>1</sub>${op("=")}<i>P</i><sub>2</sub>${op("=")}MC${sp}profit${op("=")}0`,
+    more: [
+      "Logic: if your rival charges above MC, you take the whole market by undercutting by a cent. The undercutting stops only at P = MC, where cutting further means losses.",
+      "This is the <b>Bertrand paradox</b>. It goes away with differentiated products, capacity limits, different costs (the low-cost firm prices just below the rival's MC) or repeated interaction.",
+      "Cournot vs Bertrand: same demand, very different predictions. When firms fix capacity first and then set prices, the outcome looks like Cournot (Kreps–Scheinkman).",
+    ],
+    connections: ["cournot", "nash", "dominant", "lrcomp"],
+    example: "Price-comparison sites push identical products, such as the same TV model sold by many online retailers, toward Bertrand: prices bunch close to cost. Retailers fight back by differentiating with warranties, bundles and delivery.",
+    played: [
+      "Same demand P = 120 − Q, both MC = 0 (think software downloads).",
+      "If the rival charges $40 (the Cournot price), charge $39.99 and take all of Q ≈ 80: profit ≈ 3,200 instead of 1,600 shared.",
+      "The rival undercuts back, and so on until P = MC = 0, Q = 120, profit 0. Compare monopoly P = 60 and Cournot P = 40.",
+    ],
+    graph: "econ380Outcomes",
   },
-  {
-    "id": "dominant",
-    "n": 26,
-    "week": 5,
-    "term": "Dominant strategy",
-    "simple": "A strategy that does strictly better than every alternative <i>whatever</i> the others do. If each player has one, that profile is the (unique) Nash equilibrium."
-  },
-  {
-    "id": "pd",
-    "n": 27,
-    "week": 5,
-    "term": "Prisoner’s dilemma",
-    "simple": "Each player has a dominant strategy (defect), but mutual defection is worse for both than mutual cooperation. Individual rationality ≠ collective efficiency."
-  },
-  {
-    "id": "cournot",
-    "n": 28,
-    "week": 5,
-    "term": "Cournot duopoly",
-    "simple": "Firms choose quantities simultaneously. With P = a − bQ and equal MC c: q<sub>i</sub> = (a − c)/(3b). Output lies between monopoly and competition."
-  },
-  {
-    "id": "bertrand",
-    "n": 29,
-    "week": 5,
-    "term": "Bertrand duopoly",
-    "simple": "Firms choose prices. With identical products and equal constant MC, the equilibrium is P = MC: two firms are enough for the competitive outcome."
-  }
 ];
