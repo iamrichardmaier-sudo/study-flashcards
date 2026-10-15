@@ -7,7 +7,7 @@
 // that gets pasted into Scriptable, with the deck, graphs and scheduler
 // embedded).
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, copyFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import vm from "node:vm";
@@ -198,10 +198,23 @@ const site = '<!doctype html>\n<html lang="en"><head><meta charset="utf-8">\n' +
   '<meta name="theme-color" content="#FBF8F3">\n' +
   "<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}" +
   "body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>\n" +
-  "</head><body>\n" + siteBody + "</body></html>\n";
+  "</head><body>\n" + siteBody +
+  // The class switcher shared with the other class pages (classes/nav.js).
+  // Website only: the Artifact and Scriptable builds stay self-contained.
+  '<script src="classes/nav.js"></script>\n' +
+  "</body></html>\n";
 mkdirSync(join(root, "site"), { recursive: true });
 writeFileSync(join(root, "site/index.html"), site);
 writeFileSync(join(root, "site/.nojekyll"), "");
+
+// The other classes: hand-written pages at the repo root plus classes/,
+// copied into site/ so both Pages modes serve them.
+const classPages = ["classes.html", "econ210.html", "econ378.html", "econ380.html", "ihum242.html"];
+const classAssets = readdirSync(join(root, "classes")).filter((f) => /\.(js|css)$/.test(f));
+for (const f of classPages) if (!read(f).includes('src="classes/nav.js"')) throw new Error(`${f} doesn't load the class switcher`);
+mkdirSync(join(root, "site/classes"), { recursive: true });
+for (const f of classPages) copyFileSync(join(root, f), join(root, "site", f));
+for (const f of classAssets) copyFileSync(join(root, "classes", f), join(root, "site/classes", f));
 // The same page at the repo root, so GitHub Pages serves the app whether its
 // Source is "GitHub Actions" (deploys site/) or "Deploy from a branch" (main, root).
 writeFileSync(join(root, "index.html"), site);
@@ -211,6 +224,7 @@ const kb = (s) => (Buffer.byteLength(s) / 1024).toFixed(0) + " KB";
 const count = (f) => cards.filter((c) => c[f] && (!Array.isArray(c[f]) || c[f].length)).length;
 console.log(
   `Built ${cards.length} cards (${starred} ★) → scriptable/econ381-review.js (${kb(script)}), web/econ381.html (${kb(web)}), site/index.html\n` +
+  `  + ${classPages.length} class pages and ${classAssets.length} classes/ files → site/\n` +
   `  with graph: ${count("graph")}, numbers: ${count("numbers")}, played out: ${count("played")}, ` +
   `example: ${count("example")}, connections: ${count("connections")}`,
 );

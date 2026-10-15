@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Study · All classes</title>
+<meta name="description" content="Flashcards, practice questions and interactive tools for ECON 210, 378, 380, 381 and IHUM 242.">
+<meta name="theme-color" content="#FBF8F3">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="classes/study.css">
+<style>
+  .cls { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .cl { display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 18px; border: 1px solid var(--line); background: var(--card);
+        color: var(--ink); text-decoration: none; border-top: 5px solid var(--cc); transition: transform .1s, box-shadow .15s; }
+  .cl:hover { box-shadow: 0 14px 30px -18px rgba(43,33,24,.45); transform: translateY(-1px); }
+  .cl .code { font-size: 12px; font-weight: 800; letter-spacing: .1em; color: var(--cc); }
+  .cl .nm { font-size: 18px; font-weight: 800; }
+  .cl .bl { font-size: 13.5px; color: var(--muted); }
+  .cl .st { font-size: 12px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+</style>
+</head><body>
+<main class="st-main">
+  <div class="st-h"><h1>Your classes</h1><p>Flashcards, practice questions and interactive tools. Progress is saved in this browser.</p></div>
+  <div class="cls" id="cls"></div>
+  <p class="dim small">ECON 381 is the full app with its own sign-in and sync to the phone. The other classes save locally.</p>
+</main>
+<script src="classes/nav.js"></script>
+<script>
+  (function () {
+    var box = document.getElementById("cls");
+    var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+    window.ClassNav.classes.forEach(function (c) {
+      var stat = "";
+      if (c.id !== "econ381") {
+        try {
+          var cards = JSON.parse(localStorage.getItem("study." + c.id + ".cards") || "{}");
+          var now = Date.now(), seen = 0, due = 0;
+          for (var k in cards) { seen++; if (cards[k].due <= now) due++; }
+          stat = seen ? seen + " cards started · " + due + " due" : "Not started yet";
+        } catch (e) { stat = ""; }
+      } else stat = "Midterm 1 · 126 cards";
+      var a = document.createElement("a");
+      a.className = "cl";
+      a.href = window.ClassNav.url(c);
+      a.style.setProperty("--cc", c.color);
+      a.innerHTML = '<span class="code">' + esc(c.code) + '</span><span class="nm">' + esc(c.name) + '</span><span class="bl">' + esc(c.blurb) +
+        "</span>" + (stat ? '<span class="st">' + esc(stat) + "</span>" : "");
+      box.appendChild(a);
+    });
+  })();
+</script>
+</body></html>
