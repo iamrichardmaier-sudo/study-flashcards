@@ -48,6 +48,11 @@ function releaseLater() {
   }
 }
 
+/** "Week 3" for ECON 381; the unit's own name for classes organised by units. */
+function unitLabel(w) {
+  return UI.unitTitles && WEEKS[w - 1] ? WEEKS[w - 1].title : 'Week ' + w;
+}
+
 function setWeek(c) {
   const w = WEEKS[c.week - 1];
   const r = document.documentElement.style;
@@ -57,7 +62,7 @@ function setWeek(c) {
 
 function chips(c) {
   const w = WEEKS[c.week - 1];
-  let h = '<div class="chips"><span class="chip">Week ' + c.week + '</span>';
+  let h = '<div class="chips"><span class="chip">' + unitLabel(c.week) + '</span>';
   if (c.starred) h += '<span class="chip star">★ Tested</span>';
   return h + '</div>';
 }
@@ -163,7 +168,7 @@ function showPeek(id) {
   if (!l) return;
   const w = WEEKS[l.week - 1];
   let h = '<div class="grab"></div><div class="chips"><span class="chip" style="background:' + w.soft +
-    ';color:' + w.color + '">Week ' + l.week + '</span></div>' +
+    ';color:' + w.color + '">' + unitLabel(l.week) + '</span></div>' +
     '<div class="term" style="color:' + w.color + '">' + l.term + '</div>' +
     '<div class="simple">' + l.simple + '</div>';
   if (l.formula) h += '<div class="fx">' + l.formula + '</div>';

@@ -5,6 +5,7 @@ export default {
   "name": "Career Prep",
   "tagline": "LinkedIn, networking, STAR stories, résumé bullets.",
   "color": "#2E7D52",
+  "enriched": true,
   "units": [
     {
       "id": "net",
