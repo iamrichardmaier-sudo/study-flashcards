@@ -5,6 +5,7 @@ export default {
   "name": "Islamic Humanities",
   "tagline": "Map game, timeline, key figures and their works.",
   "color": "#0F766E",
+  "enriched": true,
   "units": [
     {
       "id": "found",
