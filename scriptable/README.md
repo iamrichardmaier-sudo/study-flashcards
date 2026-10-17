@@ -22,6 +22,31 @@ There's no account and nothing to sign in to. Progress is saved to
 iCloud Drive is off for Scriptable). It survives pasting in a newer version of
 the script.
 
+## Other classes: IHUM 242, ECON 378, ECON 380
+
+Each of these classes has its own phone script, built from the same template.
+It has the same widget, start menu, flip cards and grading, and the class's
+full cards with its own diagrams:
+
+| Class | File | Name it in Scriptable |
+|---|---|---|
+| IHUM 242 · Islamic Humanities | `scriptable/ihum242-review.js` | IHUM 242 |
+| ECON 378 · Statistics for Economists | `scriptable/econ378-review.js` | ECON 378 |
+| ECON 380 · Intermediate Micro Theory | `scriptable/econ380-review.js` | ECON 380 |
+
+Set each one up the same way as ECON 381 (steps above): paste the file into a
+new Scriptable script, give it the name in the table, run it once, then add a
+Scriptable widget for it with "When Interacting" set to "Run Script". Each
+class gets its own widget, showing what's due in that class.
+
+- **Progress:** each script keeps its own progress file (`<class>-progress.json`
+  in iCloud).
+- **Sync:** each script syncs with that class's page on the website.
+- **Units, not weeks:** these classes are organised by units, so the menu says
+  "One unit…" and cards show the unit's name.
+- **One sign-in:** all the scripts share the Wazn login in the Keychain. Once
+  you've signed in to one, the others sync with no further sign-in.
+
 ## The start menu
 
 - **Review N due + M new**: what's owed now, plus up to 25 new cards a day. Tested (★) cards come first.

@@ -80,7 +80,7 @@ function render() {
   $('#fill').style.width = ((i / Math.max(CARDS.length, 1)) * 100) + '%';
   $('#card').innerHTML = chips(c) +
     '<div class="term">' + c.term + '</div>' +
-    '<div class="weekname">' + WEEKS[c.week - 1].title + '</div>';
+    (UI.unitTitles ? '' : '<div class="weekname">' + WEEKS[c.week - 1].title + '</div>');
   $('#scroll').scrollTop = 0;
   $('footer').style.visibility = 'hidden';
 }

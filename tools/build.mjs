@@ -89,21 +89,35 @@ if (errors.length) {
 const deck = { title: "ECON 381 · Midterm 1", weeks, cards };
 writeFileSync(join(root, "cards/econ381.json"), JSON.stringify(deck, null, 1) + "\n");
 
-let script = read("tools/review-template.js");
-const fill = (marker, value) => {
-  if (!script.includes(marker)) throw new Error(`template is missing ${marker}`);
-  // A function replacement so "$" in the data is never read as a pattern.
-  script = script.replace(marker, () => value);
-};
-fill("/*__SCHEDULE__*/", read("tools/schedule.js").trim());
-fill("/*__DECK__*/ null", JSON.stringify(deck));
-fill('/*__GRAPHS__*/ ""', JSON.stringify(graphSrc));
 const page = {
   css: read("tools/page/page.css"),
-  body: read("tools/page/page.html").split("__CODE__").join("ECON 381"),
+  body: read("tools/page/page.html"),
   js: read("tools/page/page.js"),
 };
-fill("/*__PAGE__*/ null", JSON.stringify(page));
+
+/** A class's phone script: tools/review-template.js with the scheduler, the
+ *  deck, the graphs and the review page filled in. `course` (the class's
+ *  code, title, progress file, Supabase table and unit wording) is left at
+ *  the template's ECON 381 values when not given. */
+function phoneScript({ code, heading, deck: d, graphs, course }) {
+  let out = read("tools/review-template.js");
+  const put = (marker, value) => {
+    if (!out.includes(marker)) throw new Error(`template is missing ${marker}`);
+    // A function replacement so "$" in the data is never read as a pattern.
+    out = out.replace(marker, () => value);
+  };
+  put("__HEADING__", heading);
+  put("__N__", String(d.cards.length));
+  put("__CODE__", code);
+  if (course) out = out.replace(/\/\*__COURSE__\*\/ \{[\s\S]*?\};/, () => "/*__COURSE__*/ " + JSON.stringify(course) + ";");
+  put("/*__SCHEDULE__*/", read("tools/schedule.js").trim());
+  put("/*__DECK__*/ null", JSON.stringify(d));
+  put('/*__GRAPHS__*/ ""', JSON.stringify(graphs));
+  put("/*__PAGE__*/ null", JSON.stringify({ ...page, body: page.body.split("__CODE__").join(code) }));
+  return out;
+}
+
+const script = phoneScript({ code: "ECON 381", heading: "ECON 381 \u2014 Midterm 1", deck, graphs: graphSrc });
 writeFileSync(join(root, "scriptable/econ381-review.js"), script);
 
 // ------------------------------------------------------------- website
@@ -298,6 +312,7 @@ const sha = (s) => createHash("sha256").update(s).digest("hex").slice(0, 16);
 
 // The other classes: courses/<id>/{course,cards,practice}.mjs + classes/<id>.js tools.
 const COURSES = ["econ210", "econ378", "econ380", "ihum242"];
+const PHONE = ["econ378", "econ380", "ihum242"];      // classes with a phone script too
 for (const id of COURSES) {
   const meta = (await import(join(root, `courses/${id}/course.mjs`))).default;
   const cs = (await import(join(root, `courses/${id}/cards.mjs`))).default;
@@ -320,6 +335,14 @@ for (const id of COURSES) {
     extraCss: read("tools/kit/kit.css"), backend: { ...SUPABASE, table: "study_progress", course: id } });
   const site = sitePage(siteApp, `${meta.code} ${meta.name}: flashcards, practice questions and interactive tools.`);
   writeFileSync(join(root, `site/${id}.html`), site);
+  // The class's phone app (Scriptable), for IHUM 242, ECON 378 and ECON 380.
+  if (PHONE.includes(id)) {
+    const ps = phoneScript({ code: meta.code, heading: meta.code + " \u2014 " + meta.name, deck, graphs: graphSrc + "\n" + classGraphs,
+      course: { code: meta.code, title: meta.code + " \u00b7 " + meta.name, progressFile: `${id}-progress.json`,
+        table: "study_progress", course: id, unitWord: "Unit", unitTitles: true } });
+    writeFileSync(join(root, `scriptable/${id}-review.js`), ps);
+    console.log(`  + scriptable/${id}-review.js (${kb(ps)})`);
+  }
   writeFileSync(join(root, `${id}.html`), site);
   contents.push(content);
   const n = (f) => cs.filter((c) => c[f] && (!Array.isArray(c[f]) || c[f].length)).length;

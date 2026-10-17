@@ -9,7 +9,7 @@
 // schedule, renders every one of the 126 answers looking for layout
 // overflow, and builds the widget.
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
@@ -28,9 +28,19 @@ try {
 }
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const SCRIPT = join(root, "scriptable/econ381-review.js");
+// Which class's phone script: node tools/preview.mjs [outDir] [econ381|econ378|econ380|ihum242]
+const ID = process.argv[3] || "econ381";
+const SCRIPT = join(root, `scriptable/${ID}-review.js`);
+const PF = `/icloud/${ID}-progress.json`;
+// Where that class's progress lives in Supabase (the website's table for it).
+const TABLE = ID === "econ381" ? "econ381_progress" : "study_progress";
 const out = process.argv[2] || join(root, ".preview");
 mkdirSync(out, { recursive: true });
+
+// The deck and code inside the script, for the checks below.
+const SRC = readFileSync(SCRIPT, "utf8");
+const DECK_IDS = Object.fromEntries(JSON.parse(SRC.match(/const DECK = (\{.*\});\n/)[1]).cards.map((c) => [c.id, c]));
+const CODE = (SRC.match(/const COURSE = \/\*__COURSE__\*\/ \{[^}]*?"?code"?:\s*"([^"]+)"/) || [])[1];
 
 const browser = await chromium.launch({
   executablePath: process.env.CHROMIUM || undefined,
@@ -109,7 +119,7 @@ const review = await runScript(SCRIPT, {
 
 assert.ok(review.log.completed, "script should call Script.complete()");
 assert.ok(pings.every((p) => p === false), "econ381:// requests must be blocked");
-const progress = JSON.parse(review.fs.get("/icloud/econ381-progress.json"));
+const progress = JSON.parse(review.fs.get(PF));
 const graded = Object.entries(progress.cards);
 assert.equal(graded.length, 3, "three cards graded");
 const byRating = Object.fromEntries(graded.map(([id, s]) => [s.rating, s]));
@@ -126,13 +136,14 @@ const showcase = ["gdp", "cpi-vs-deflator", "cobb-douglas", "loanable-funds", "c
   "hyperinflation", "quantity-theory", "ss-unemployment-rate", "minimum-wage", "solow-diagram",
   "golden-saving", "lf-fall", "china", "fisher-effect", "cd-marginal", "m1"];
 const cram = await runScript(SCRIPT, {
-  files: { "/icloud/econ381-progress.json": JSON.stringify(progress) },
+  files: { [PF]: JSON.stringify(progress) },
   alerts: ["Cram"],
   onPresent: async (wv) => {
     const { page, errors } = await openPage(wv.html);
-    assert.equal(await page.evaluate("CARDS.length"), 126);
+    const N = await page.evaluate("CARDS.length");
+    if (ID === "econ381") assert.equal(N, 126);
     const problems = [];
-    for (let k = 0; k < 126; k++) {
+    for (let k = 0; k < N; k++) {
       const info = await page.evaluate(`(() => {
         i = ${k}; render();
         const front = document.querySelector('#card').scrollWidth;
@@ -161,7 +172,7 @@ const cram = await runScript(SCRIPT, {
       if (info.escapes) problems.push(`#${info.n} ${info.id}: graph drawing leaves its box: ${info.escapes}`);
       if (info.wantGraph && !info.hasGraph) problems.push(`#${info.n} ${info.id}: graph didn't render`);
       if (info.sections < 2) problems.push(`#${info.n} ${info.id}: only ${info.sections} detail sections`);
-      if (showcase.includes(info.id)) await tallShot(page, `card-${String(info.n).padStart(3, "0")}-${info.id}`);
+      if (showcase.includes(info.id) || (ID !== "econ381" && k % 6 === 0)) await tallShot(page, `card-${String(info.n).padStart(3, "0")}-${info.id}`);
     }
     await page.evaluate("i = 0; render()");
     await page.evaluate("const c = CARDS.find((x) => x.id === 'crowding-out'); CARDS.splice(CARDS.indexOf(c), 1); CARDS.unshift(c); i = 0; render()");
@@ -174,9 +185,9 @@ const cram = await runScript(SCRIPT, {
     return [{ id: "gdp", rating: "missed", t: Date.now() }];   // cram must ignore this
   },
 });
-const after = JSON.parse(cram.fs.get("/icloud/econ381-progress.json"));
+const after = JSON.parse(cram.fs.get(PF));
 assert.deepEqual(after, progress, "cram must not change the schedule");
-console.log("✓ cram: all 126 answers render without overflow; nothing rescheduled");
+console.log(`✓ cram: all ${Object.keys(DECK_IDS).length} answers render without overflow; nothing rescheduled`);
 
 // ------------------------------------------------------------ 3. widgets
 
@@ -184,12 +195,12 @@ for (const family of ["small", "medium"]) {
   const w = await runScript(SCRIPT, {
     runsInWidget: true,
     widgetFamily: family,
-    files: { "/icloud/econ381-progress.json": JSON.stringify(progress) },
+    files: { [PF]: JSON.stringify(progress) },
   });
   assert.ok(w.log.widget, "widget built");
   const texts = [];
   (function walk(s) { for (const it of s.items) { if (it.text) texts.push(it.text); if (it.items) walk(it); } })(w.log.widget);
-  assert.ok(texts.includes("ECON 381"));
+  assert.ok(texts.includes(CODE), "widget shows the class code");
   assert.ok(w.log.widget.url.startsWith("scriptable:///run?scriptName="));
   writeFileSync(join(out, `widget-${family}.txt`), texts.join("\n") + "\n");
   console.log(`✓ ${family} widget: ${texts.join(" | ")}`);
@@ -215,9 +226,12 @@ function fakeSupabase(row) {
       return b.password === "right" ? { json: { access_token: "tok", user: { id: "u1" } } } : { status: 400, json: { error: "invalid_grant" } };
     }
     assert.equal(req.headers.Authorization, "Bearer tok");
+    assert.ok(req.url.includes("/rest/v1/" + TABLE + "?"), "this class's table: " + req.url);
+    if (ID !== "econ381") assert.ok(req.url.includes("course_id=eq." + ID) || req.url.includes("on_conflict=user_id,course_id"), "this class only: " + req.url);
     if (req.method === "GET") return { json: db.row ? [{ data: db.row }] : [] };
     const b = JSON.parse(req.body);
     assert.equal(b.user_id, "u1");
+    if (ID !== "econ381") assert.equal(b.course_id, ID);
     assert.ok(req.url.includes("on_conflict=user_id"));
     db.row = b.data;
     return { status: 201, json: null };
@@ -236,7 +250,7 @@ const webCard = Object.keys(webDone.cards)[0];
     alerts: ["Review"],
     onPresent: async () => [],
   });
-  const saved = JSON.parse(run.fs.get("/icloud/econ381-progress.json"));
+  const saved = JSON.parse(run.fs.get(PF));
   assert.ok(saved.cards[webCard], "the website's grade came down to the phone");
   assert.ok(fake.db.row.cards[webCard], "and the merged progress went back up");
   assert.ok(run.log.alerts[0].message.includes("synced"), "menu says synced");
