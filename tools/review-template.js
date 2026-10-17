@@ -3,7 +3,7 @@
 // icon-color: deep-blue; icon-glyph: chart-line;
 
 /**
- * ECON 381 — Midterm 1 flashcards for Scriptable (iOS)
+ * __HEADING__ flashcards for Scriptable (iOS)
  * ---------------------------------------------------------------------------
  * GENERATED FILE. Edit tools/review-template.js, tools/schedule.js,
  * tools/graphs.js or cards/src/*.mjs and run `node tools/build.mjs`.
@@ -26,13 +26,13 @@
  *            smaller print, extra detail, connected cards, a real-world
  *            example, real numbers, a worked example and a graph.
  *
- * Everything is in this one file: the 126 cards, the graphs and the
+ * Everything is in this one file: the __N__ cards, the graphs and the
  * scheduler. There is no account and nothing to sign in to. Your progress is
  * a small JSON file in Scriptable's iCloud folder (local storage if iCloud is
  * off), so it survives re-pasting a newer version of this script.
  *
  * SETUP
- *   1. Scriptable → + → paste this file → name it "ECON 381".
+ *   1. Scriptable → + → paste this file → name it "__CODE__".
  *   2. Run it once.
  *   3. Home screen → add a Scriptable widget → choose this script.
  *      Set "When Interacting" to "Run Script".
@@ -40,7 +40,12 @@
 
 // ---------------------------------------------------------------- config
 
-const PROGRESS_FILE = "econ381-progress.json";
+// Which class this script is. build.mjs fills it in: code and title for the
+// widget and menu, the progress file, the Supabase table (and class) the
+// website shares, and whether the deck is organised by weeks or units.
+const COURSE = /*__COURSE__*/ { code: "ECON 381", title: "ECON 381 · Midterm 1", progressFile: "econ381-progress.json",
+  table: "econ381_progress", course: null, unitWord: "Week", unitTitles: false };
+const PROGRESS_FILE = COURSE.progressFile;
 
 const CREAM = "#FDF8F2";
 const INK = "#2B2118";
@@ -172,7 +177,8 @@ function authHeaders(sess) {
 }
 
 async function pullRemote(sess) {
-  const req = new Request(SUPABASE_URL + "/rest/v1/econ381_progress?select=data");
+  const req = new Request(SUPABASE_URL + "/rest/v1/" + COURSE.table + "?select=data" +
+    (COURSE.course ? "&course_id=eq." + encodeURIComponent(COURSE.course) : ""));
   req.headers = authHeaders(sess);
   const rows = await req.loadJSON();
   if (!Array.isArray(rows)) throw new Error("couldn't read progress");
@@ -186,10 +192,12 @@ async function syncNow(sess, progress) {
   try {
     mergeProgress(progress, await pullRemote(sess));
     saveProgress(progress);
-    const req = new Request(SUPABASE_URL + "/rest/v1/econ381_progress?on_conflict=user_id");
+    const req = new Request(SUPABASE_URL + "/rest/v1/" + COURSE.table + "?on_conflict=" + (COURSE.course ? "user_id,course_id" : "user_id"));
     req.method = "POST";
     req.headers = Object.assign(authHeaders(sess), { Prefer: "resolution=merge-duplicates,return=minimal" });
-    req.body = JSON.stringify({ user_id: sess.userId, data: progress });
+    req.body = JSON.stringify(COURSE.course
+      ? { user_id: sess.userId, course_id: COURSE.course, data: progress }
+      : { user_id: sess.userId, data: progress });
     await req.load();
     const code = req.response && req.response.statusCode;
     return !code || code < 300;
@@ -228,7 +236,7 @@ function buildWidget(stats) {
 
   const header = w.addStack();
   header.centerAlignContent();
-  const title = header.addText("ECON 381");
+  const title = header.addText(COURSE.code);
   title.font = Font.boldSystemFont(11);
   title.textColor = new Color(BRAND);
   header.addSpacer();
@@ -255,7 +263,7 @@ function buildWidget(stats) {
     s.textOpacity = 0.6;
   } else {
     const week = WEEKS[card.week - 1];
-    const wk = w.addText((card.starred ? "★ " : "") + "WEEK " + card.week);
+    const wk = w.addText((card.starred ? "★ " : "") + (COURSE.unitTitles ? week.title.toUpperCase() : "WEEK " + card.week));
     wk.font = Font.boldSystemFont(9);
     wk.textColor = new Color(week.color);
     w.addSpacer(2);
@@ -329,6 +337,7 @@ function reviewHTML(cards, mode) {
   js = fill(js, "/*__CARDS__*/[]", json(cards.map(forPage)));
   js = fill(js, "/*__WEEKS__*/[]", json(WEEKS));
   js = fill(js, "/*__PRACTICE__*/false", practice ? "true" : "false");
+  if (COURSE.unitTitles) js = fill(js, "/*__UI__*/{}", json({ unitTitles: true }));
   let body = PAGE.body;
   body = fill(body, "__QUIT__", practice ? "Cram \u00b7 nothing is rescheduled" : "Swipe down when you\u2019re done");
   body = fill(body, "__DONE_ACTIONS__", '<p style="opacity:.45;font-size:13px">Swipe down to save and close.</p>');
@@ -379,7 +388,7 @@ async function chooseSession(progress, sess) {
     options.push("★ Tested cards only (" + testedCount + ")");
     actions.push("tested");
   }
-  options.push("One week…");
+  options.push("One " + COURSE.unitWord.toLowerCase() + "…");
   actions.push("week");
   options.push("Cram all " + CARDS.length + " · no scheduling");
   actions.push("cram");
@@ -396,7 +405,7 @@ async function chooseSession(progress, sess) {
       (st.upcoming < Infinity ? " · next card at " + timeOf(st.upcoming) : "") +
       "\n" + message;
   }
-  const choice = await pick("ECON 381 · Midterm 1", message, options);
+  const choice = await pick(COURSE.title, message, options);
   if (choice === -1) return null;
   const act = actions[choice];
 
@@ -412,16 +421,17 @@ async function chooseSession(progress, sess) {
     const labels = WEEKS.map((w, k) => {
       const q = buildQueue(CARDS, progress, now, (c) => c.week === k + 1, Infinity);
       const n = q.due.length + q.fresh.length;
-      return "Week " + (k + 1) + ": " + w.title + (n ? " (" + n + ")" : " ✓");
+      return COURSE.unitWord + " " + (k + 1) + ": " + w.title + (n ? " (" + n + ")" : " ✓");
     });
-    const k = await pick("Which week?", "Due and new cards from that week only.", labels);
+    const unit = COURSE.unitWord.toLowerCase();
+    const k = await pick("Which " + unit + "?", "Due and new cards from that " + unit + " only.", labels);
     if (k === -1) return null;
     const q = buildQueue(CARDS, progress, now, (c) => c.week === k + 1, Infinity);
     if (q.due.length + q.fresh.length === 0) {
       const again = await pick(
-        "Week " + (k + 1) + " is caught up",
+        COURSE.unitWord + " " + (k + 1) + " is caught up",
         "Nothing in it is due. Cram it anyway? That won't change its schedule.",
-        ["Cram week " + (k + 1)],
+        ["Cram " + unit + " " + (k + 1)],
       );
       if (again === -1) return null;
       return { cards: shuffle(CARDS.filter((c) => c.week === k + 1)), mode: "cram" };
@@ -445,7 +455,7 @@ async function showStats(progress) {
     const cs = CARDS.filter((c) => c.week === k + 1);
     const seen = cs.filter((c) => progress.cards[c.id]).length;
     const solid = cs.filter((c) => (progress.cards[c.id] || {}).solid).length;
-    return "Week " + (k + 1) + ": " + seen + "/" + cs.length + " seen · " + solid + " solid";
+    return COURSE.unitWord + " " + (k + 1) + ": " + seen + "/" + cs.length + " seen · " + solid + " solid";
   });
   // The cards missed most, worth a look in the notes.
   const hard = CARDS
@@ -475,7 +485,7 @@ async function showStats(progress) {
       for (const k in progress) delete progress[k];
       Object.assign(progress, fresh);
       saveProgress(progress);
-      await tell("Reset", "All 126 cards are new again.");
+      await tell("Reset", "All " + CARDS.length + " cards are new again.");
     }
   }
 }
